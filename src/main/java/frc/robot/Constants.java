@@ -139,4 +139,26 @@ public final class Constants {
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
+  public static final class ShooterConstants {
+    public static final int kIndexerMotorCanID = 31;
+    public static final int kFlywheelMotorCanID = 32;
+    public static final int kPivotMotorCanID = 33;
+
+    public static final int kIndexerMotorCurrentLimit = 60;
+    public static final int kFlywheelMotorCurrentLimit = 60;
+    public static final int kPivotMotorCurrentLimit = 60;
+  }
+
+  public static final class PivotPIDConstants {
+    public static final double kP = 0.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+  }
+
+  public static final class IntakeConstants {
+    public static final int kIntakeMotorCanID = 43;
+
+    public static final int kIntakeMotorCurrentLimit = 60;
+  }
 }
