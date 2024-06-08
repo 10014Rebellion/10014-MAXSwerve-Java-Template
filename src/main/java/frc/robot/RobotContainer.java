@@ -80,9 +80,12 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.setX(),
                 m_robotDrive));*/
-        m_driverController.a().whileTrue(robotShooter.runFlywheelCommand(2));
-        m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(2));
-        m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(2));
+        m_driverController.a().whileTrue(robotShooter.runFlywheelCommand(2))
+                              .whileFalse(robotShooter.runFlywheelCommand(0));
+        m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(2))
+                                        .whileFalse(robotShooter.runIndexerCommand(0));
+        m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(2))
+                                       .whileFalse(robotIntake.runIntakeCommand(0));
     }
 
     /**
