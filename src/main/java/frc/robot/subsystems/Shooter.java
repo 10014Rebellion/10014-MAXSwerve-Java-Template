@@ -50,7 +50,7 @@ public class Shooter {
         flywheelMotor.setIdleMode(IdleMode.kCoast);
         pivotMotor.setIdleMode(IdleMode.kBrake);
 
-        indexerMotor.setInverted(false);
+        indexerMotor.setInverted(true);
         flywheelMotor.setInverted(false);
         pivotMotor.setInverted(false);
 

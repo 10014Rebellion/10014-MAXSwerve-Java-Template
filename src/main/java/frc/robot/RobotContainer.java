@@ -84,7 +84,7 @@ public class RobotContainer {
                               .whileFalse(robotShooter.runFlywheelCommand(0));
         m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(2))
                                         .whileFalse(robotShooter.runIndexerCommand(0));
-        m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(2))
+        m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(8))
                                        .whileFalse(robotIntake.runIntakeCommand(0));
     }
 

@@ -141,9 +141,9 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int kIndexerMotorCanID = 31;
-    public static final int kFlywheelMotorCanID = 32;
-    public static final int kPivotMotorCanID = 33;
+    public static final int kIndexerMotorCanID = 32;
+    public static final int kFlywheelMotorCanID = 33;
+    public static final int kPivotMotorCanID = 31;
 
     public static final int kIndexerMotorCurrentLimit = 60;
     public static final int kFlywheelMotorCurrentLimit = 60;
