@@ -51,6 +51,9 @@ public final class Constants {
     public static final double kBackLeftChassisAngularOffset = Math.PI;
     public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
+    // Pigeon CAN ID
+    public static final int kPigeonCanID = 10;
+
     // SPARK MAX CAN IDs
     public static final int kFrontLeftDrivingCanId = 11;
     public static final int kRearLeftDrivingCanId = 14;
@@ -117,6 +120,7 @@ public final class Constants {
   }
 
   public static final class OIConstants {
+    public static final double kDriveMult = 0.25;
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
   }

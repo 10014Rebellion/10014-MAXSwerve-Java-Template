@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -59,11 +60,13 @@ public class RobotContainer {
             // Turning is controlled by the X axis of the right stick.
             new RunCommand(
                 () -> m_robotDrive.drive(
-                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getLeftY()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getLeftX()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getRightX()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
                     true, true),
                 m_robotDrive));
+
+        SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
         
     }
 
@@ -81,13 +84,25 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.setX(),
                 m_robotDrive));
-        m_driverController.a().whileTrue(robotShooter.runFlywheelCommand(2))
-                              .whileFalse(robotShooter.runFlywheelCommand(0));
+        m_driverController.x()
+            .whileTrue(new RunCommand(
+                () -> m_robotDrive.zeroHeading(),
+                m_robotDrive));
+        
+
+        m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(2))
+                                         .whileFalse(robotShooter.runFlywheelCommand(0));
         m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(2))
                                         .whileFalse(robotShooter.runIndexerCommand(0));
-        m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(8))
+        m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(10))
                                        .whileFalse(robotIntake.runIntakeCommand(0));
-    }
+
+        // shooter basic commands
+        m_driverController.y().whileTrue(robotShooter.manualMoveArmCommand(2))
+                              .whileFalse(robotShooter.manualMoveArmCommand(0));
+        m_driverController.a().whileTrue(robotShooter.manualMoveArmCommand(-2))
+                              .whileFalse(robotShooter.manualMoveArmCommand(0));
+        }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
