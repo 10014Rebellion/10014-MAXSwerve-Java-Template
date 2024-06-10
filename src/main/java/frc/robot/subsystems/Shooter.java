@@ -26,7 +26,7 @@ import frc.robot.Constants.ShooterConstants;
 //import frc.robot.Constants.ShooterConstants.PivotPIDConstants;
 
 
-public class Shooter {
+public class Shooter extends SubsystemBase {
     
     private final CANSparkMax indexerMotor;
     private final CANSparkMax flywheelMotor;
