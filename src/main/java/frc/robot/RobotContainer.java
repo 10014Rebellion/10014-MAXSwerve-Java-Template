@@ -15,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -76,10 +77,10 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        /*new JoystickButton(m_driverController, Button.kR1.value)
+        m_driverController.b()
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.setX(),
-                m_robotDrive));*/
+                m_robotDrive));
         m_driverController.a().whileTrue(robotShooter.runFlywheelCommand(2));
         m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(2));
         m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(2));
