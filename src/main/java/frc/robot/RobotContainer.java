@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Climb;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -43,9 +44,13 @@ public class RobotContainer {
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final Shooter robotShooter = new Shooter();
     private final Intake robotIntake = new Intake();
+    private final Climb robotClimb = new Climb();
 
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+
+    // Copilot's controller
+    CommandXboxController copilotController = new CommandXboxController(OIConstants.kCopilotControllerPort);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -66,7 +71,7 @@ public class RobotContainer {
                     true, true),
                 m_robotDrive));
 
-        SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
+        //SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
         
     }
 
@@ -92,7 +97,7 @@ public class RobotContainer {
 
         m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(2))
                                          .whileFalse(robotShooter.runFlywheelCommand(0));
-        m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(2))
+        m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(4))
                                         .whileFalse(robotShooter.runIndexerCommand(0));
         m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(10))
                                        .whileFalse(robotIntake.runIntakeCommand(0));
@@ -102,6 +107,16 @@ public class RobotContainer {
                               .whileFalse(robotShooter.manualMoveArmCommand(0));
         m_driverController.a().whileTrue(robotShooter.manualMoveArmCommand(-2))
                               .whileFalse(robotShooter.manualMoveArmCommand(0));
+
+        // manual move climb commands
+        copilotController.y().whileTrue(robotClimb.moveRightClimbCommand(2))
+                             .whileFalse(robotClimb.moveRightClimbCommand(0));
+        copilotController.a().whileTrue(robotClimb.moveRightClimbCommand(-2))
+                             .whileFalse(robotClimb.moveRightClimbCommand(0));
+        copilotController.povUp().whileTrue(robotClimb.moveLeftClimbCommand(2))
+                                 .whileFalse(robotClimb.moveLeftClimbCommand(0));
+        copilotController.povDown().whileTrue(robotClimb.moveLeftClimbCommand(-2))
+                                   .whileFalse(robotClimb.moveLeftClimbCommand(0));
         }
 
     /**

@@ -36,6 +36,12 @@ public class Shooter extends SubsystemBase {
 
     private final PIDController pivotController;
 
+    private double kP;
+    private double kI;
+    private double kD;
+
+    private double setPoint;
+
     public Shooter() {
 
         indexerMotor = new CANSparkMax(ShooterConstants.kIndexerMotorCanID, MotorType.kBrushless);
@@ -59,8 +65,11 @@ public class Shooter extends SubsystemBase {
         pivotMotor.setSmartCurrentLimit(ShooterConstants.kPivotMotorCurrentLimit);
 
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        pivotEncoder.setPositionConversionFactor(360);
 
         pivotController = new PIDController(PivotPIDConstants.kP, PivotPIDConstants.kI, PivotPIDConstants.kD);
+
+        
     }
 
     // please dont run permanently when i press it once...
@@ -91,4 +100,20 @@ public class Shooter extends SubsystemBase {
     public Command runFlywheelCommand(double targetVoltage) {
         return new InstantCommand(() -> runFlywheel(targetVoltage));
     }
+
+    public void periodic() {
+        SmartDashboard.putNumber("Pivot Angle", pivotEncoder.getPosition());
+        SmartDashboard.putNumber("kP", 0);
+        kP = SmartDashboard.getNumber("kP", PivotPIDConstants.kP);
+        SmartDashboard.putNumber("kI", 0);
+        kI = SmartDashboard.getNumber("kI", PivotPIDConstants.kI);
+        SmartDashboard.putNumber("kD", 0);
+        kD = SmartDashboard.getNumber("kD", PivotPIDConstants.kD);
+        SmartDashboard.putNumber("Setpoint", 0);
+
+        SmartDashboard.putNumber("PID output", pivotController.calculate(pivotEncoder.getPosition(), SmartDashboard.getNumber("Setpoint", 0)));
+        pivotController.setPID(kP,kI,kD);
+    }
+
+
  }

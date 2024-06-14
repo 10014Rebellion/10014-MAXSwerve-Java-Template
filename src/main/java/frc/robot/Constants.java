@@ -120,9 +120,12 @@ public final class Constants {
   }
 
   public static final class OIConstants {
-    public static final double kDriveMult = 0.25;
+    
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.05;
+    public static final double kDriveMult = 0.25;
+
+    public static final int kCopilotControllerPort = 1;
   }
 
   public static final class AutoConstants {
@@ -164,5 +167,14 @@ public final class Constants {
     public static final int kIntakeMotorCanID = 43;
 
     public static final int kIntakeMotorCurrentLimit = 60;
+  }
+
+  public static final class ClimbConstants {
+    public static final int kLeftClimbMotorCanID = 41;
+    public static final int kRightClimbMotorCanID = 42;
+
+    public static final int kLeftClimbMotorCurrentLimit = 60;
+    public static final int kRightClimbMotorCurrentLimit = 60;
+
   }
 }
