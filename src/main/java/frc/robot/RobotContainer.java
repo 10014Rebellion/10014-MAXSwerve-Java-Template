@@ -85,10 +85,10 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
-        m_driverController.b()
+        /*m_driverController.b()
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.setX(),
-                m_robotDrive));
+                m_robotDrive));*/
         m_driverController.x()
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
@@ -107,16 +107,23 @@ public class RobotContainer {
                               .whileFalse(robotShooter.manualMoveArmCommand(0));
         m_driverController.a().whileTrue(robotShooter.manualMoveArmCommand(-2))
                               .whileFalse(robotShooter.manualMoveArmCommand(0));
+        m_driverController.b().whileTrue(robotShooter.manualMoveArmCommand(0))
+                              .whileFalse(robotShooter.manualMoveArmCommand(0));
 
         // manual move climb commands
-        copilotController.y().whileTrue(robotClimb.moveRightClimbCommand(2))
+        copilotController.y().whileTrue(robotClimb.moveRightClimbCommand(6))
                              .whileFalse(robotClimb.moveRightClimbCommand(0));
-        copilotController.a().whileTrue(robotClimb.moveRightClimbCommand(-2))
+        copilotController.a().whileTrue(robotClimb.moveRightClimbCommand(-6))
                              .whileFalse(robotClimb.moveRightClimbCommand(0));
-        copilotController.povUp().whileTrue(robotClimb.moveLeftClimbCommand(2))
+        copilotController.povUp().whileTrue(robotClimb.moveLeftClimbCommand(6))
                                  .whileFalse(robotClimb.moveLeftClimbCommand(0));
-        copilotController.povDown().whileTrue(robotClimb.moveLeftClimbCommand(-2))
+        copilotController.povDown().whileTrue(robotClimb.moveLeftClimbCommand(-6))
                                    .whileFalse(robotClimb.moveLeftClimbCommand(0));
+
+        copilotController.b().whileTrue(robotClimb.moveBothClimbCommand(6))
+                             .whileFalse(robotClimb.moveBothClimbCommand(0));
+        copilotController.x().whileTrue(robotClimb.moveBothClimbCommand(-6))
+                             .whileFalse(robotClimb.moveBothClimbCommand(0));
         }
 
     /**

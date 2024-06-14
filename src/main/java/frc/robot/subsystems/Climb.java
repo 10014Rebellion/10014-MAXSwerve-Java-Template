@@ -59,7 +59,12 @@ public class Climb {
     }
 
     public void moveRightClimb(double targetVoltage) {
+        rightClimbMotor.setVoltage(targetVoltage);
+    }
+
+    public void moveBothClimb(double targetVoltage) {
         leftClimbMotor.setVoltage(targetVoltage);
+        rightClimbMotor.setVoltage(targetVoltage);
     }
 
     public Command moveLeftClimbCommand(double targetVoltage) {
@@ -68,5 +73,9 @@ public class Climb {
 
     public Command moveRightClimbCommand(double targetVoltage) {
         return new InstantCommand(() -> moveRightClimb(targetVoltage));
+    }
+
+    public Command moveBothClimbCommand(double targetVoltage) {
+        return new InstantCommand(() -> moveBothClimb(targetVoltage));
     }
 }

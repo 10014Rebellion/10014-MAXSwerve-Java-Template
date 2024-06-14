@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.io.Console;
 import java.util.concurrent.TimeUnit;
 
 import com.revrobotics.AbsoluteEncoder;
@@ -15,6 +16,7 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -42,6 +44,9 @@ public class Shooter extends SubsystemBase {
 
     private double setPoint;
 
+    private double armTargetVoltage;
+    private boolean armBoolCheck;
+
     public Shooter() {
 
         indexerMotor = new CANSparkMax(ShooterConstants.kIndexerMotorCanID, MotorType.kBrushless);
@@ -66,7 +71,8 @@ public class Shooter extends SubsystemBase {
 
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pivotEncoder.setPositionConversionFactor(360);
-
+        pivotEncoder.setInverted(true);
+        pivotEncoder.setZeroOffset(260);
         pivotController = new PIDController(PivotPIDConstants.kP, PivotPIDConstants.kI, PivotPIDConstants.kD);
 
         
@@ -74,7 +80,16 @@ public class Shooter extends SubsystemBase {
 
     // please dont run permanently when i press it once...
     public void moveArmManually(double targetVoltage) {
-        pivotMotor.setVoltage(targetVoltage);
+        if(((targetVoltage > 0) && (pivotEncoder.getPosition() <= 140)) || ((targetVoltage < 0) && (pivotEncoder.getPosition() >= 5))) {
+            pivotMotor.setVoltage(targetVoltage);
+        }
+        else {
+           pivotMotor.setVoltage(0);
+            
+        }
+        armTargetVoltage = targetVoltage;
+        armBoolCheck = (((targetVoltage > 0) && (pivotEncoder.getPosition() <= 180)) || ((targetVoltage < 0) && (pivotEncoder.getPosition() >= 5)));
+
     }
 
     public double getPivotAngle() {
@@ -101,9 +116,13 @@ public class Shooter extends SubsystemBase {
         return new InstantCommand(() -> runFlywheel(targetVoltage));
     }
 
+    public Command runPIDArmCommand(double setPoint) {
+        return new InstantCommand(() -> pivotController.calculate(pivotEncoder.getPosition(), SmartDashboard.getNumber("Setpoint", setPoint)));
+    }
+
     public void periodic() {
         SmartDashboard.putNumber("Pivot Angle", pivotEncoder.getPosition());
-        SmartDashboard.putNumber("kP", 0);
+        SmartDashboard.putNumber("kP", 0.01);
         kP = SmartDashboard.getNumber("kP", PivotPIDConstants.kP);
         SmartDashboard.putNumber("kI", 0);
         kI = SmartDashboard.getNumber("kI", PivotPIDConstants.kI);
@@ -113,6 +132,9 @@ public class Shooter extends SubsystemBase {
 
         SmartDashboard.putNumber("PID output", pivotController.calculate(pivotEncoder.getPosition(), SmartDashboard.getNumber("Setpoint", 0)));
         pivotController.setPID(kP,kI,kD);
+
+        SmartDashboard.putNumber("ArmVoltage set val", armTargetVoltage);
+        SmartDashboard.putBoolean("armCheck val", armBoolCheck);
     }
 
 
