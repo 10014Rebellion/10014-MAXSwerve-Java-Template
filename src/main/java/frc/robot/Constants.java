@@ -155,12 +155,23 @@ public final class Constants {
     public static final int kIndexerMotorCurrentLimit = 60;
     public static final int kFlywheelMotorCurrentLimit = 60;
     public static final int kPivotMotorCurrentLimit = 60;
+
+    public static final int kArmLowerLimit = 5;
+    public static final int kArmUpperLimit = 145;
   }
 
   public static final class PivotPIDConstants {
-    public static final double kP = 0.0;
+    //PID Constants
+    public static final double kP = 0.125;
     public static final double kI = 0.0;
-    public static final double kD = 0.0;
+    public static final double kD = 0.002;
+    public static final double baseSetpoint = 90;
+
+    //Feed Forward constants
+    public static final double kS = 0.0;
+    public static final double kG = 0.1;
+    public static final double kV = 0.002;
+    public static final double kA = 0.0;
   }
 
   public static final class IntakeConstants {

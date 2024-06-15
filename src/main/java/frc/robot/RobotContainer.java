@@ -14,23 +14,22 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter.ManualShooter;
+import frc.robot.subsystems.Shooter.armPIDController;
 import frc.robot.subsystems.Climb;
 
 /*
@@ -42,9 +41,13 @@ import frc.robot.subsystems.Climb;
 public class RobotContainer {
     // The robot's subsystems
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-    private final Shooter robotShooter = new Shooter();
+    private final ManualShooter robotShooter = new ManualShooter();
+    private final armPIDController robotArmPID = new armPIDController();
     private final Intake robotIntake = new Intake();
     private final Climb robotClimb = new Climb();
+
+    private final Command enableArmPID = Commands.runOnce(robotArmPID::enable, robotArmPID);
+    private final Command disableArmPID = Commands.runOnce(robotArmPID::disable, robotArmPID);
 
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -71,6 +74,9 @@ public class RobotContainer {
                     true, true),
                 m_robotDrive));
 
+        /*robotArmPID.setDefaultCommand(
+            robotArmPID.disablePID()
+        );*/
         //SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
         
     }
@@ -85,6 +91,7 @@ public class RobotContainer {
      * {@link JoystickButton}.
      */
     private void configureButtonBindings() {
+        //robotArmPID.disable();
         /*m_driverController.b()
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.setX(),
@@ -95,20 +102,30 @@ public class RobotContainer {
                 m_robotDrive));
         
 
-        m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(2))
+        m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(6))
                                          .whileFalse(robotShooter.runFlywheelCommand(0));
-        m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(4))
+        m_driverController.rightBumper().whileTrue(robotShooter.runIndexerCommand(6))
                                         .whileFalse(robotShooter.runIndexerCommand(0));
         m_driverController.leftBumper().whileTrue(robotIntake.runIntakeCommand(10))
                                        .whileFalse(robotIntake.runIntakeCommand(0));
 
         // shooter basic commands
-        m_driverController.y().whileTrue(robotShooter.manualMoveArmCommand(2))
+        /*m_driverController.y().whileTrue(robotShooter.manualMoveArmCommand(2))
                               .whileFalse(robotShooter.manualMoveArmCommand(0));
         m_driverController.a().whileTrue(robotShooter.manualMoveArmCommand(-2))
-                              .whileFalse(robotShooter.manualMoveArmCommand(0));
-        m_driverController.b().whileTrue(robotShooter.manualMoveArmCommand(0))
-                              .whileFalse(robotShooter.manualMoveArmCommand(0));
+                              .whileFalse(robotShooter.manualMoveArmCommand(0));*/
+        m_driverController.y().whileTrue(new InstantCommand(() -> 
+                                        robotArmPID.goToSetpoint(45)));
+                              //.whileFalse(disableArmPID);
+        m_driverController.b().whileTrue(new InstantCommand(() -> 
+                                        robotArmPID.goToSetpoint(90)));
+                              //.whileFalse(disableArmPID);
+        m_driverController.a().whileTrue(new InstantCommand(() -> 
+                                        robotArmPID.goToSetpoint(120)));
+                              //.whileFalse(disableArmPID);
+        m_driverController.povUp().whileTrue(disableArmPID);
+
+        m_driverController.povDown().whileTrue(new InstantCommand(() -> robotArmPID.editPIDVals()));
 
         // manual move climb commands
         copilotController.y().whileTrue(robotClimb.moveRightClimbCommand(6))
