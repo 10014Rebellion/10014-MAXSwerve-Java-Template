@@ -35,7 +35,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     private final ArmFeedforward armFFControl;
 
     // Shooter Object=s
-    //private final CANSparkMax flywheelMotor;
+    private final CANSparkMax flywheelMotor;
 
     // REV PDH for the switchable channel.
 
@@ -89,10 +89,10 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
 
         // Initializes the Flywheel and Indexer motors
 
-        /*flywheelMotor = new CANSparkMax(ShooterConstants.kFlywheelMotorCanID, MotorType.kBrushless);
+        flywheelMotor = new CANSparkMax(ShooterConstants.kFlywheelMotorCanID, MotorType.kBrushless);
         flywheelMotor.setIdleMode(IdleMode.kCoast);
         flywheelMotor.setInverted(false);
-        flywheelMotor.setSmartCurrentLimit(ShooterConstants.kFlywheelMotorCurrentLimit);*/
+        flywheelMotor.setSmartCurrentLimit(ShooterConstants.kFlywheelMotorCurrentLimit);
 
         pdh = new PowerDistribution(1, ModuleType.kRev);
         pdh.setSwitchableChannel(false);
@@ -176,10 +176,10 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotMotor.setVoltage(0);
     }
 
-    /*public Command runFlywheelCommand(double targetVoltage) {
+    public Command runFlywheelCommand(double targetVoltage) {
         return new InstantCommand(() -> 
         flywheelMotor.setVoltage(targetVoltage));
-    }*/
+    }
     
     public boolean atSetpoint() {
         return m_controller.atSetpoint();

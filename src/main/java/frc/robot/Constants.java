@@ -30,9 +30,9 @@ public final class Constants {
     public static final double kMaxSpeedMetersPerSecond = 5;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
-    public static final double kDirectionSlewRate = 2; // radians per second
-    public static final double kMagnitudeSlewRate = 2.5; // percent per second (1 = 100%)
-    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+    public static final double kDirectionSlewRate = 4.8; // radians per second // Originally 1.2
+    public static final double kMagnitudeSlewRate = 7.2; // percent per second (1 = 100%) // Originally 1.8
+    public static final double kRotationalSlewRate = 4.0; // percent per second (1 = 100%) // Originally 2.0
 
     // Chassis configuration
     public static final double kTrackWidth = Units.inchesToMeters(26.5);
@@ -153,9 +153,9 @@ public final class Constants {
     public static final int kPivotMotorCanID = 31;
     
 
-    public static final int kIndexerMotorCurrentLimit = 60;
-    public static final int kFlywheelMotorCurrentLimit = 60;
-    public static final int kPivotMotorCurrentLimit = 60;
+    public static final int kIndexerMotorCurrentLimit = 60; // Original: 60, too high?
+    public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
+    public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     
 
     public static final double kArmLowerLimit = 13;
@@ -165,6 +165,7 @@ public final class Constants {
 
     public static final double kArmIntakePosition = 8;
     public static final double kArmSubwooferShotPosition = 25;
+    public static final double kArmSubwooferSideShotPosition = 20;
     public static final double kArmYeetPosition = 35;
     public static final double kArmDefensePosition = 45;
     public static final double kArmAmpPosition = 130;

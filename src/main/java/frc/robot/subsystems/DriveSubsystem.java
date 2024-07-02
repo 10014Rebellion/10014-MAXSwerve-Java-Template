@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -81,6 +82,7 @@ public class DriveSubsystem extends SubsystemBase {
       
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    
     AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry,
      this::getRobotRelativeSpeeds, this::driveRobotRelative, 
      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
@@ -114,6 +116,8 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
         });
+
+    SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
   }
 
   /**
@@ -222,6 +226,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
     //SmartDashboard.putRaw("Front left state", m_frontLeft.getState());
     SmartDashboard.putNumber("Pigeon Heading", m_gyro.getAngle());
+    SmartDashboard.putNumber("RearLeft motor temp", m_rearLeft.getMotorTemp());
   }
 
   /**
@@ -233,7 +238,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(-45)));
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
-
   /**
    * Sets the swerve ModuleStates.
    *

@@ -111,6 +111,9 @@ public class MAXSwerveModule {
     m_drivingEncoder.setPosition(0);
   }
 
+  public double getMotorTemp() {
+    return m_drivingSparkMax.getMotorTemperature();
+  }
   /**
    * Returns the current state of the module.
    *

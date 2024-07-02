@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.time.Instant;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 /*import com.revrobotics.CANSparkMax.*;
@@ -71,11 +69,6 @@ public class Climb extends SubsystemBase{
         rightClimbMotor.setVoltage(targetVoltage);
     }
 
-    public void moveClimbArms(double leftVoltage, double rightVoltage) {
-        leftClimbMotor.setVoltage(leftVoltage);
-        rightClimbMotor.setVoltage(rightVoltage);
-    }
-
     public void moveBothClimb(double targetVoltage) {
         leftClimbMotor.setVoltage(targetVoltage);
         rightClimbMotor.setVoltage(targetVoltage);
@@ -84,6 +77,11 @@ public class Climb extends SubsystemBase{
     /*public void runClimbRoller(double targetVoltage) {
         rollerClimbMotor.setVoltage(targetVoltage);
     }*/
+
+    public void moveClimbSeparate(double leftClimbVoltage, double rightClimbVoltage) {
+        leftClimbMotor.setVoltage(-leftClimbVoltage);
+        rightClimbMotor.setVoltage(-rightClimbVoltage);
+    }
 
     public Command moveLeftClimbCommand(double targetVoltage) {
         return new InstantCommand(() -> moveLeftClimb(targetVoltage));
