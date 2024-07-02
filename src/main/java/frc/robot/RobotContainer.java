@@ -46,9 +46,6 @@ public class RobotContainer {
     private final Intake robotIntake = new Intake();
     private final Climb robotClimb = new Climb();
 
-    private final Command enableArmPID = Commands.runOnce(robotArmPID::enable, robotArmPID);
-    private final Command disableArmPID = Commands.runOnce(robotArmPID::disable, robotArmPID);
-
     // The driver's controller
     CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 
@@ -123,7 +120,6 @@ public class RobotContainer {
         m_driverController.a().whileTrue(new InstantCommand(() -> 
                                         robotArmPID.goToSetpoint(120)));
                               //.whileFalse(disableArmPID);
-        m_driverController.povUp().whileTrue(disableArmPID);
 
         m_driverController.povDown().whileTrue(new InstantCommand(() -> robotArmPID.editPIDVals()));
 

@@ -27,11 +27,11 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 5;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
-    public static final double kDirectionSlewRate = 1.2; // radians per second
-    public static final double kMagnitudeSlewRate = 1.8; // percent per second (1 = 100%)
+    public static final double kDirectionSlewRate = 2; // radians per second
+    public static final double kMagnitudeSlewRate = 2.5; // percent per second (1 = 100%)
     public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
     // Chassis configuration
@@ -80,7 +80,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762;
+    public static final double kWheelDiameterMeters = 0.07493;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
     public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
@@ -98,14 +98,14 @@ public final class Constants {
     public static final double kTurningEncoderPositionPIDMinInput = 0; // radians
     public static final double kTurningEncoderPositionPIDMaxInput = kTurningEncoderPositionFactor; // radians
 
-    public static final double kDrivingP = 0.04;
+    public static final double kDrivingP = 0.06;
     public static final double kDrivingI = 0;
     public static final double kDrivingD = 0;
     public static final double kDrivingFF = 1 / kDriveWheelFreeSpeedRps;
     public static final double kDrivingMinOutput = -1;
     public static final double kDrivingMaxOutput = 1;
 
-    public static final double kTurningP = 1;
+    public static final double kTurningP = 1.5;
     public static final double kTurningI = 0;
     public static final double kTurningD = 0;
     public static final double kTurningFF = 0;
@@ -122,8 +122,8 @@ public final class Constants {
   public static final class OIConstants {
     
     public static final int kDriverControllerPort = 0;
-    public static final double kDriveDeadband = 0.05;
-    public static final double kDriveMult = 0.25;
+    public static final double kDriveDeadband = 0.1;
+    public static final double kDriveMult = 1;
 
     public static final int kCopilotControllerPort = 1;
   }
@@ -134,9 +134,9 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
+    public static final double kPXController = 5.0;
+    public static final double kPYController = 5.0;
+    public static final double kPThetaController = 5.0;
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
@@ -151,27 +151,44 @@ public final class Constants {
     public static final int kIndexerMotorCanID = 32;
     public static final int kFlywheelMotorCanID = 33;
     public static final int kPivotMotorCanID = 31;
+    
 
     public static final int kIndexerMotorCurrentLimit = 60;
     public static final int kFlywheelMotorCurrentLimit = 60;
     public static final int kPivotMotorCurrentLimit = 60;
+    
 
-    public static final int kArmLowerLimit = 5;
-    public static final int kArmUpperLimit = 145;
+    public static final double kArmLowerLimit = 13;
+    public static final double kArmUpperLimit = 135;
+
+    public static final double kArmParallelPosition = 51;
+
+    public static final double kArmIntakePosition = 8;
+    public static final double kArmSubwooferShotPosition = 25;
+    public static final double kArmYeetPosition = 35;
+    public static final double kArmDefensePosition = 45;
+    public static final double kArmAmpPosition = 130;
+    public static final double kArmTrapPosition = 110;
   }
 
   public static final class PivotPIDConstants {
     //PID Constants
-    public static final double kP = 0.125;
+    public static final double kP = 0.1;
+    // ALL ELSE FAILS, kP to 0.1 = good value
     public static final double kI = 0.0;
-    public static final double kD = 0.002;
+    public static final double kD = 0.001;
     public static final double baseSetpoint = 90;
 
     //Feed Forward constants
     public static final double kS = 0.0;
-    public static final double kG = 0.1;
-    public static final double kV = 0.002;
+    public static final double kG = 1.16;
+    public static final double kV = 0.0;
     public static final double kA = 0.0;
+
+    public static final double errorLimit = 8.0;
+
+    public static final double maxVelocity = 1000;
+    public static final double maxAccel = 500;
   }
 
   public static final class IntakeConstants {
@@ -183,9 +200,10 @@ public final class Constants {
   public static final class ClimbConstants {
     public static final int kLeftClimbMotorCanID = 41;
     public static final int kRightClimbMotorCanID = 42;
+    public static final int kClimbRollerMotorCanID = 44;
 
     public static final int kLeftClimbMotorCurrentLimit = 60;
     public static final int kRightClimbMotorCurrentLimit = 60;
-
+    public static final int kClimbRollerMotorCurrentLimit = 60;
   }
 }
