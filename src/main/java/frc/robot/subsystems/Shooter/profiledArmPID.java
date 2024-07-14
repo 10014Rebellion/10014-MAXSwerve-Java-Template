@@ -7,21 +7,16 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.BooleanEntry;
-import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.BooleanTopic;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.Constants.PivotPIDConstants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -114,7 +109,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     public void useOutput(double outputVoltage, TrapezoidProfile.State state) {
 
         // Calculates the output of the feedforward controller
-        double FFOutput = armFFControl.calculate(pivotEncoder.getPosition() * Math.PI / 180, 10);
+        double FFOutput = armFFControl.calculate((pivotEncoder.getPosition() - ShooterConstants.kArmParallelPosition) * Math.PI / 180, 10);
 
         double totalOutput = outputVoltage + FFOutput;
         // Runs a check that the controller isn't trying to go outside the bounds for whatever reason.
