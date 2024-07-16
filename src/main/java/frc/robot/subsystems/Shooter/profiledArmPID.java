@@ -89,7 +89,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
 
         // Initializes the Flywheel and Indexer motors
 
-        flywheelMotor = new CANSparkMax(ShooterConstants.kFlywheelMotorCanID, MotorType.kBrushless);
+        flywheelMotor = new CANSparkMax(38, MotorType.kBrushless);
         flywheelMotor.setIdleMode(IdleMode.kCoast);
         flywheelMotor.setInverted(false);
         flywheelMotor.setSmartCurrentLimit(ShooterConstants.kFlywheelMotorCurrentLimit);
@@ -171,6 +171,10 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotMotor.setVoltage(FFOutput);
     }
 
+    public void runManualArmCommand(double outputVoltage) {
+        disable();
+        pivotMotor.setVoltage(outputVoltage);
+    }
     public void stopRunningArm() {
         disable();
         pivotMotor.setVoltage(0);

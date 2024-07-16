@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class forceIndexCommand extends Command {
-    final indexerCommand forcedIndexer;
+    /*final indexerCommand forcedIndexer;
 
     public forceIndexCommand(indexerCommand i) {
         forcedIndexer = i;
@@ -25,5 +25,5 @@ public class forceIndexCommand extends Command {
     @Override
     public boolean isFinished() {
         return true;
-    }
+    }*/
 }

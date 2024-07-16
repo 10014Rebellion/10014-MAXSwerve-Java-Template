@@ -123,7 +123,7 @@ public final class Constants {
     
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.1;
-    public static final double kDriveMult = 0.5;
+    public static final double kDriveMult = 0.25;
 
     public static final int kCopilotControllerPort = 1;
   }
@@ -149,10 +149,10 @@ public final class Constants {
 
   public static final class ShooterConstants {
     public static final int kIndexerMotorCanID = 32;
-    public static final int kFlywheelMotorCanID = 33;
+    //public static final int kFlywheelMotorCanID = 33;
     public static final int kPivotMotorCanID = 31;
-    public static final int kLeftFlywheelMotorCanID = 38;
-    public static final int kRightFlywheelMotorCanID = 39;
+    public static final int kLeftFlywheelMotorCanID = 33;
+    public static final int kRightFlywheelMotorCanID = 34;
     
 
     public static final int kIndexerMotorCurrentLimit = 60; // Original: 60, too high?
