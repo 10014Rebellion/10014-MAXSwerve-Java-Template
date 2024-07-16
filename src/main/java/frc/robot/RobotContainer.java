@@ -7,25 +7,38 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.XboxController;
+
+//import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
+
+import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
+import frc.robot.subsystems.Shooter.profiledArmPID;
+import frc.robot.subsystems.Shooter.shooterFlywheels;
+import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.DriveSubsystem;
+
 import frc.robot.commands.flywheelCommand;
 import frc.robot.commands.forceIndexCommand;
-import frc.robot.subsystems.Shooter.indexerSubsystem;
-import frc.robot.commands.commandRunIndexer;
+import frc.robot.commands.indexerCommand;
 import frc.robot.commands.intakeCommand;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.commands.flywheelCommands.CommandManualFlywheels;
+
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -33,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.util.List;
@@ -40,12 +54,8 @@ import java.util.List;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Shooter.profiledArmPID;
-import frc.robot.subsystems.Shooter.shooterFlywheels;
-import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
-import frc.robot.subsystems.Shooter.indexerSubsystem;
-import frc.robot.subsystems.Climb;
+
+
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -63,14 +73,14 @@ public class RobotContainer {
     private final profiledArmPID robotShooter;
     private final Climb robotClimb;
     private final doubleShooterFlywheels robotFlywheels;
-    private final indexerSubsystem robotIndexer;
+    //private final shooterFlywheels robotFlywheels;
 
     //private final indexerCommand robotIndexer = new indexerCommand();
     //private final forceIndexCommand forceRobotIndexer = new forceIndexCommand(robotIndexer);
     //private final intakeCommand robotIntake = new intakeCommand();
 
-    //private final indexerCommand robotIndexer;
-    //private final forceIndexCommand forceRobotIndexer;
+    private final indexerCommand robotIndexer;
+    private final forceIndexCommand forceRobotIndexer;
     private final intakeCommand robotIntake;
     //private final flywheelCommand commandShoot;
 
@@ -97,19 +107,19 @@ public class RobotContainer {
         robotShooter = new profiledArmPID();
         robotClimb = new Climb();
         robotFlywheels = new doubleShooterFlywheels();
-        robotIndexer = new indexerSubsystem();
+        //robotFlywheels = new shooterFlywheels();
 
 
-        //robotIndexer = new indexerCommand();
-        //forceRobotIndexer = new forceIndexCommand(robotIndexer);
+        robotIndexer = new indexerCommand();
+        forceRobotIndexer = new forceIndexCommand(robotIndexer);
         robotIntake = new intakeCommand();
         //commandShoot = new flywheelCommand(robotFlywheels);
 
-        indexAndCheckNoteCommand = new ParallelCommandGroup(new commandRunIndexer(robotIndexer))
-                    //.alongWith(new InstantCommand(() -> robotIndexer.ignoreDetection(false)))
-                    //.alongWith(robotIndexer)
+        indexAndCheckNoteCommand = new ParallelCommandGroup(new InstantCommand(() -> robotIndexer.setIndexerSpeed(8))
+                    .alongWith(new InstantCommand(() -> robotIndexer.ignoreDetection(false)))
+                    .alongWith(robotIndexer)
                     .alongWith(new InstantCommand(()-> robotIntake.setIntakeSpeed(8)))
-                    .alongWith(robotIntake);
+                    .alongWith(robotIntake));
 
         shootSubwooferCommand = new ParallelCommandGroup(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition), 
                                 robotShooter.runFlywheelCommand(12));
@@ -120,7 +130,7 @@ public class RobotContainer {
         //ParallelCommandGroup prepSubwooferCommand = new ParallelCommandGroup( );
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Prep Subwoofer Shot", shootSubwooferCommand);
-        NamedCommands.registerCommand("Index Note", new commandRunIndexer(robotIndexer));
+        NamedCommands.registerCommand("Index Note", forceRobotIndexer);
         //NamedCommands.registerCommand("Stop Pickup", new InstantCommand(robotIntake.end(true)_);
         NamedCommands.registerCommand("Pickup Note", indexAndCheckNoteCommand);
         NamedCommands.registerCommand("Go To Subwoofer Shot Position", robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
@@ -156,10 +166,7 @@ public class RobotContainer {
         //SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
         
     }
-    private void configureButtonBindings() {
-        //configureCompetitionButtonBindings();
-        configureTestButtonBindings();
-    }
+
     /**
      * Use this method to define your button->command mappings. Buttons can be
      * created by
@@ -169,31 +176,56 @@ public class RobotContainer {
      * passing it to a
      * {@link JoystickButton}.
      */
-    private void configureCompetitionButtonBindings() {
+    private void configureButtonBindings() {
+        //robotArmPID.disable();
+        /*m_driverController.b()
+            .whileTrue(new RunCommand(
+                () -> m_robotDrive.setX(),
+                m_robotDrive));*/
         m_driverController.x()
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
-        
+        m_driverController.a().onTrue(new CommandManualFlywheels(robotFlywheels, 12));
         m_driverController.rightBumper().whileTrue(indexAndCheckNoteCommand
                                         .alongWith((robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))))
                                         //.alongWith(robotIntake)))
-                                        .whileFalse(robotIntake.forceRunIntake(0));
-                                        //.alongWith(robotIndexer.forceRunIndexer(0)));
-        m_driverController.leftBumper() .whileTrue(new commandRunIndexer(robotIndexer)
+                                        .whileFalse(robotIntake.forceRunIntake(0)
+                                        .alongWith(robotIndexer.forceRunIndexer(0)));
+        m_driverController.leftBumper() .whileTrue(robotIndexer.forceRunIndexer(-6)
                                         .alongWith(robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))
                                         .alongWith(robotIntake.forceRunIntake(-6)))
-                                        .whileFalse(robotIntake.forceRunIntake(0));
-                                        //.alongWith(robotIndexer.forceRunIndexer(0)));
+                                        .whileFalse(robotIntake.forceRunIntake(0)
+                                        .alongWith(robotIndexer.forceRunIndexer(0)));
 
         //m_driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runFFOnlyCommand()));
 
         m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12))
                                         .whileFalse(robotShooter.runFlywheelCommand(0));
-        m_driverController.leftTrigger().whileTrue(new commandRunIndexer(robotIndexer)
+        m_driverController.leftTrigger().whileTrue(robotIndexer.forceRunIndexer(8)
                                                     .alongWith(robotIntake.forceRunIntake(8)))
-                                        .whileFalse(//robotIndexer.forceRunIndexer(0)
-                                                    robotIntake.forceRunIntake(0));
+                                        .whileFalse(robotIndexer.forceRunIndexer(0)
+                                                    .alongWith(robotIntake.forceRunIntake(0)));
+        /*m_driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runArmFFOnly()))
+                              .whileFalse(new InstantCommand(() -> robotShooter.stopRunningArm()));
+        */
+        // shooter basic commands
+
+        // copilot Climb commands
+        /*copilotController.rightBumper().whileTrue(robotClimb.moveRightClimbCommand(6))
+                                       .whileFalse(robotClimb.moveRightClimbCommand(0));
+        copilotController.rightTrigger().whileTrue(robotClimb.moveRightClimbCommand(-6))
+                                        .whileFalse(robotClimb.moveRightClimbCommand(0));
+        copilotController.leftBumper().whileTrue(robotClimb.moveLeftClimbCommand(6))
+                                      .whileFalse(robotClimb.moveLeftClimbCommand(0));
+        copilotController.leftTrigger().whileTrue(robotClimb.moveLeftClimbCommand(-6))
+                                      .whileFalse(robotClimb.moveLeftClimbCommand(0));
+
+        copilotController.povUp().whileTrue(robotClimb.moveBothClimbCommand(8))
+                                 .whileFalse(robotClimb.moveBothClimbCommand(0));
+        copilotController.povDown().whileTrue(robotClimb.moveBothClimbCommand(-8))
+                                   .whileFalse(robotClimb.moveBothClimbCommand(0));*/
+
         // Copilot Shooter Commands
         copilotController.x().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
         
@@ -203,7 +235,7 @@ public class RobotContainer {
 
         copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
 
-        /*copilotController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12)
+        copilotController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12)
                                                 .alongWith(robotIndexer.forceRunIndexer(6)))
                                     .whileFalse(robotIndexer.forceRunIndexer(0)
                                                 .alongWith(robotShooter.runFlywheelCommand(0)));
@@ -212,22 +244,14 @@ public class RobotContainer {
                                                 .alongWith(robotIndexer.forceRunIndexer(-6)))
                                     .whileFalse(robotIndexer.forceRunIndexer(0)
                                                 .alongWith(robotShooter.runFlywheelCommand(0)));
-*/
+
         copilotController.povUp().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmDefensePosition));
         //copilotController.povDown().whileTrue());
         
         }
 
-    private void configureTestButtonBindings() {
-        System.out.println("YOU ARE IN TESTING MODE");
-        m_driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
-        m_driverController.a().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(-12)))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
-        m_driverController.rightTrigger().whileTrue(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(12)))
-                            .whileFalse(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(0)));
-        m_driverController.leftTrigger().whileTrue(new commandRunIndexer(robotIndexer));
-        //m_driverController.rightBumper().whileTrue(new intakeCommand());
+    private void testBindings() {
+        m_driverController.a().onTrue(new CommandManualFlywheels(robotFlywheels, 12));
     }
 
     /**
@@ -283,10 +307,10 @@ public class RobotContainer {
                 .andThen(new WaitCommand(2))
                 .andThen(robotShooter.runFlywheelCommand(12)
                 .alongWith(new WaitCommand(1)))
-                //.andThen(robotIndexer.forceRunIndexer(6))
+                .andThen(robotIndexer.forceRunIndexer(6))
                 .andThen(new WaitCommand(1))
-                .andThen(robotShooter.runFlywheelCommand(0));
-                //.alongWith(robotIndexer.forceRunIndexer(0)));
+                .andThen(robotShooter.runFlywheelCommand(0)
+                .alongWith(robotIndexer.forceRunIndexer(0)));
     }
 
     public Command getAutonomousCommand() {

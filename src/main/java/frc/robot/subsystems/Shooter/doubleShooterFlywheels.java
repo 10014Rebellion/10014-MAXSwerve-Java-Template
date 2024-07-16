@@ -23,11 +23,10 @@ public class doubleShooterFlywheels extends SubsystemBase{
     private SparkPIDController leftFlywheelController;
     private SparkPIDController rightFlywheelController;
 
-    private double leftFlywheelReference;
-    private double rightFlywheelReference;
-    private boolean PIDEnabled;
+    private double flywheelVelocityReference;
+    private double flywheelVelocityOffset;
 
-    private TunableNumber flywheelVelocityTunableNumber;
+    private TunableNumber flywheelVelocityTunableNumber, flywheelVelocityOffsetTunableNumber;
     private TunableNumber flywheelP, flywheelV, flywheelD;
 
     public doubleShooterFlywheels() {
@@ -47,41 +46,40 @@ public class doubleShooterFlywheels extends SubsystemBase{
         // So, they must be different objects.
         leftFlywheelController = leftFlywheelMotor.getPIDController();
         rightFlywheelController = rightFlywheelMotor.getPIDController();
-        leftFlywheelReference = 0;
-        rightFlywheelReference = 0;
-        PIDEnabled = false;
+        flywheelVelocityReference = 0;
+        flywheelVelocityOffset = 0;
 
         flywheelVelocityTunableNumber = new TunableNumber("Tunable Flywheel Velocity");
+        flywheelVelocityOffsetTunableNumber = new TunableNumber("Tunable Flywheel Velocity Offset");
         flywheelP = new TunableNumber("Flywheel P");
         flywheelV = new TunableNumber("Flywheel FF");
         flywheelD = new TunableNumber("Flywheel D");
 
         flywheelVelocityTunableNumber.setDefault(0);
+        flywheelVelocityOffsetTunableNumber.setDefault(0);
         flywheelD.setDefault(0);
         flywheelP.setDefault(0);
         flywheelV.setDefault(0);
     }
 
     public void setFlywheelVelocity(double targetVelocity) {
-        leftFlywheelReference = targetVelocity;
+        flywheelVelocityReference = targetVelocity;
+        double offsetVelocityReference = flywheelVelocityReference * flywheelVelocityOffset;
         leftFlywheelController.setReference(targetVelocity, ControlType.kVelocity);
-    }
-    public void setFlywheelVoltage(double targetVoltage) {
-        leftFlywheelMotor.setVoltage(targetVoltage);
-        rightFlywheelMotor.setVoltage(targetVoltage);
+        rightFlywheelController.setReference(offsetVelocityReference, ControlType.kVelocity);
     }
 
-    public void setFlywheelVoltage(double leftTargetVoltage, double rightTargetVoltage) {
-        leftFlywheelMotor.setVoltage(leftTargetVoltage);
-        rightFlywheelMotor.setVoltage(rightTargetVoltage);
+    public void setVelocityOffset(double offsetPercent) {
+        flywheelVelocityOffset = offsetPercent;
     }
 
     public boolean flywheelAtSetpoint() {
+        double offsetVelocityReference = flywheelVelocityReference * flywheelVelocityOffset;
         return 
-        (Math.abs(leftFlywheelReference - leftFlywheelEncoder.getVelocity()) < 500
-         && leftFlywheelReference != 0) &&
-        (Math.abs(rightFlywheelReference - rightFlywheelEncoder.getVelocity()) < 500
-         && rightFlywheelReference != 0);
+        (Math.abs(flywheelVelocityReference - leftFlywheelEncoder.getVelocity()) < 500
+         && flywheelVelocityReference != 0) &&
+        (Math.abs(offsetVelocityReference - rightFlywheelEncoder.getVelocity()) < 500
+         && offsetVelocityReference != 0);
     }
 
     public double getLeftFlywheelVelocity() {
@@ -94,6 +92,10 @@ public class doubleShooterFlywheels extends SubsystemBase{
 
     public void tuneFlywheelVelocity() {
         setFlywheelVelocity(flywheelVelocityTunableNumber.get());
+    }
+
+    public void tuneFlywheelVelocityOffset() {
+        setVelocityOffset(flywheelVelocityOffset);
     }
 
     public void tuneFlywheelP() {
@@ -119,19 +121,33 @@ public class doubleShooterFlywheels extends SubsystemBase{
         SmartDashboard.putNumber("Right Flywheel Current", rightFlywheelMotor.getOutputCurrent());
 
         if (flywheelVelocityTunableNumber.hasChanged()) {
-          tuneFlywheelVelocity();
+            tuneFlywheelVelocity();
+        }
+
+        if(flywheelVelocityOffsetTunableNumber.hasChanged()) {
+            tuneFlywheelVelocityOffset();
         }
     
         if (flywheelP.hasChanged()) {
-          tuneFlywheelP();
+            tuneFlywheelP();
         }
     
         if (flywheelV.hasChanged()) {
-          tuneFlywheelV();
+            tuneFlywheelV();
         }
     
         if (flywheelD.hasChanged()) {
-          tuneFlywheelD();
+            tuneFlywheelD();
         }
+    }
+    // Manual control.
+    public void setFlywheelVoltage(double targetVoltage) {
+        leftFlywheelMotor.setVoltage(targetVoltage);
+        rightFlywheelMotor.setVoltage(targetVoltage);
+    }
+
+    public void setFlywheelVoltage(double leftTargetVoltage, double rightTargetVoltage) {
+        leftFlywheelMotor.setVoltage(leftTargetVoltage);
+        rightFlywheelMotor.setVoltage(rightTargetVoltage);
     }
 }
