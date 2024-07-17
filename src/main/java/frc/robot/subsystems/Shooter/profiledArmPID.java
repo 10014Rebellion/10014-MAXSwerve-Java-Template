@@ -55,7 +55,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
 
     public DigitalInput noteDetector = new DigitalInput(0);
     public DigitalInput noteDetector2 = new DigitalInput(1);
-    public PowerDistribution pdh;
+    
     public double setpoint = ShooterConstants.kArmParallelPosition;
 
 
@@ -89,8 +89,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         flywheelMotor.setInverted(false);
         flywheelMotor.setSmartCurrentLimit(ShooterConstants.kFlywheelMotorCurrentLimit);
 
-        pdh = new PowerDistribution(1, ModuleType.kRev);
-        pdh.setSwitchableChannel(false);
+        
 
         // Disables the PID to start in order to avoid any weird accidental movement.
         m_controller.reset(pivotEncoder.getPosition());
@@ -137,15 +136,15 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             }
         }
         
-        noteDetectionEntry.set((!noteDetector.get()) || (!noteDetector2.get()));
-        atSetpointEntry.set(atSetpoint());
+        //noteDetectionEntry.set((!noteDetector.get()) || (!noteDetector2.get()));
+        //atSetpointEntry.set(atSetpoint());
         SmartDashboard.putNumber("PID+FF output", totalOutput);
         SmartDashboard.putNumber("PID Output", outputVoltage);
         SmartDashboard.putNumber("FF Output", FFOutput);
         SmartDashboard.putNumber("Arm Position", pivotEncoder.getPosition());
         SmartDashboard.putNumber("PID Setpoint", setpoint);
         SmartDashboard.putNumber("Pivot Current", pivotMotor.getOutputCurrent());
-        pdh.setSwitchableChannel(noteDetectionEntry.get());
+        
     }
 
     public void goToSetpoint(double setpoint) {

@@ -5,7 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.BooleanTopic;
@@ -14,7 +14,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class oldIndexerCommand extends Command {
 
-    /*public CANSparkMax indexerMotor;
+    public CANSparkMax indexerMotor;
     //public DigitalInput noteDetector = new DigitalInput(0);
     public double indexerSpeed = 1.5;
     public boolean ignoreDetectionBool = true;
@@ -25,10 +25,10 @@ public class oldIndexerCommand extends Command {
     private final BooleanSubscriber noteDetectionSubscriber;
 
     public oldIndexerCommand() {
-        indexerMotor = new CANSparkMax(ShooterConstants.kIndexerMotorCanID, MotorType.kBrushless);
+        indexerMotor = new CANSparkMax(IndexerConstants.kIndexerMotorCanID, MotorType.kBrushless);
         indexerMotor.setIdleMode(IdleMode.kCoast);
         indexerMotor.setInverted(true);
-        indexerMotor.setSmartCurrentLimit(ShooterConstants.kIndexerMotorCurrentLimit);
+        indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerMotorCurrentLimit);
 
         noteDetectionSubscriber = noteDetectedTopic.subscribe(false);
     }
@@ -66,7 +66,7 @@ public class oldIndexerCommand extends Command {
 
     public Command forceRunIndexer(double outputVoltage) {
         return new InstantCommand(() -> indexerMotor.setVoltage(outputVoltage));
-    }*/
+    }
 }
 
 

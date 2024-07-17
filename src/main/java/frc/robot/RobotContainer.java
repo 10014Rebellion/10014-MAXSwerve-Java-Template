@@ -28,12 +28,16 @@ import frc.robot.subsystems.Shooter.profiledArmPID;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.DriveSubsystem;
 
-import frc.robot.commands.flywheelCommand;
-import frc.robot.commands.forceIndexCommand;
+//import frc.robot.commands.forceIndexCommand;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
-import frc.robot.commands.commandRunIndexer;
+import frc.robot.subsystems.Shooter.intakeSubsystem;
 import frc.robot.commands.intakeCommand;
-
+import frc.robot.commands.IndexerCommands.commandIndexerReverse;
+import frc.robot.commands.IndexerCommands.commandIndexerStart;
+import frc.robot.commands.IndexerCommands.commandIndexerPickup;
+import frc.robot.commands.IntakeCommands.commandIntakePickup;
+import frc.robot.commands.IntakeCommands.commandIntakeStart;
+import frc.robot.commands.IntakeCommands.commandIntakeReverse;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -73,6 +77,7 @@ public class RobotContainer {
     private final Climb robotClimb;
     private final doubleShooterFlywheels robotFlywheels;
     private final indexerSubsystem robotIndexer;
+    private final intakeSubsystem robotIntake;
 
     //private final indexerCommand robotIndexer = new indexerCommand();
     //private final forceIndexCommand forceRobotIndexer = new forceIndexCommand(robotIndexer);
@@ -80,7 +85,6 @@ public class RobotContainer {
 
     //private final indexerCommand robotIndexer;
     //private final forceIndexCommand forceRobotIndexer;
-    private final intakeCommand robotIntake;
     //private final flywheelCommand commandShoot;
 
     private ParallelCommandGroup indexAndCheckNoteCommand;
@@ -107,19 +111,19 @@ public class RobotContainer {
         robotClimb = new Climb();
         robotFlywheels = new doubleShooterFlywheels();
         robotIndexer = new indexerSubsystem();
+        robotIntake = new intakeSubsystem();
 
 
         //robotIndexer = new indexerCommand();
         //forceRobotIndexer = new forceIndexCommand(robotIndexer);
-        robotIntake = new intakeCommand();
+        //robotIntake = new intakeCommand();
 
         //commandShoot = new flywheelCommand(robotFlywheels);
 
-        indexAndCheckNoteCommand = new ParallelCommandGroup(new commandRunIndexer(robotIndexer))
+        indexAndCheckNoteCommand = new ParallelCommandGroup(new commandIndexerStart(robotIndexer))
                     //.alongWith(new InstantCommand(() -> robotIndexer.ignoreDetection(false)))
                     //.alongWith(robotIndexer)
-                    .alongWith(new InstantCommand(()-> robotIntake.setIntakeSpeed(8)))
-                    .alongWith(robotIntake);
+                    .alongWith(new commandIntakePickup(robotIntake));
 
         shootSubwooferCommand = new ParallelCommandGroup(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition), 
                                 robotShooter.runFlywheelCommand(12));
@@ -130,7 +134,7 @@ public class RobotContainer {
         //ParallelCommandGroup prepSubwooferCommand = new ParallelCommandGroup( );
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Prep Subwoofer Shot", shootSubwooferCommand);
-        NamedCommands.registerCommand("Index Note", new commandRunIndexer(robotIndexer));
+        NamedCommands.registerCommand("Index Note", new commandIndexerStart(robotIndexer));
         //NamedCommands.registerCommand("Stop Pickup", new InstantCommand(robotIntake.end(true)_);
         NamedCommands.registerCommand("Pickup Note", indexAndCheckNoteCommand);
         NamedCommands.registerCommand("Go To Subwoofer Shot Position", robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
@@ -186,24 +190,24 @@ public class RobotContainer {
                 m_robotDrive));
         
         m_driverController.rightBumper().whileTrue(indexAndCheckNoteCommand
-                                        .alongWith((robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))))
+                                        .alongWith((robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))));
                                         //.alongWith(robotIntake)))
-                                        .whileFalse(robotIntake.forceRunIntake(0));
+                                        //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
-        m_driverController.leftBumper() .whileTrue(new commandRunIndexer(robotIndexer)
+        m_driverController.leftBumper() .whileTrue(new commandIndexerStart(robotIndexer)
                                         .alongWith(robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))
-                                        .alongWith(robotIntake.forceRunIntake(-6)))
-                                        .whileFalse(robotIntake.forceRunIntake(0));
+                                        .alongWith(new commandIntakeReverse(robotIntake)));
+                                        //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
 
         //m_driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runFFOnlyCommand()));
 
         m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12))
                                         .whileFalse(robotShooter.runFlywheelCommand(0));
-        m_driverController.leftTrigger().whileTrue(new commandRunIndexer(robotIndexer)
-                                                    .alongWith(robotIntake.forceRunIntake(8)))
-                                        .whileFalse(//robotIndexer.forceRunIndexer(0)
-                                                    robotIntake.forceRunIntake(0));
+        m_driverController.leftTrigger().whileTrue(new commandIndexerStart(robotIndexer)
+                                                    .alongWith(new commandIntakeStart(robotIntake)));
+                                        //.whileFalse(robotIndexer.forceRunIndexer(0)
+                                                    //robotIntake.forceRunIntake(0));
         // Copilot Shooter Commands
         copilotController.x().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
         
@@ -236,7 +240,7 @@ public class RobotContainer {
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
         m_driverController.rightTrigger().whileTrue(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(12)))
                             .whileFalse(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(0)));
-        m_driverController.leftTrigger().whileTrue(new commandRunIndexer(robotIndexer));
+        m_driverController.leftTrigger().whileTrue(new commandIndexerStart(robotIndexer));
         //m_driverController.rightBumper().whileTrue(new intakeCommand());
     }
 

@@ -148,14 +148,13 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int kIndexerMotorCanID = 32;
+    
     //public static final int kFlywheelMotorCanID = 33;
     public static final int kPivotMotorCanID = 31;
     public static final int kLeftFlywheelMotorCanID = 33;
     public static final int kRightFlywheelMotorCanID = 34;
     
-
-    public static final int kIndexerMotorCurrentLimit = 60; // Original: 60, too high?
+    
     public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     public static final int kLeftFlywheelMotorCurrentLimit = 60;
@@ -174,6 +173,48 @@ public final class Constants {
     public static final double kArmDefensePosition = 45;
     public static final double kArmAmpPosition = 130;
     public static final double kArmTrapPosition = 110;
+  }
+
+  public static class IndexerConstants {
+    public static final int kIndexerMotorCanID = 32;
+    public static final int kIndexerMotorCurrentLimit = 60; // Original: 60, too high?
+
+    public static final int kNoteDetector1Port = 0;
+    public static final int kNoteDetector2Port = 1;
+
+    public static boolean robotHasNote;
+
+    /*
+     * Intake States:
+     * IDLE: Intake is not currently being commanded to do anything.
+     * START: Intake is being forced to move.
+     * REVERSE: Intake is being forced to move backwards.
+     * PICKUP: Intake is pulling a note in, and waiting for the note to enter.
+     */
+    public static intakeState currentIntakeState = intakeState.IDLE;
+    public enum intakeState {
+      IDLE,
+      START,
+      REVERSE,
+      PICKUP
+    }
+
+    /*
+     * Indexer States:
+     * IDLE: Indexer is not currently being commanded to do anything.
+     * START: Indexer is being forced to move.
+     * REVERSE: Indexer is being forced to send the note backwards.
+     * HOLD: Indexer has a note and is holding it in the shooter.
+     * PICKUP: Indexer is pulling a note in, and waiting for the note to enter.
+     */
+    public static indexState currentIndexState = indexState.IDLE;
+    public enum indexState {
+      IDLE,
+      START,
+      REVERSE,
+      HOLD,
+      PICKUP
+    }
   }
 
   public static final class PivotPIDConstants {
@@ -198,7 +239,6 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final int kIntakeMotorCanID = 43;
-
     public static final int kIntakeMotorCurrentLimit = 60;
   }
 

@@ -1,20 +1,22 @@
-package frc.robot.commands;
+package frc.robot.commands.IndexerCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 
-public class commandRunIndexer extends Command{
+public class commandIndexerReverse extends Command{
     
     private indexerSubsystem indexer;
 
-    public commandRunIndexer(indexerSubsystem i){
+    public commandIndexerReverse(indexerSubsystem i){
         indexer = i;
         addRequirements(indexer);
     }
 
     @Override
     public void initialize() {
-        indexer.runIndexer();
+        indexer.reverseIndexer();
+        IndexerConstants.currentIndexState = IndexerConstants.indexState.REVERSE;
     }
 
     @Override
@@ -23,11 +25,10 @@ public class commandRunIndexer extends Command{
     @Override
     public void end(boolean interrupted) {
         indexer.stopIndexer();
-        System.out.println("why did i stop im very confused.");
+        IndexerConstants.currentIndexState = IndexerConstants.indexState.IDLE;
     }
     @Override
     public boolean isFinished() {
-        System.out.println("Unga bunga?");
         return false;
         
     }
