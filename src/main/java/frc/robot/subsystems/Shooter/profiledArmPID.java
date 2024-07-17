@@ -53,8 +53,8 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     private final BooleanEntry noteDetectionEntry;
     private final BooleanEntry atSetpointEntry;
 
-    public DigitalInput noteDetector = new DigitalInput(0);
-    public DigitalInput noteDetector2 = new DigitalInput(1);
+    //public DigitalInput noteDetector = new DigitalInput(0);
+    //public DigitalInput noteDetector2 = new DigitalInput(1);
     
     public double setpoint = ShooterConstants.kArmParallelPosition;
 

@@ -166,8 +166,8 @@ public final class Constants {
 
     public static final double kArmParallelPosition = 51;
 
-    public static final double kArmIntakePosition = 8;
-    public static final double kArmSubwooferShotPosition = 25;
+    public static final double kArmIntakePosition = 15;
+    public static final double kArmSubwooferShotPosition = 30;
     public static final double kArmSubwooferSideShotPosition = 20;
     public static final double kArmYeetPosition = 35;
     public static final double kArmDefensePosition = 45;
@@ -219,7 +219,7 @@ public final class Constants {
 
   public static final class PivotPIDConstants {
     //PID Constants
-    public static final double kP = 0.1;
+    public static final double kP = 0.3;
     // ALL ELSE FAILS, kP to 0.1 = good value
     public static final double kI = 0.0;
     public static final double kD = 0.001;
@@ -227,11 +227,11 @@ public final class Constants {
 
     //Feed Forward constants
     public static final double kS = 0.0;
-    public static final double kG = 1.16;
+    public static final double kG = 0.4; // 0.5 is good for 75:1
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double errorLimit = 8.0;
+    public static final double errorLimit = 1.0;
 
     public static final double maxVelocity = 1000;
     public static final double maxAccel = 500;

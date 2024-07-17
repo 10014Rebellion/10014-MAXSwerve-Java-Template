@@ -37,6 +37,7 @@ import frc.robot.commands.IndexerCommands.commandIndexerStart;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
+import frc.robot.commands.flywheelCommands.CommandManualFlywheels;
 import frc.robot.commands.IntakeCommands.commandIntakeReverse;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -171,8 +172,8 @@ public class RobotContainer {
         
     }
     private void configureButtonBindings() {
-        //configureCompetitionButtonBindings();
-        configureTestButtonBindings();
+        configureCompetitionButtonBindings();
+        //configureTestButtonBindings();
     }
     /**
      * Use this method to define your button->command mappings. Buttons can be
@@ -189,25 +190,33 @@ public class RobotContainer {
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
         
-        m_driverController.rightBumper().whileTrue(indexAndCheckNoteCommand
-                                        .alongWith((robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))));
+        m_driverController.rightBumper().whileTrue(
+            new SequentialCommandGroup(
+            new InstantCommand(() -> robotShooter.goToSetpoint(ShooterConstants.kArmIntakePosition)),
+            new ParallelCommandGroup(
+                new commandIntakePickup(robotIntake),
+                new commandIndexerPickup(robotIndexer)
+            )));
                                         //.alongWith(robotIntake)))
                                         //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
-        m_driverController.leftBumper() .whileTrue(new commandIndexerStart(robotIndexer)
-                                        .alongWith(robotShooter.goToSetpointCommand(ShooterConstants.kArmIntakePosition))
-                                        .alongWith(new commandIntakeReverse(robotIntake)));
+        m_driverController.leftBumper() .whileTrue(
+            new SequentialCommandGroup(
+            new InstantCommand(() -> robotShooter.goToSetpoint(ShooterConstants.kArmIntakePosition)),
+            new ParallelCommandGroup(
+                new commandIntakeReverse(robotIntake),
+                new commandIndexerReverse(robotIndexer)
+            )));
                                         //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
 
-        //m_driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runFFOnlyCommand()));
-
-        m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12))
-                                        .whileFalse(robotShooter.runFlywheelCommand(0));
-        m_driverController.leftTrigger().whileTrue(new commandIndexerStart(robotIndexer)
-                                                    .alongWith(new commandIntakeStart(robotIntake)));
-                                        //.whileFalse(robotIndexer.forceRunIndexer(0)
-                                                    //robotIntake.forceRunIntake(0));
+        m_driverController.rightTrigger().whileTrue(new CommandManualFlywheels(robotFlywheels, 12));
+        m_driverController.leftTrigger().whileTrue(
+                new ParallelCommandGroup(
+                    new commandIndexerStart(robotIndexer),
+                    new commandIntakeStart(robotIntake)
+                    )
+            );
         // Copilot Shooter Commands
         copilotController.x().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
         
@@ -238,10 +247,12 @@ public class RobotContainer {
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
         m_driverController.a().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(-12)))
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
-        m_driverController.rightTrigger().whileTrue(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(12)))
+        m_driverController.rightTrigger().whileTrue(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(12, 6)))
                             .whileFalse(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(0)));
-        m_driverController.leftTrigger().whileTrue(new commandIndexerStart(robotIndexer));
-        //m_driverController.rightBumper().whileTrue(new intakeCommand());
+        m_driverController.leftTrigger().whileTrue(new commandIndexerPickup(robotIndexer));
+        m_driverController.rightBumper().whileTrue(new commandIntakeStart(robotIntake));
+        m_driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runArmFFOnly()))
+                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
     }
 
     /**
