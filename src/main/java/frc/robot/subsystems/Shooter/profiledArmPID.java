@@ -29,9 +29,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     private final AbsoluteEncoder pivotEncoder;
     private final ArmFeedforward armFFControl;
 
-    // Shooter Object=s
-    private final CANSparkMax flywheelMotor;
-
     // REV PDH for the switchable channel.
 
     //Pulls PID constants into more useable forms
@@ -47,11 +44,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     
     // Initializes the network table... Stuff
     // Imma be honest idk how this works yet
-    private NetworkTableInstance inst = NetworkTableInstance.getDefault();
-    public BooleanTopic noteDetectedTopic = inst.getBooleanTopic("Note Detected");
-    public BooleanTopic atSetpointTopic = inst.getBooleanTopic("At Setpoint");
-    private final BooleanEntry noteDetectionEntry;
-    private final BooleanEntry atSetpointEntry;
 
     public DigitalInput noteDetector = new DigitalInput(0);
     public DigitalInput noteDetector2 = new DigitalInput(1);
@@ -65,10 +57,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         super(new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(PivotPIDConstants.maxVelocity, PivotPIDConstants.maxAccel)));
         getController().setTolerance(PivotPIDConstants.errorLimit, 10);
         setGoal(ShooterConstants.kArmParallelPosition);
-        
-        //Establishes the entry.
-        noteDetectionEntry = noteDetectedTopic.getEntry(false);
-        atSetpointEntry = atSetpointTopic.getEntry(false);
+
         //Initializes the Feedforward controller
         armFFControl = new ArmFeedforward(kS, kG, kV, kA);
 
@@ -81,13 +70,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pivotEncoder.setPositionConversionFactor(360);
         pivotEncoder.setInverted(true);
-
-        // Initializes the Flywheel and Indexer motors
-
-        flywheelMotor = new CANSparkMax(38, MotorType.kBrushless);
-        flywheelMotor.setIdleMode(IdleMode.kCoast);
-        flywheelMotor.setInverted(false);
-        flywheelMotor.setSmartCurrentLimit(ShooterConstants.kFlywheelMotorCurrentLimit);
 
         
 
@@ -172,11 +154,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     public void stopRunningArm() {
         disable();
         pivotMotor.setVoltage(0);
-    }
-
-    public Command runFlywheelCommand(double targetVoltage) {
-        return new InstantCommand(() -> 
-        flywheelMotor.setVoltage(targetVoltage));
     }
     
     public boolean atSetpoint() {

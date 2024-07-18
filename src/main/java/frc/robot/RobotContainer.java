@@ -26,17 +26,19 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Shooter.profiledArmPID;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.DriveSubsystem;
-
-//import frc.robot.commands.forceIndexCommand;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 import frc.robot.subsystems.Shooter.intakeSubsystem;
+
+//import frc.robot.commands.forceIndexCommand;
+
 import frc.robot.commands.intakeCommand;
 import frc.robot.commands.IndexerCommands.commandIndexerReverse;
 import frc.robot.commands.IndexerCommands.commandIndexerStart;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
+import frc.robot.commands.flywheelCommands.CommandManualFlywheels;
 import frc.robot.commands.IntakeCommands.commandIntakeReverse;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -54,11 +56,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Shooter.profiledArmPID;
-import frc.robot.subsystems.Shooter.shooterFlywheels;
-import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
-import frc.robot.subsystems.Shooter.indexerSubsystem;
-import frc.robot.subsystems.Climb;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -121,16 +118,10 @@ public class RobotContainer {
         //commandShoot = new flywheelCommand(robotFlywheels);
 
         indexAndCheckNoteCommand = new ParallelCommandGroup(new commandIndexerStart(robotIndexer))
-                    //.alongWith(new InstantCommand(() -> robotIndexer.ignoreDetection(false)))
-                    //.alongWith(robotIndexer)
                     .alongWith(new commandIntakePickup(robotIntake));
 
         shootSubwooferCommand = new ParallelCommandGroup(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition), 
-                                robotShooter.runFlywheelCommand(12));
-
-        stopAllNoteMotorsCommand = new ParallelCommandGroup(
-            robotShooter.runFlywheelCommand(0)
-        );
+                                new CommandManualFlywheels(robotFlywheels, 12));
         //ParallelCommandGroup prepSubwooferCommand = new ParallelCommandGroup( );
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Prep Subwoofer Shot", shootSubwooferCommand);
@@ -158,16 +149,12 @@ public class RobotContainer {
                     true, false),
                 m_robotDrive));
 
-        /*robotArmPID.setDefaultCommand(
-            robotArmPID.disablePID()
-        );*/
-        robotClimb.setDefaultCommand(
+        /*robotClimb.setDefaultCommand(
             new RunCommand(
                 () -> robotClimb.moveClimbSeparate(
                     MathUtil.applyDeadband(copilotController.getLeftY(), 0.1) * 8,
                     MathUtil.applyDeadband(copilotController.getRightY(), 0.1) * 8),
-                robotClimb));
-        //SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
+                robotClimb));*/
         
     }
     private void configureButtonBindings() {
@@ -202,8 +189,8 @@ public class RobotContainer {
 
         //m_driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runFFOnlyCommand()));
 
-        m_driverController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12))
-                                        .whileFalse(robotShooter.runFlywheelCommand(0));
+        m_driverController.rightTrigger().whileTrue(new CommandManualFlywheels(robotFlywheels, 12));
+
         m_driverController.leftTrigger().whileTrue(new commandIndexerStart(robotIndexer)
                                                     .alongWith(new commandIntakeStart(robotIntake)));
                                         //.whileFalse(robotIndexer.forceRunIndexer(0)
@@ -294,14 +281,13 @@ public class RobotContainer {
     public SequentialCommandGroup shootNoMoveAuton() {
         //WaitCommand autonWait = new WaitCommand(1);
         //m_robotDrive.
-        return robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition - 5)
-                .andThen(new WaitCommand(2))
-                .andThen(robotShooter.runFlywheelCommand(12)
-                .alongWith(new WaitCommand(1)))
-                //.andThen(robotIndexer.forceRunIndexer(6))
-                .andThen(new WaitCommand(1))
-                .andThen(robotShooter.runFlywheelCommand(0));
-                //.alongWith(robotIndexer.forceRunIndexer(0)));
+        return new SequentialCommandGroup(
+            robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition - 5),
+            new WaitCommand(2),
+            new CommandManualFlywheels(robotFlywheels, 12),
+            new WaitCommand(1),
+            new commandIndexerStart(robotIndexer)
+        );
     }
 
     public Command getAutonomousCommand() {
