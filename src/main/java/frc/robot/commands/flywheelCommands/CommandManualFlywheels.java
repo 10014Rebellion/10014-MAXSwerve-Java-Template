@@ -5,11 +5,9 @@ import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 
 public class CommandManualFlywheels extends Command {
     private final doubleShooterFlywheels flywheels;
-    private final double flywheelVoltage;
 
-    public CommandManualFlywheels (doubleShooterFlywheels f, double fVoltage) {
+    public CommandManualFlywheels (doubleShooterFlywheels f) {
         flywheels = f;
-        flywheelVoltage = fVoltage;
         addRequirements(flywheels);
     }
 

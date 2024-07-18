@@ -6,21 +6,15 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.BooleanEntry;
-import edu.wpi.first.networktables.BooleanTopic;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.PivotPIDConstants;
 import frc.robot.Constants.ShooterConstants;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 public class profiledArmPID extends ProfiledPIDSubsystem{
 
@@ -49,6 +43,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     //public DigitalInput noteDetector2 = new DigitalInput(1);
     
     public double setpoint = ShooterConstants.kArmParallelPosition;
+    public double pivotPos = 0;
 
 
     public profiledArmPID() {
@@ -71,10 +66,13 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotEncoder.setPositionConversionFactor(360);
         pivotEncoder.setInverted(true);
 
-        
+        if (pivotEncoder.getPosition() > 180) {
+            pivotPos = pivotEncoder.getPosition() - 360;
+        }
+        else pivotPos = pivotEncoder.getPosition();
 
         // Disables the PID to start in order to avoid any weird accidental movement.
-        m_controller.reset(pivotEncoder.getPosition());
+        m_controller.reset(pivotPos);
         disable();
 
         SmartDashboard.putNumber("kP", PivotPIDConstants.kP);
@@ -83,20 +81,25 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
 
     @Override
     public double getMeasurement() {
-        return (pivotEncoder.getPosition());
+        return (pivotPos);
     }
 
     @Override
     public void useOutput(double outputVoltage, TrapezoidProfile.State state) {
 
+        if (pivotEncoder.getPosition() > 180) {
+            pivotPos = pivotEncoder.getPosition() - 360;
+        }
+        else pivotPos = pivotEncoder.getPosition();
+
         // Calculates the output of the feedforward controller
-        double FFOutput = armFFControl.calculate((pivotEncoder.getPosition() - ShooterConstants.kArmParallelPosition) * Math.PI / 180, 10);
+        double FFOutput = armFFControl.calculate(pivotPos * Math.PI / 180, 10);
 
         double totalOutput = outputVoltage + FFOutput;
         // Runs a check that the controller isn't trying to go outside the bounds for whatever reason.
         if (!atSetpoint()) {
-            if (((pivotEncoder.getPosition() < ShooterConstants.kArmLowerLimit) && (totalOutput < 0) ||
-                ((pivotEncoder.getPosition() > ShooterConstants.kArmUpperLimit) && (totalOutput > 0))))
+            if (((pivotPos < ShooterConstants.kArmLowerLimit) && (totalOutput < 0) ||
+                ((pivotPos > ShooterConstants.kArmUpperLimit) && (totalOutput > 0))))
                 {pivotMotor.setVoltage(0); 
                 System.out.println("OUTSIDE BOUNDS");}
             // Then, it lets it move.
@@ -123,7 +126,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         SmartDashboard.putNumber("PID+FF output", totalOutput);
         SmartDashboard.putNumber("PID Output", outputVoltage);
         SmartDashboard.putNumber("FF Output", FFOutput);
-        SmartDashboard.putNumber("Arm Position", pivotEncoder.getPosition());
+        SmartDashboard.putNumber("Arm Position", pivotPos);
         SmartDashboard.putNumber("PID Setpoint", setpoint);
         SmartDashboard.putNumber("Pivot Current", pivotMotor.getOutputCurrent());
         

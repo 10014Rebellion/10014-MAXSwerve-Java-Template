@@ -23,15 +23,14 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 
-import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Shooter.profiledArmPID;
+import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.DriveSubsystem;
-
-//import frc.robot.commands.forceIndexCommand;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 import frc.robot.subsystems.Shooter.intakeSubsystem;
-import frc.robot.commands.intakeCommand;
+
+//import frc.robot.commands.forceIndexCommand;
 import frc.robot.commands.IndexerCommands.commandIndexerReverse;
 import frc.robot.commands.IndexerCommands.commandIndexerStart;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
@@ -55,11 +54,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Shooter.profiledArmPID;
-import frc.robot.subsystems.Shooter.shooterFlywheels;
-import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
-import frc.robot.subsystems.Shooter.indexerSubsystem;
-import frc.robot.subsystems.Climb;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -127,11 +121,7 @@ public class RobotContainer {
                     .alongWith(new commandIntakePickup(robotIntake));
 
         shootSubwooferCommand = new ParallelCommandGroup(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition), 
-                                robotShooter.runFlywheelCommand(12));
-
-        stopAllNoteMotorsCommand = new ParallelCommandGroup(
-            robotShooter.runFlywheelCommand(0)
-        );
+                                new CommandManualFlywheels(robotFlywheels));
         //ParallelCommandGroup prepSubwooferCommand = new ParallelCommandGroup( );
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Prep Subwoofer Shot", shootSubwooferCommand);
@@ -210,7 +200,7 @@ public class RobotContainer {
                                         //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
 
-        m_driverController.rightTrigger().whileTrue(new CommandManualFlywheels(robotFlywheels, 12));
+        m_driverController.rightTrigger().whileTrue(new CommandManualFlywheels(robotFlywheels));
         m_driverController.leftTrigger().whileTrue(
                 new ParallelCommandGroup(
                     new commandIndexerStart(robotIndexer),
@@ -305,14 +295,12 @@ public class RobotContainer {
     public SequentialCommandGroup shootNoMoveAuton() {
         //WaitCommand autonWait = new WaitCommand(1);
         //m_robotDrive.
-        return robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition - 5)
-                .andThen(new WaitCommand(2))
-                .andThen(robotShooter.runFlywheelCommand(12)
-                .alongWith(new WaitCommand(1)))
-                //.andThen(robotIndexer.forceRunIndexer(6))
-                .andThen(new WaitCommand(1))
-                .andThen(robotShooter.runFlywheelCommand(0));
-                //.alongWith(robotIndexer.forceRunIndexer(0)));
+        return new SequentialCommandGroup(
+            robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition - 5),
+            new WaitCommand(2),
+            new CommandManualFlywheels(robotFlywheels),
+            new WaitCommand(1),
+            new commandIndexerStart(robotIndexer));
     }
 
     public Command getAutonomousCommand() {

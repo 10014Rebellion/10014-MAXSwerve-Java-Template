@@ -27,7 +27,7 @@ public class doubleShooterFlywheels extends SubsystemBase{
     private double rightFlywheelVelocityReference;
     private double flywheelVelocityOffset;
 
-    private TunableNumber leftFlywheelVelocityTunableNumber, rightFlywheelVelocityTunableNumber;
+    //private TunableNumber leftFlywheelVelocityTunableNumber, rightFlywheelVelocityTunableNumber;
     private TunableNumber flywheelP, flywheelV, flywheelD;
 
     public doubleShooterFlywheels() {
@@ -54,14 +54,15 @@ public class doubleShooterFlywheels extends SubsystemBase{
         rightFlywheelVelocityReference = 0;
         flywheelVelocityOffset = 0;
 
-        leftFlywheelVelocityTunableNumber = new TunableNumber("Tunable Left Flywheel Velocity");
-        rightFlywheelVelocityTunableNumber = new TunableNumber("Tunable Right Flywheel Velocity");
+        //leftFlywheelVelocityTunableNumber = new TunableNumber("Tunable Left Flywheel Velocity");
+        //rightFlywheelVelocityTunableNumber = new TunableNumber("Tunable Right Flywheel Velocity");
         flywheelP = new TunableNumber("Flywheel P");
         flywheelV = new TunableNumber("Flywheel V");
         flywheelD = new TunableNumber("Flywheel D");
 
-        leftFlywheelVelocityTunableNumber.setDefault(0);
-        rightFlywheelVelocityTunableNumber.setDefault(0);
+        //leftFlywheelVelocityTunableNumber.setDefault(0);
+        //rightFlywheelVelocityTunableNumber.setDefault(0);
+
         flywheelD.setDefault(0.0001);
         flywheelP.setDefault( 0.0003);
         flywheelV.setDefault(0.00017);
@@ -81,6 +82,14 @@ public class doubleShooterFlywheels extends SubsystemBase{
         
     }
 
+    public void setBothFlywheelVelocity(double leftTargetVelocity, double rightTargetVelocity) {
+        leftFlywheelVelocityReference = leftTargetVelocity;
+        leftFlywheelController.setReference(leftTargetVelocity, ControlType.kVelocity);
+
+        rightFlywheelVelocityReference = rightTargetVelocity;
+        rightFlywheelController.setReference(rightTargetVelocity, ControlType.kVelocity);
+    }
+
     public void setVelocityOffset(double offsetPercent) {
         flywheelVelocityOffset = offsetPercent;
     }
@@ -88,9 +97,9 @@ public class doubleShooterFlywheels extends SubsystemBase{
     public boolean flywheelAtSetpoint() {
         //double offsetVelocityReference = flywheelVelocityReference * flywheelVelocityOffset;
         return 
-        (Math.abs(leftFlywheelVelocityReference - leftFlywheelEncoder.getVelocity()) < 500
+        (Math.abs(leftFlywheelVelocityReference - leftFlywheelEncoder.getVelocity()) < 200
          && leftFlywheelVelocityReference != 0) &&
-        (Math.abs(rightFlywheelVelocityReference - rightFlywheelEncoder.getVelocity()) < 500
+        (Math.abs(rightFlywheelVelocityReference - rightFlywheelEncoder.getVelocity()) < 200
          && rightFlywheelVelocityReference != 0);
     }
 
@@ -103,11 +112,11 @@ public class doubleShooterFlywheels extends SubsystemBase{
     }
 
     public void tuneLeftFlywheelVelocity() {
-        setLeftFlywheelVelocity(leftFlywheelVelocityTunableNumber.get());
+       // setLeftFlywheelVelocity(leftFlywheelVelocityTunableNumber.get());
     }
 
     public void tuneRightFlywheelVelocity() {
-        setRightFlywheelVelocity(rightFlywheelVelocityTunableNumber.get());
+       // setRightFlywheelVelocity(rightFlywheelVelocityTunableNumber.get());
     }
 
     public void tuneFlywheelVelocityOffset() {
@@ -136,13 +145,13 @@ public class doubleShooterFlywheels extends SubsystemBase{
         SmartDashboard.putNumber("Left Flywheel Current", leftFlywheelMotor.getOutputCurrent());
         SmartDashboard.putNumber("Right Flywheel Current", rightFlywheelMotor.getOutputCurrent());
 
-        if (leftFlywheelVelocityTunableNumber.hasChanged()) {
+        /*if (leftFlywheelVelocityTunableNumber.hasChanged()) {
             tuneLeftFlywheelVelocity();
         }
 
         if(rightFlywheelVelocityTunableNumber.hasChanged()) {
             tuneRightFlywheelVelocity();
-        }
+        }*/
     
         if (flywheelP.hasChanged()) {
             tuneFlywheelP();

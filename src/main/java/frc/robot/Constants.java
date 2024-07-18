@@ -6,7 +6,14 @@ package frc.robot;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -173,6 +180,13 @@ public final class Constants {
     public static final double kArmDefensePosition = 0;
     public static final double kArmAmpPosition = 85;
     public static final double kArmTrapPosition = 85;
+
+    public static flywheelState currentFlywheelState = flywheelState.IDLE;
+    public enum flywheelState {
+      IDLE,
+      SHOOT,
+      REVERSE
+    }
   }
 
   public static class IndexerConstants {
@@ -250,5 +264,17 @@ public final class Constants {
     public static final int kLeftClimbMotorCurrentLimit = 60;
     public static final int kRightClimbMotorCurrentLimit = 60;
     public static final int kClimbRollerMotorCurrentLimit = 60;
+  }
+
+  public static final class FieldConstants {
+    public static final AprilTagFieldLayout kAprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    public static final Pose2d kBlueSpeakerAprilTagLocation = new Pose2d(0.0381, 5.547, new Rotation2d(0));
+    public static final Pose2d kRedSpeakerAprilTagLocation = new Pose2d(16.57, 5.547, new Rotation2d(0));
+  }
+
+  public static final class photonConstants {
+    public static final String kCameraName = "centralCamera";
+    public static final Transform3d kCameraLocation = new Transform3d(new Translation3d(Units.inchesToMeters(15), Units.inchesToMeters(0), Units.inchesToMeters(18)),
+                                                                      new Rotation3d(0, Units.degreesToRadians(17.5), 0));
   }
 }
