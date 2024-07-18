@@ -45,8 +45,8 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     // Initializes the network table... Stuff
     // Imma be honest idk how this works yet
 
-    public DigitalInput noteDetector = new DigitalInput(0);
-    public DigitalInput noteDetector2 = new DigitalInput(1);
+    //public DigitalInput noteDetector = new DigitalInput(0);
+    //public DigitalInput noteDetector2 = new DigitalInput(1);
     
     public double setpoint = ShooterConstants.kArmParallelPosition;
 
