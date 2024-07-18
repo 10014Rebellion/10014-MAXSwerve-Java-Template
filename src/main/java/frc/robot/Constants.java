@@ -161,18 +161,18 @@ public final class Constants {
     public static final int kRightFlywheelMotorCurrentLimit = 60;
     
 
-    public static final double kArmLowerLimit = 13;
-    public static final double kArmUpperLimit = 135;
+    public static final double kArmLowerLimit = -37.5;
+    public static final double kArmUpperLimit = 90;
 
-    public static final double kArmParallelPosition = 51;
+    public static final double kArmParallelPosition = 0;
 
-    public static final double kArmIntakePosition = 15;
-    public static final double kArmSubwooferShotPosition = 30;
-    public static final double kArmSubwooferSideShotPosition = 20;
-    public static final double kArmYeetPosition = 35;
-    public static final double kArmDefensePosition = 45;
-    public static final double kArmAmpPosition = 130;
-    public static final double kArmTrapPosition = 110;
+    public static final double kArmIntakePosition = -37;
+    public static final double kArmSubwooferShotPosition = 0;
+    public static final double kArmSubwooferSideShotPosition = 0;
+    public static final double kArmYeetPosition = -10;
+    public static final double kArmDefensePosition = 0;
+    public static final double kArmAmpPosition = 85;
+    public static final double kArmTrapPosition = 85;
   }
 
   public static class IndexerConstants {

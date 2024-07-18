@@ -33,6 +33,9 @@ public class indexerSubsystem extends SubsystemBase{
     public void runIndexer() {
         indexerMotor.setVoltage(indexerSpeed);
     }
+    public void runIndexerFast() {
+        indexerMotor.setVoltage(12);
+    }
 
     public void stopIndexer() {
         indexerMotor.setVoltage(0);

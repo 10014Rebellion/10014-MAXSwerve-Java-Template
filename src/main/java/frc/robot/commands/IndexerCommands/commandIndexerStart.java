@@ -15,7 +15,7 @@ public class commandIndexerStart extends Command{
 
     @Override
     public void initialize() {
-        indexer.runIndexer();
+        indexer.runIndexerFast();
         IndexerConstants.currentIndexState = IndexerConstants.indexState.START;
     }
 
