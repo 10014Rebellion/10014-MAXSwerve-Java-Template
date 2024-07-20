@@ -37,6 +37,8 @@ import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
 import frc.robot.commands.flywheelCommands.CommandManualFlywheels;
+import frc.robot.commands.flywheelCommands.commandFlywheelIdle;
+import frc.robot.commands.flywheelCommands.commandFlywheelShoot;
 import frc.robot.commands.IntakeCommands.commandIntakeReverse;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -145,7 +147,7 @@ public class RobotContainer {
                 () -> m_robotDrive.drive(
                     -MathUtil.applyDeadband(m_driverController.getLeftY()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(m_driverController.getLeftX()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(m_driverController.getRightX()*OIConstants.kDriveMult*.75, OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(m_driverController.getRightX()*OIConstants.kTurnMult, OIConstants.kDriveDeadband),
                     true, false),
                 m_robotDrive));
 
@@ -186,7 +188,8 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 new commandIntakePickup(robotIntake),
                 new commandIndexerPickup(robotIndexer)
-            )));
+            )))
+            .whileFalse(new commandFlywheelIdle(robotFlywheels));
                                         //.alongWith(robotIntake)))
                                         //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
@@ -200,7 +203,9 @@ public class RobotContainer {
                                         //.whileFalse(robotIntake.forceRunIntake(0));
                                         //.alongWith(robotIndexer.forceRunIndexer(0)));
 
-        m_driverController.rightTrigger().whileTrue(new CommandManualFlywheels(robotFlywheels));
+        m_driverController.rightTrigger().whileTrue(new commandFlywheelShoot(robotFlywheels))
+                                        .whileFalse(new commandFlywheelIdle(robotFlywheels));
+                                //.onFalse(new commandFlywheelIdle(robotFlywheels));
         m_driverController.leftTrigger().whileTrue(
                 new ParallelCommandGroup(
                     new commandIndexerStart(robotIndexer),

@@ -26,12 +26,9 @@ public class commandIndexerStart extends Command{
     public void end(boolean interrupted) {
         indexer.stopIndexer();
         IndexerConstants.currentIndexState = IndexerConstants.indexState.IDLE;
-        System.out.println("why did i stop im very confused.");
     }
     @Override
     public boolean isFinished() {
-        System.out.println("Unga bunga?");
         return false;
-        
     }
 }

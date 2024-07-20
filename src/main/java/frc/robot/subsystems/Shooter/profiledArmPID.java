@@ -65,6 +65,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pivotEncoder.setPositionConversionFactor(360);
         pivotEncoder.setInverted(true);
+        pivotEncoder.setZeroOffset(ShooterConstants.kArmZeroOffset);
 
         if (pivotEncoder.getPosition() > 180) {
             pivotPos = pivotEncoder.getPosition() - 360;
@@ -74,6 +75,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         // Disables the PID to start in order to avoid any weird accidental movement.
         m_controller.reset(pivotPos);
         disable();
+        //goToSetpoint(ShooterConstants.kArmIntakePosition);
 
         SmartDashboard.putNumber("kP", PivotPIDConstants.kP);
         

@@ -131,6 +131,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.1;
     public static final double kDriveMult = 0.25;
+    public static final double kTurnMult = 0.5;
 
     public static final int kCopilotControllerPort = 1;
   }
@@ -158,20 +159,15 @@ public final class Constants {
     
     //public static final int kFlywheelMotorCanID = 33;
     public static final int kPivotMotorCanID = 31;
-    public static final int kLeftFlywheelMotorCanID = 33;
-    public static final int kRightFlywheelMotorCanID = 34;
-    
     
     public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
-    public static final int kLeftFlywheelMotorCurrentLimit = 60;
-    public static final int kRightFlywheelMotorCurrentLimit = 60;
     
-
     public static final double kArmLowerLimit = -37.5;
     public static final double kArmUpperLimit = 90;
 
     public static final double kArmParallelPosition = 0;
+    public static final double kArmZeroOffset = 298.9;
 
     public static final double kArmIntakePosition = -37;
     public static final double kArmSubwooferShotPosition = 0;
@@ -185,8 +181,21 @@ public final class Constants {
     public enum flywheelState {
       IDLE,
       SHOOT,
-      REVERSE
+      REVERSE,
+      NOTHING
     }
+  }
+
+  public static final class FlywheelConstants {
+    public static final int kLeftFlywheelMotorCanID = 33;
+    public static final int kRightFlywheelMotorCanID = 34;
+
+    public static final int kLeftFlywheelMotorCurrentLimit = 60;
+    public static final int kRightFlywheelMotorCurrentLimit = 60;
+
+    public static final double kFlywheelP = 0.0001;
+    public static final double kFlywheelD = 0.0;
+    public static final double kFlywheelFF = 0.00017;
   }
 
   public static class IndexerConstants {

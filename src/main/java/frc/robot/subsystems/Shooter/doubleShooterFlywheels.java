@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Shooter;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
@@ -7,9 +8,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkPIDController.AccelStrategy;
 import com.revrobotics.CANSparkBase.ControlType;
 
 import frc.robot.utils.TunableNumber;
+import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class doubleShooterFlywheels extends SubsystemBase{ 
@@ -31,11 +35,11 @@ public class doubleShooterFlywheels extends SubsystemBase{
     private TunableNumber flywheelP, flywheelV, flywheelD;
 
     public doubleShooterFlywheels() {
-        leftFlywheelMotor = new CANSparkFlex(ShooterConstants.kLeftFlywheelMotorCanID, MotorType.kBrushless);
-        rightFlywheelMotor = new CANSparkFlex(ShooterConstants.kRightFlywheelMotorCanID, MotorType.kBrushless);
+        leftFlywheelMotor = new CANSparkFlex(FlywheelConstants.kLeftFlywheelMotorCanID, MotorType.kBrushless);
+        rightFlywheelMotor = new CANSparkFlex(FlywheelConstants.kRightFlywheelMotorCanID, MotorType.kBrushless);
 
-        leftFlywheelMotor.setSmartCurrentLimit(ShooterConstants.kLeftFlywheelMotorCurrentLimit);
-        rightFlywheelMotor.setSmartCurrentLimit(ShooterConstants.kRightFlywheelMotorCurrentLimit);
+        leftFlywheelMotor.setSmartCurrentLimit(FlywheelConstants.kLeftFlywheelMotorCurrentLimit);
+        rightFlywheelMotor.setSmartCurrentLimit(FlywheelConstants.kRightFlywheelMotorCurrentLimit);
 
         leftFlywheelMotor.setIdleMode(IdleMode.kCoast);
         rightFlywheelMotor.setIdleMode(IdleMode.kCoast);
@@ -53,7 +57,20 @@ public class doubleShooterFlywheels extends SubsystemBase{
         leftFlywheelVelocityReference = 0;
         rightFlywheelVelocityReference = 0;
         flywheelVelocityOffset = 0;
+        
+        leftFlywheelController.setP(FlywheelConstants.kFlywheelP);
+        leftFlywheelController.setD(FlywheelConstants.kFlywheelD);
+        leftFlywheelController.setFF(FlywheelConstants.kFlywheelFF);
 
+        rightFlywheelController.setP(FlywheelConstants.kFlywheelP);
+        rightFlywheelController.setD(FlywheelConstants.kFlywheelD);
+        rightFlywheelController.setFF(FlywheelConstants.kFlywheelFF);
+
+        leftFlywheelController.setOutputRange(0, 1);
+        rightFlywheelController.setOutputRange(0, 1);
+
+        leftFlywheelMotor.burnFlash();
+        rightFlywheelMotor.burnFlash();
         //leftFlywheelVelocityTunableNumber = new TunableNumber("Tunable Left Flywheel Velocity");
         //rightFlywheelVelocityTunableNumber = new TunableNumber("Tunable Right Flywheel Velocity");
         flywheelP = new TunableNumber("Flywheel P");
@@ -63,12 +80,14 @@ public class doubleShooterFlywheels extends SubsystemBase{
         //leftFlywheelVelocityTunableNumber.setDefault(0);
         //rightFlywheelVelocityTunableNumber.setDefault(0);
 
-        flywheelD.setDefault(0.0001);
-        flywheelP.setDefault( 0.0003);
-        flywheelV.setDefault(0.00017);
+        flywheelD.setDefault(FlywheelConstants.kFlywheelD);
+        flywheelP.setDefault( FlywheelConstants.kFlywheelP);
+        flywheelV.setDefault(FlywheelConstants.kFlywheelFF);
         // Good D: 0.0001
         // Good P: 0.0003
         // Good V: 0.00017
+        //System.out.println(leftFlywheelController.getSmartMotionAccelStrategy(0))
+        
     }
 
     public void setLeftFlywheelVelocity(double targetVelocity) {
@@ -164,6 +183,11 @@ public class doubleShooterFlywheels extends SubsystemBase{
         if (flywheelD.hasChanged()) {
             tuneFlywheelD();
         }
+
+        SmartDashboard.putNumber("Left Flywheel set value", leftFlywheelMotor.getAppliedOutput());
+
+        
+        
     }
     // Manual control.
     public void setFlywheelVoltage(double targetVoltage) {
