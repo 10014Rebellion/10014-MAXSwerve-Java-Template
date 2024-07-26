@@ -22,10 +22,11 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
-
+import frc.robot.Constants.photonConstants;
 import frc.robot.subsystems.Shooter.profiledArmPID;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 import frc.robot.subsystems.Shooter.intakeSubsystem;
@@ -76,6 +77,8 @@ public class RobotContainer {
     private final indexerSubsystem robotIndexer;
     private final intakeSubsystem robotIntake;
 
+    private final Vision centralCamera;
+
     //private final indexerCommand robotIndexer = new indexerCommand();
     //private final forceIndexCommand forceRobotIndexer = new forceIndexCommand(robotIndexer);
     //private final intakeCommand robotIntake = new intakeCommand();
@@ -102,13 +105,15 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
+        centralCamera = new Vision(photonConstants.kCameraName, photonConstants.kCameraLocation);
         // Robot subsystem initialization.
-        m_robotDrive = new DriveSubsystem();
+        m_robotDrive = new DriveSubsystem(centralCamera);
         robotShooter = new profiledArmPID();
         robotClimb = new Climb();
         robotFlywheels = new doubleShooterFlywheels();
         robotIndexer = new indexerSubsystem();
         robotIntake = new intakeSubsystem();
+        
 
 
         //robotIndexer = new indexerCommand();

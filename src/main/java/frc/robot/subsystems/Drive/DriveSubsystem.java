@@ -15,19 +15,29 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import frc.robot.subsystems.Vision;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose3d;
 
 import frc.robot.Constants.OIConstants;
 
@@ -78,6 +88,18 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
       });
 
+  private Field2d field = new Field2d();
+  private Vision centralCamera;
+  private SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
+      DriveConstants.kDriveKinematics, 
+      new Rotation2d(m_gyro.getAngle()),
+       new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+       }, getPose());
+
   
       
   /** Creates a new DriveSubsystem. */
@@ -103,6 +125,35 @@ public class DriveSubsystem extends SubsystemBase {
     },
     this // Reference to this subsystem to set requirements);
     );
+    
+  }
+
+  public DriveSubsystem(Vision centralCamera) {
+    this.centralCamera = centralCamera;
+    
+    AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry,
+     this::getRobotRelativeSpeeds, this::driveRobotRelative, 
+     new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+                    new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // Rotation PID constants
+                    4.5, // Max module speed, in m/s
+                    0.4759, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new ReplanningConfig() // Default path replanning config. See the API for the options here
+    ),  () -> {
+      // Boolean supplier that controls when the path will be mirrored for the red alliance
+      // This will flip the path being followed to the red side of the field.
+      // THE ORIGIN WILL REMAIN ON THE BLUE S
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent()) {
+        return alliance.get() == DriverStation.Alliance.Red;
+      }
+      return false;
+    },
+    this // Reference to this subsystem to set requirements);
+    );
+    
+    SmartDashboard.putData("Field", field);
+
   }
 
   @Override
@@ -117,6 +168,37 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         });
 
+    swervePoseEstimator.update(
+      Rotation2d.fromDegrees(m_gyro.getAngle()),
+      new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+       }
+    );
+    
+    var visionResult = centralCamera.getLatestResult();
+    Optional<EstimatedRobotPose> centralCamPoseEstimate = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
+    
+    /*if (centralCamPoseEstimate.isPresent()) {
+      var imageCaptureTime = visionResult.getTimestampSeconds();
+      //var camToTargetTrans = visionResult.getBestTarget().getBestCameraToTarget();
+      centralCamPoseEstimate.ifPresent(poseEstimation -> {
+      Pose2d visionPoseEstimate = poseEstimation.estimatedPose.toPose2d();
+      swervePoseEstimator.addVisionMeasurement(visionPoseEstimate, imageCaptureTime);
+    });
+    }*/
+    if (visionResult.hasTargets()) {
+      var imageCaptureTime = visionResult.getTimestampSeconds();
+      Pose3d aprilTagPoseEstimate = centralCamera.apriltagRelativeFieldPose();
+      swervePoseEstimator.addVisionMeasurement(aprilTagPoseEstimate.toPose2d(), imageCaptureTime);
+    }
+    //pose3d visionMeasurement3d = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
+    SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
+    SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
+    SmartDashboard.putNumber("Current ID", centralCamera.getCurrentID());
+    field.setRobotPose(swervePoseEstimator.getEstimatedPosition());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
   }
 
