@@ -7,6 +7,7 @@ package frc.robot.subsystems.Drive;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -169,7 +170,8 @@ public class DriveSubsystem extends SubsystemBase {
         });
 
     swervePoseEstimator.update(
-      Rotation2d.fromDegrees(m_gyro.getAngle()),
+      Rotation2d.fromDegrees(
+        m_gyro.getAngle()),
       new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
@@ -178,8 +180,8 @@ public class DriveSubsystem extends SubsystemBase {
        }
     );
     
-    var visionResult = centralCamera.getLatestResult();
-    Optional<EstimatedRobotPose> centralCamPoseEstimate = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
+    //var visionResult = centralCamera.getLatestResult();
+    //Optional<EstimatedRobotPose> centralCamPoseEstimate = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
     
     /*if (centralCamPoseEstimate.isPresent()) {
       var imageCaptureTime = visionResult.getTimestampSeconds();
@@ -189,16 +191,21 @@ public class DriveSubsystem extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(visionPoseEstimate, imageCaptureTime);
     });
     }*/
-    if (visionResult.hasTargets()) {
-      var imageCaptureTime = visionResult.getTimestampSeconds();
-      Pose3d aprilTagPoseEstimate = centralCamera.apriltagRelativeFieldPose();
-      swervePoseEstimator.addVisionMeasurement(aprilTagPoseEstimate.toPose2d(), imageCaptureTime);
+    if (centralCamera.hasTargets()) {
+      //var imageCaptureTime = visionResult.getTimestampSeconds();
+      //Pose3d aprilTagPoseEstimate = centralCamera.apriltagRelativeFieldPose();
+      swervePoseEstimator.addVisionMeasurement(centralCamera.getEstimatedCameraPose().transformBy(centralCamera.getCameraLocation()).toPose2d(), centralCamera.getImageTimestamp());
     }
     //pose3d visionMeasurement3d = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
-    SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
-    SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
+    //SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
+    //SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
     SmartDashboard.putNumber("Current ID", centralCamera.getCurrentID());
+    SmartDashboard.putBoolean("Camera Has Targets?", centralCamera.hasTargets());
     field.setRobotPose(swervePoseEstimator.getEstimatedPosition());
+    SmartDashboard.putNumber("Estimated Pos X", centralCamera.getEstimatedCameraPose().toPose2d().getX());
+    SmartDashboard.putNumber("Estimated Pos Y", centralCamera.getEstimatedCameraPose().toPose2d().getY());
+    SmartDashboard.putNumber("Estimated Pos Z", centralCamera.getEstimatedCameraPose().getZ());
+    SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
   }
 

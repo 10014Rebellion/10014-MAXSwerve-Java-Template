@@ -15,6 +15,7 @@ import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,9 +26,14 @@ public class Vision extends SubsystemBase{
     
     private PhotonCamera photonCamera;
     private PhotonPoseEstimator photonPoseEstimator;
+    private PhotonPipelineResult aprilTagResult;
+    private PhotonTrackedTarget trackedTags;
+    private Pose3d trackedTagPose;
+    private double trackedTagDist;
 
     private Transform3d cameraLocation;
     private AprilTagFieldLayout aprilTagFieldLayout;
+    
 
     private double currentDistance, currentRotation;
     private double currentXDistance, currentYDistance;
@@ -78,7 +84,7 @@ public class Vision extends SubsystemBase{
         return robotPose;
     }
 
-    public boolean hasSpeakerTarget() {
+    public boolean hasTargets() {
         return getLatestResult().hasTargets();
     }
 
@@ -94,8 +100,63 @@ public class Vision extends SubsystemBase{
         else return -1;
     }
 
+    public Pose3d getGivenTagPose (int i) {
+        Pose3d tagPose = aprilTagFieldLayout.getTagPose(i).get();
+        return tagPose;
+    }
+
+    public Pose3d getEstimatedCameraPose() {
+        //var imageCaptureTime = aprilTagResult.getTimestampSeconds();
+        Transform3d camToTargetTrans = aprilTagResult.getBestTarget().getBestCameraToTarget();
+        Pose3d camPose = trackedTagPose.transformBy(camToTargetTrans.inverse());
+        return camPose;
+    }
+
+    public double getImageTimestamp() {
+        return aprilTagResult.getTimestampSeconds();
+    }
+
+    public double getDistanceToTag() {
+        return trackedTagDist;
+    }
+
+    public Transform3d getCameraLocation() {
+        return cameraLocation;
+    }
+
     @Override
     public void periodic() {
+        if (this.photonCamera != null) {
+            aprilTagResult = getLatestResult();
+
+            if (hasTargets()) {
+                for (int i = 0; i < aprilTagResult.getTargets().size(); i++) {
+                    int ID = aprilTagResult.getTargets().get(i).getFiducialId();
+                    // Come back and set these to be the correct tags, + add the alliance detection.
+                    if (ID == 7 || ID == 5 || ID == 3) {
+                        trackedTags = aprilTagResult.targets.get(i);
+                        trackedTagPose = getGivenTagPose(ID);
+                        trackedTagDist = PhotonUtils.calculateDistanceToTargetMeters(
+                        cameraLocation.getY(),
+                        Units.inchesToMeters(trackedTagPose.getY()), 
+                        cameraLocation.getRotation().getY(),
+                        Units.degreesToRadians(aprilTagResult.getBestTarget().getYaw()));
+                    }
+                }
+            }
+        }
+        
+        /*for (PhotonTrackedTarget i : getLatestResult().getTargets()) {
+            if (i.getFiducialId() != -1) {
+                Pose3d aprilTagPose = new Pose3d();
+                aprilTagPose = aprilTagFieldLayout.getTagPose(i.getFiducialId()).get();
+                robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
+                            i.getBestCameraToTarget(),
+                            aprilTagPose,
+                            cameraLocation);
+                
+            }
+        }*/
         /*Optional<EstimatedRobotPose> photonPoseEstimation = getEstimatedGlobalPose();
         photonPoseEstimation.ifPresent(poseEstimation -> {
             SmartDashboard.putNumber("pv X", poseEstimation.estimatedPose.getX());
