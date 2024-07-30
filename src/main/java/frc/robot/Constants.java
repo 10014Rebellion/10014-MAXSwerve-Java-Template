@@ -283,10 +283,12 @@ public final class Constants {
 
   public static final class photonConstants {
     public static final String kCameraName = "centralCamera";
-    public static final Transform3d kCameraLocation = new Transform3d(new Translation3d(Units.inchesToMeters(15), 
-                                                                      Units.inchesToMeters(0), 
-                                                                      Units.inchesToMeters(18)),
-                                                                      new Rotation3d(0, 
-                                                                      Units.degreesToRadians(17.5), 0));
+      public static final Transform3d kCameraLocation = new Transform3d(
+        new Translation3d(Units.inchesToMeters(14),                                                                
+        Units.inchesToMeters(0),                                                               
+        Units.inchesToMeters(15.75)),                                                     
+        new Rotation3d(0,                                         
+        Units.degreesToRadians(17.5), 0));
+    public static double speakerDistance;
   }
 }

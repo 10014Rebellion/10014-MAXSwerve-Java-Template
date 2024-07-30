@@ -180,31 +180,16 @@ public class DriveSubsystem extends SubsystemBase {
        }
     );
     
-    //var visionResult = centralCamera.getLatestResult();
-    //Optional<EstimatedRobotPose> centralCamPoseEstimate = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
-    
-    /*if (centralCamPoseEstimate.isPresent()) {
-      var imageCaptureTime = visionResult.getTimestampSeconds();
-      //var camToTargetTrans = visionResult.getBestTarget().getBestCameraToTarget();
-      centralCamPoseEstimate.ifPresent(poseEstimation -> {
-      Pose2d visionPoseEstimate = poseEstimation.estimatedPose.toPose2d();
-      swervePoseEstimator.addVisionMeasurement(visionPoseEstimate, imageCaptureTime);
-    });
-    }*/
-    if (centralCamera.hasTargets()) {
-      //var imageCaptureTime = visionResult.getTimestampSeconds();
-      //Pose3d aprilTagPoseEstimate = centralCamera.apriltagRelativeFieldPose();
-      swervePoseEstimator.addVisionMeasurement(centralCamera.getEstimatedCameraPose().transformBy(centralCamera.getCameraLocation()).toPose2d(), centralCamera.getImageTimestamp());
+    var visionResult = centralCamera.getLatestResult();
+    Optional<EstimatedRobotPose> centralCamPoseEstimate = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
+    if(centralCamPoseEstimate.isPresent())  {
+      swervePoseEstimator.addVisionMeasurement(centralCamPoseEstimate.get().estimatedPose.toPose2d(), visionResult.getTimestampSeconds());
     }
-    //pose3d visionMeasurement3d = centralCamera.getEstimatedGlobalPose(swervePoseEstimator.getEstimatedPosition());
-    //SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
-    //SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
-    SmartDashboard.putNumber("Current ID", centralCamera.getCurrentID());
-    SmartDashboard.putBoolean("Camera Has Targets?", centralCamera.hasTargets());
+
     field.setRobotPose(swervePoseEstimator.getEstimatedPosition());
-    SmartDashboard.putNumber("Estimated Pos X", centralCamera.getEstimatedCameraPose().toPose2d().getX());
-    SmartDashboard.putNumber("Estimated Pos Y", centralCamera.getEstimatedCameraPose().toPose2d().getY());
-    SmartDashboard.putNumber("Estimated Pos Z", centralCamera.getEstimatedCameraPose().getZ());
+    
+    SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
+    SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
     SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
   }
