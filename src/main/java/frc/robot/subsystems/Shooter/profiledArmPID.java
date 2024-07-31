@@ -9,12 +9,15 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.PivotPIDConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.photonConstants;
 
 public class profiledArmPID extends ProfiledPIDSubsystem{
 
@@ -45,6 +48,8 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     public double setpoint = ShooterConstants.kArmParallelPosition;
     public double pivotPos = 0;
 
+    private InterpolatingDoubleTreeMap pivotAngleMap;
+
 
     public profiledArmPID() {
 
@@ -67,6 +72,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotEncoder.setInverted(true);
         pivotEncoder.setZeroOffset(ShooterConstants.kArmZeroOffset);
 
+        // Converts the encoder readings into a -180 -> 180 deg format.
         if (pivotEncoder.getPosition() > 180) {
             pivotPos = pivotEncoder.getPosition() - 360;
         }
@@ -78,7 +84,8 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         //goToSetpoint(ShooterConstants.kArmIntakePosition);
 
         SmartDashboard.putNumber("kP", PivotPIDConstants.kP);
-        
+        pivotAngleMap = new InterpolatingDoubleTreeMap();
+        populatePivotAngleMap();
     }
 
     @Override
@@ -89,6 +96,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     @Override
     public void useOutput(double outputVoltage, TrapezoidProfile.State state) {
 
+        // Converts the encoder readings into a -180 -> 180 deg format.
         if (pivotEncoder.getPosition() > 180) {
             pivotPos = pivotEncoder.getPosition() - 360;
         }
@@ -109,6 +117,8 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
                 pivotMotor.setVoltage(0);
                 System.out.println("Just FF Running?");
             }
+            // If the PID is trying to tell it to go beyond the realm of reality,
+            // It says no.
             else {
                 if(totalOutput > 12) {
                     pivotMotor.setVoltage(12);
@@ -131,12 +141,25 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         SmartDashboard.putNumber("Arm Position", pivotPos);
         SmartDashboard.putNumber("PID Setpoint", setpoint);
         SmartDashboard.putNumber("Pivot Current", pivotMotor.getOutputCurrent());
+        if (pivotAngleMap != null) {
+            SmartDashboard.putNumber("Current Pivot Map Setpoint", pivotAngleMap.get(photonConstants.speakerDistance));
+        }
         
     }
 
     public void goToSetpoint(double setpoint) {
-        setGoal(setpoint);
-        this.setpoint = setpoint;
+        if (setpoint >= ShooterConstants.kArmUpperLimit) {
+            setGoal(ShooterConstants.kArmUpperLimit);
+            this.setpoint = ShooterConstants.kArmUpperLimit;
+        }
+        else if (setpoint <= ShooterConstants.kArmLowerLimit) {
+            setGoal(ShooterConstants.kArmLowerLimit);
+            this.setpoint = ShooterConstants.kArmLowerLimit;
+        }
+        else {
+            setGoal(setpoint);
+            this.setpoint = setpoint;
+        }
         enable();
     }
 
@@ -169,5 +192,13 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         double FFOutput = armFFControl.calculate(ShooterConstants.kArmParallelPosition * Math.PI / 180, 10);
         disable();
         pivotMotor.setVoltage(FFOutput);
+    }
+
+    public void populatePivotAngleMap() {
+        pivotAngleMap.put(1.0, -30.0);
+        pivotAngleMap.put(1.5, -20.0);
+        pivotAngleMap.put(2.0, -10.0);
+        pivotAngleMap.put(2.5, 0.0);
+        pivotAngleMap.put(3.0, 10.0);
     }
 }

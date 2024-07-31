@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardContainer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -95,13 +96,19 @@ public class Vision extends SubsystemBase{
         aprilTagResult = getLatestResult();
         if(aprilTagResult.hasTargets()) {
             for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
-                if (i.getFiducialId() == 3) {
+                // These IDs are only the central speakers for each alliance.
+                if (i.getFiducialId() == 3) { //&& DriverStation.getAlliance().toString().equals("Red")) {
                     trackedTag = i;
                     trackedTagPose = aprilTagFieldLayout.getTagPose(3).get();
                     updateDistanceToTag();
                 }
+                else if (i.getFiducialId() == 7 ) {//&& DriverStation.getAlliance().toString().equals("Blue")) {
+                    trackedTag = i;
+                    trackedTagPose = aprilTagFieldLayout.getTagPose(7).get();
+                    updateDistanceToTag();
+                }
             }
         }
-        SmartDashboard.putNumber("Robot Distance from Speaker (Inches)", Units.metersToInches(trackedTagDist));
+        SmartDashboard.putNumber("Robot Distance from Speaker (Meters)", trackedTagDist);
     }
 }

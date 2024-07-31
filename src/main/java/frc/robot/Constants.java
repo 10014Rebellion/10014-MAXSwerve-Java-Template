@@ -184,6 +184,16 @@ public final class Constants {
       REVERSE,
       NOTHING
     }
+
+    public static armState currentArmState = armState.IDLE;
+    public enum armState {
+      IDLE,
+      MOVING,
+      SPEAKER,
+      AMP,
+      INTAKE,
+      YEET
+    }
   }
 
   public static final class FlywheelConstants {
@@ -254,7 +264,7 @@ public final class Constants {
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double errorLimit = 1.0;
+    public static final double errorLimit = 5.0;
 
     public static final double maxVelocity = 1000;
     public static final double maxAccel = 500;

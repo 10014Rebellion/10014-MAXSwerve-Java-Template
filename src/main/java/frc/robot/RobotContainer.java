@@ -34,6 +34,8 @@ import frc.robot.subsystems.Shooter.intakeSubsystem;
 //import frc.robot.commands.forceIndexCommand;
 import frc.robot.commands.IndexerCommands.commandIndexerReverse;
 import frc.robot.commands.IndexerCommands.commandIndexerStart;
+import frc.robot.commands.ArmCommands.commandArmAmp;
+import frc.robot.commands.ArmCommands.commandArmIntake;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
@@ -189,15 +191,12 @@ public class RobotContainer {
         
         m_driverController.rightBumper().whileTrue(
             new SequentialCommandGroup(
-            new InstantCommand(() -> robotShooter.goToSetpoint(ShooterConstants.kArmIntakePosition)),
+            new commandArmIntake(robotShooter),
             new ParallelCommandGroup(
                 new commandIntakePickup(robotIntake),
                 new commandIndexerPickup(robotIndexer)
             )))
             .whileFalse(new commandFlywheelIdle(robotFlywheels));
-                                        //.alongWith(robotIntake)))
-                                        //.whileFalse(robotIntake.forceRunIntake(0));
-                                        //.alongWith(robotIndexer.forceRunIndexer(0)));
         m_driverController.leftBumper() .whileTrue(
             new SequentialCommandGroup(
             new InstantCommand(() -> robotShooter.goToSetpoint(ShooterConstants.kArmIntakePosition)),
@@ -220,7 +219,7 @@ public class RobotContainer {
         // Copilot Shooter Commands
         copilotController.x().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
         
-        copilotController.y().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmAmpPosition));
+        copilotController.y().whileTrue(new commandArmAmp(robotShooter));
 
         copilotController.b().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferSideShotPosition));
 
