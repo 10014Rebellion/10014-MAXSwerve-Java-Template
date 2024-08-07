@@ -107,7 +107,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
 
         double totalOutput = outputVoltage + FFOutput;
         // Runs a check that the controller isn't trying to go outside the bounds for whatever reason.
-        if (!atSetpoint()) {
             if (((pivotPos < ShooterConstants.kArmLowerLimit) && (totalOutput < 0) ||
                 ((pivotPos > ShooterConstants.kArmUpperLimit) && (totalOutput > 0))))
                 {pivotMotor.setVoltage(0); 
@@ -131,10 +130,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
                 }
                 
             }
-        }
         
-        //noteDetectionEntry.set((!noteDetector.get()) || (!noteDetector2.get()));
-        //atSetpointEntry.set(atSetpoint());
         SmartDashboard.putNumber("PID+FF output", totalOutput);
         SmartDashboard.putNumber("PID Output", outputVoltage);
         SmartDashboard.putNumber("FF Output", FFOutput);
@@ -162,6 +158,21 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         }
         enable();
     }
+
+    public void altGoToSetpoint(double setpoint) {
+        if (setpoint > ShooterConstants.kArmUpperLimit) {
+            setGoal(ShooterConstants.kArmUpperLimit);
+            this.setpoint = ShooterConstants.kArmUpperLimit;
+        }
+        else if (setpoint < ShooterConstants.kArmLowerLimit) {
+            setGoal(ShooterConstants.kArmLowerLimit);
+            this.setpoint = ShooterConstants.kArmLowerLimit;
+        }
+        else {
+            setGoal(setpoint);
+            this.setpoint = setpoint;
+        }
+    }
     
     public Command goToSetpointCommand(double setpoint) {
         return new InstantCommand(() ->
@@ -185,7 +196,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     }
     
     public boolean atSetpoint() {
-        return (Math.abs(pivotPos - setpoint) < 1);
+        return (Math.abs(pivotPos - setpoint) < PivotPIDConstants.errorLimit);
     }
 
     public double getCalculatedSpeakerAngle() {

@@ -197,10 +197,13 @@ public class RobotContainer {
                 new commandIndexerStart(robotIndexer)
                 )
             );
-        m_driverController.y().whileTrue(
-            new RepeatCommand(new commandArmAutoAim(robotShooter)));
+        m_driverController.a().whileTrue(
+            new ParallelCommandGroup(
+                new commandArmAutoAim(robotShooter),
+                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, m_driverController),
+                new commandFlywheelShoot(robotFlywheels)
+            ));
 
-        //m_driverController.a().whileTrue(new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, m_driverController));
         
         m_driverController.rightBumper().whileTrue(
             new SequentialCommandGroup(

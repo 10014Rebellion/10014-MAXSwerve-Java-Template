@@ -75,7 +75,7 @@ public final class Constants {
     public static final boolean kGyroReversed = false;
 
     // Turning PID Controller Values. This controls aiming at things like the speaker or amp.
-    public static final double kAngularP = 0.01;
+    public static final double kAngularP = 0.02;
     public static final double kAngularD = 0.0;
 
     
@@ -267,11 +267,11 @@ public final class Constants {
 
     //Feed Forward constants
     public static final double kS = 0.0;
-    public static final double kG = 0.38; // 0.5 is good for 75:1
+    public static final double kG = 0.4; // 0.5 is good for 75:1
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 
-    public static final double errorLimit = 5.0;
+    public static final double errorLimit = 1.0;
 
     public static final double maxVelocity = 1000;
     public static final double maxAccel = 500;
