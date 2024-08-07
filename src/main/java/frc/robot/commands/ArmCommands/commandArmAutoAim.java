@@ -14,16 +14,17 @@ public class commandArmAutoAim extends Command {
 
     @Override
     public void initialize() {
+        arm.enable();
     }
 
     @Override
     public void execute() {
-        arm.goToCalculatedSpeakerAngle();
+        double calculatedArmAngle = arm.getCalculatedSpeakerAngle();
+        arm.altGoToSetpoint(calculatedArmAngle);
     }
 
     @Override
     public void end(boolean interrupted) {
-        ShooterConstants.currentArmState = ShooterConstants.armState.INTAKE;
     }
 
     @Override

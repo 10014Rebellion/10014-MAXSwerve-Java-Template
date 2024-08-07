@@ -120,7 +120,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             // If the PID is trying to tell it to go beyond the realm of reality,
             // It says no.
             else {
-                if(totalOutput > 12) {
+                                if(totalOutput > 12) {
                     pivotMotor.setVoltage(12);
                 }
                 else if (totalOutput < -12) {
@@ -147,6 +147,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     }
 
     public void goToSetpoint(double setpoint) {
+        
         if (setpoint > ShooterConstants.kArmUpperLimit) {
             setGoal(ShooterConstants.kArmUpperLimit);
             this.setpoint = ShooterConstants.kArmUpperLimit;
@@ -161,11 +162,10 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         }
         enable();
     }
-
+    
     public Command goToSetpointCommand(double setpoint) {
         return new InstantCommand(() ->
-        goToSetpoint(setpoint));
-        
+        goToSetpoint(setpoint));      
     }
 
     public void runArmFFOnly() {
@@ -185,10 +185,11 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     }
     
     public boolean atSetpoint() {
-        return m_controller.atSetpoint();
+        return (Math.abs(pivotPos - setpoint) < 1);
     }
 
     public double getCalculatedSpeakerAngle() {
+        
         if (pivotAngleMap != null) {
             return pivotAngleMap.get(photonConstants.speakerDistance);
         }

@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
@@ -196,7 +197,8 @@ public class RobotContainer {
                 new commandIndexerStart(robotIndexer)
                 )
             );
-        //m_driverController.y().whileTrue(new commandArmAutoAim(robotShooter));
+        m_driverController.y().whileTrue(
+            new RepeatCommand(new commandArmAutoAim(robotShooter)));
 
         //m_driverController.a().whileTrue(new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, m_driverController));
         
@@ -233,7 +235,7 @@ public class RobotContainer {
         
         copilotController.y().whileTrue(new commandArmAmp(robotShooter));
 
-        copilotController.b().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferSideShotPosition));
+        copilotController.b().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmParallelPosition));
 
         copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
 
