@@ -37,7 +37,7 @@ public class Vision extends SubsystemBase{
     private AprilTagFieldLayout aprilTagFieldLayout;
     
 
-    private double currentDistance, currentRotation;
+    private double currentRotation;
     private double currentXDistance, currentYDistance;
 
     private String cameraName;
@@ -53,7 +53,7 @@ public class Vision extends SubsystemBase{
                                                     cameraLocation);
         this.cameraLocation = cameraLocation;
         aprilTagFieldLayout = FieldConstants.kAprilTagFieldLayout;
-        currentDistance = 0;
+        trackedTagDist = 0;
         currentRotation = 0;
         
         //SmartDashboard.putData("Field", field);
@@ -89,6 +89,20 @@ public class Vision extends SubsystemBase{
 
     public Transform3d getCameraLocation() {
         return cameraLocation;
+    }
+
+    public double getYaw() {
+        if (aprilTagResult.hasTargets()) {
+            for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
+                if (i.getFiducialId() == 3) { //&& DriverStation.getAlliance().toString().equals("Red"))
+                    return i.getYaw();
+                }
+                else if (i.getFiducialId() == 8 ) {//&& DriverStation.getAlliance().toString().equals("Blue")) 
+                    return i.getYaw();
+                }
+            }
+        }
+        return 0.0;
     }
 
     @Override

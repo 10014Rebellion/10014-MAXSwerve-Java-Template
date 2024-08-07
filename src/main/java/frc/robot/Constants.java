@@ -73,7 +73,14 @@ public final class Constants {
     public static final int kRearRightTurningCanId = 23;
 
     public static final boolean kGyroReversed = false;
+
+    // Turning PID Controller Values. This controls aiming at things like the speaker or amp.
+    public static final double kAngularP = 0.01;
+    public static final double kAngularD = 0.0;
+
+    
   }
+
 
   public static final class ModuleConstants {
     // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
@@ -163,13 +170,13 @@ public final class Constants {
     public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     
-    public static final double kArmLowerLimit = -37.5;
+    public static final double kArmLowerLimit = -35.5;
     public static final double kArmUpperLimit = 90;
 
     public static final double kArmParallelPosition = 0;
-    public static final double kArmZeroOffset = 298.9;
+    public static final double kArmZeroOffset = 123.5;
 
-    public static final double kArmIntakePosition = -37;
+    public static final double kArmIntakePosition = -35;
     public static final double kArmSubwooferShotPosition = 0;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;

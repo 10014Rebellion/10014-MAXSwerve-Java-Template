@@ -35,11 +35,13 @@ import frc.robot.subsystems.Shooter.intakeSubsystem;
 import frc.robot.commands.IndexerCommands.commandIndexerReverse;
 import frc.robot.commands.IndexerCommands.commandIndexerStart;
 import frc.robot.commands.ArmCommands.commandArmAmp;
+import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
+import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
-import frc.robot.commands.flywheelCommands.CommandManualFlywheels;
+import frc.robot.commands.flywheelCommands.commandManualFlywheels;
 import frc.robot.commands.flywheelCommands.commandFlywheelIdle;
 import frc.robot.commands.flywheelCommands.commandFlywheelShoot;
 import frc.robot.commands.IntakeCommands.commandIntakeReverse;
@@ -130,7 +132,7 @@ public class RobotContainer {
                     .alongWith(new commandIntakePickup(robotIntake));
 
         shootSubwooferCommand = new ParallelCommandGroup(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition), 
-                                new CommandManualFlywheels(robotFlywheels));
+                                new commandManualFlywheels(robotFlywheels));
         //ParallelCommandGroup prepSubwooferCommand = new ParallelCommandGroup( );
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Prep Subwoofer Shot", shootSubwooferCommand);
@@ -188,6 +190,15 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
+        m_driverController.b().whileTrue(
+            new SequentialCommandGroup(
+                new commandManualFlywheels(robotFlywheels),
+                new commandIndexerStart(robotIndexer)
+                )
+            );
+        //m_driverController.y().whileTrue(new commandArmAutoAim(robotShooter));
+
+        //m_driverController.a().whileTrue(new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, m_driverController));
         
         m_driverController.rightBumper().whileTrue(
             new SequentialCommandGroup(
@@ -197,25 +208,26 @@ public class RobotContainer {
                 new commandIndexerPickup(robotIndexer)
             )))
             .whileFalse(new commandFlywheelIdle(robotFlywheels));
+        
         m_driverController.leftBumper() .whileTrue(
             new SequentialCommandGroup(
-            new InstantCommand(() -> robotShooter.goToSetpoint(ShooterConstants.kArmIntakePosition)),
+            new commandArmIntake(robotShooter),
             new ParallelCommandGroup(
                 new commandIntakeReverse(robotIntake),
                 new commandIndexerReverse(robotIndexer)
             )));
-                                        //.whileFalse(robotIntake.forceRunIntake(0));
-                                        //.alongWith(robotIndexer.forceRunIndexer(0)));
 
         m_driverController.rightTrigger().whileTrue(new commandFlywheelShoot(robotFlywheels))
                                         .whileFalse(new commandFlywheelIdle(robotFlywheels));
-                                //.onFalse(new commandFlywheelIdle(robotFlywheels));
+        
         m_driverController.leftTrigger().whileTrue(
                 new ParallelCommandGroup(
                     new commandIndexerStart(robotIndexer),
                     new commandIntakeStart(robotIntake)
-                    )
-            );
+                ));
+        
+
+
         // Copilot Shooter Commands
         copilotController.x().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
         
@@ -225,19 +237,22 @@ public class RobotContainer {
 
         copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
 
-        /*copilotController.rightTrigger().whileTrue(robotShooter.runFlywheelCommand(12)
-                                                .alongWith(robotIndexer.forceRunIndexer(6)))
-                                    .whileFalse(robotIndexer.forceRunIndexer(0)
-                                                .alongWith(robotShooter.runFlywheelCommand(0)));
+        /*copilotController.leftTrigger().whileTrue(robotClimb.moveLeftClimbCommand(3))
+                                    .whileFalse(robotClimb.moveLeftClimbCommand(0));
+        copilotController.leftBumper().whileTrue(robotClimb.moveLeftClimbCommand(-3))
+                                    .whileFalse(robotClimb.moveLeftClimbCommand(0));
+        copilotController.rightTrigger().whileTrue(robotClimb.moveRightClimbCommand(3))
+                                    .whileFalse(robotClimb.moveRightClimbCommand(0));
+        copilotController.rightBumper().whileTrue(robotClimb.moveRightClimbCommand(-3))
+                                    .whileFalse(robotClimb.moveRightClimbCommand(0));*/
 
-        copilotController.leftTrigger().whileTrue(robotShooter.runFlywheelCommand(12)
-                                                .alongWith(robotIndexer.forceRunIndexer(-6)))
-                                    .whileFalse(robotIndexer.forceRunIndexer(0)
-                                                .alongWith(robotShooter.runFlywheelCommand(0)));
-*/
-        copilotController.povUp().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmDefensePosition));
-        //copilotController.povDown().whileTrue());
-        
+        copilotController.povUp().whileTrue(robotClimb.moveBothClimbCommand(6))
+                                .whileFalse(robotClimb.moveBothClimbCommand(0));
+        copilotController.povDown().whileTrue(robotClimb.moveBothClimbCommand(-3))
+                                .whileFalse(robotClimb.moveBothClimbCommand(0));
+
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(75.0));
+        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
         }
 
     private void configureTestButtonBindings() {
@@ -307,7 +322,7 @@ public class RobotContainer {
         return new SequentialCommandGroup(
             robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition - 5),
             new WaitCommand(2),
-            new CommandManualFlywheels(robotFlywheels),
+            new commandManualFlywheels(robotFlywheels),
             new WaitCommand(1),
             new commandIndexerStart(robotIndexer));
     }

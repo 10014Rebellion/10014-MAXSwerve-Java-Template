@@ -56,7 +56,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         // Initializes the PIDController.
         super(new ProfiledPIDController(kP, kI, kD, new TrapezoidProfile.Constraints(PivotPIDConstants.maxVelocity, PivotPIDConstants.maxAccel)));
         getController().setTolerance(PivotPIDConstants.errorLimit, 10);
-        setGoal(ShooterConstants.kArmParallelPosition);
+        
 
         //Initializes the Feedforward controller
         armFFControl = new ArmFeedforward(kS, kG, kV, kA);
@@ -82,7 +82,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         m_controller.reset(pivotPos);
         disable();
         //goToSetpoint(ShooterConstants.kArmIntakePosition);
-
+        setGoal(ShooterConstants.kArmParallelPosition);
         SmartDashboard.putNumber("kP", PivotPIDConstants.kP);
         pivotAngleMap = new InterpolatingDoubleTreeMap();
         populatePivotAngleMap();
@@ -144,15 +144,14 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         if (pivotAngleMap != null) {
             SmartDashboard.putNumber("Current Pivot Map Setpoint", pivotAngleMap.get(photonConstants.speakerDistance));
         }
-        
     }
 
     public void goToSetpoint(double setpoint) {
-        if (setpoint >= ShooterConstants.kArmUpperLimit) {
+        if (setpoint > ShooterConstants.kArmUpperLimit) {
             setGoal(ShooterConstants.kArmUpperLimit);
             this.setpoint = ShooterConstants.kArmUpperLimit;
         }
-        else if (setpoint <= ShooterConstants.kArmLowerLimit) {
+        else if (setpoint < ShooterConstants.kArmLowerLimit) {
             setGoal(ShooterConstants.kArmLowerLimit);
             this.setpoint = ShooterConstants.kArmLowerLimit;
         }
@@ -179,6 +178,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         disable();
         pivotMotor.setVoltage(outputVoltage);
     }
+
     public void stopRunningArm() {
         disable();
         pivotMotor.setVoltage(0);
@@ -188,13 +188,19 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         return m_controller.atSetpoint();
     }
 
-    public void runFFOnlyCommand() {
-        double FFOutput = armFFControl.calculate(ShooterConstants.kArmParallelPosition * Math.PI / 180, 10);
-        disable();
-        pivotMotor.setVoltage(FFOutput);
+    public double getCalculatedSpeakerAngle() {
+        if (pivotAngleMap != null) {
+            return pivotAngleMap.get(photonConstants.speakerDistance);
+        }
+        else return ShooterConstants.kArmParallelPosition;
+    }
+
+    public void goToCalculatedSpeakerAngle() {
+        goToSetpoint(getCalculatedSpeakerAngle());
     }
 
     public void populatePivotAngleMap() {
+        // THESE ARE TEST ANGLES. THEY WILL NOT BE ACCURATE.
         pivotAngleMap.put(1.0, -30.0);
         pivotAngleMap.put(1.5, -20.0);
         pivotAngleMap.put(2.0, -10.0);
