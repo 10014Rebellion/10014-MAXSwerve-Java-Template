@@ -1,6 +1,5 @@
 package frc.robot.subsystems.Shooter;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkFlex;
@@ -8,13 +7,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController.AccelStrategy;
 import com.revrobotics.CANSparkBase.ControlType;
-
 import frc.robot.utils.TunableNumber;
 import frc.robot.Constants.FlywheelConstants;
-import frc.robot.Constants.IndexerConstants;
-import frc.robot.Constants.ShooterConstants;
 
 public class doubleShooterFlywheels extends SubsystemBase{ 
 
