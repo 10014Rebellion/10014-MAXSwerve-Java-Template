@@ -169,12 +169,12 @@ public class RobotContainer {
         /*robotArmPID.setDefaultCommand(
             robotArmPID.disablePID()
         );*/
-        robotClimb.setDefaultCommand(
-            new RunCommand(
+        /*robotClimb.setDefaultCommand(
+            new InstantCommand(
                 () -> robotClimb.moveClimbSeparate(
-                    MathUtil.applyDeadband(copilotController.getLeftY(), 0.1) * 8,
-                    MathUtil.applyDeadband(copilotController.getRightY(), 0.1) * 8),
-                robotClimb));
+                    MathUtil.applyDeadband(copilotController.getRightY(), 0.1) * 8,
+                    MathUtil.applyDeadband(copilotController.getLeftY(), 0.1) * 8),
+                robotClimb));*/
         //SmartDashboard.putNumber("Pigeon Heading", m_robotDrive.getHeading());
         
     }
@@ -234,6 +234,13 @@ public class RobotContainer {
                 )
             ));
 
+        driverController.rightTrigger().whileTrue(
+            new ParallelCommandGroup(
+                new commandArmAutoAim(robotShooter),
+                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
+                new commandFlywheelShoot(robotFlywheels)
+            ));
+
         /*driverController.rightTrigger().whileTrue(new commandFlywheelShoot(robotFlywheels))
                                         .whileFalse(new commandFlywheelIdle(robotFlywheels));
         
@@ -271,24 +278,29 @@ public class RobotContainer {
         // Have the drivetrain rotate toward the speaker
         // Have the arm get to the correct angle
         // Rev the flywheels up to speed
-        copilotController.rightTrigger().whileTrue(
+        /*copilotController.rightTrigger().whileTrue(
             new ParallelCommandGroup(
                 new commandArmAutoAim(robotShooter),
                 new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
                 new commandFlywheelShoot(robotFlywheels)
-            ));
+            ));*/
         
+        copilotController.rightTrigger().whileTrue(
+            new commandManualFlywheels(robotFlywheels));
+
+        copilotController.leftBumper().whileTrue(
+            new InstantCommand(() -> robotClimb.moveRightClimb(3)))
+        .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
         copilotController.rightBumper().whileTrue(
-            new commandManualFlywheels(robotFlywheels)
-        );
+             new InstantCommand(() -> robotClimb.moveLeftClimb(3)))
+        .whileFalse(new InstantCommand(() -> robotClimb.moveLeftClimb(0)));
+        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(6)))
+                                .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
 
-        copilotController.povUp().whileTrue(robotClimb.moveBothClimbCommand(6))
-                                .whileFalse(robotClimb.moveBothClimbCommand(0));
-
-        copilotController.povDown().whileTrue(robotClimb.moveBothClimbCommand(-3))
-                                .whileFalse(robotClimb.moveBothClimbCommand(0));
+        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-3)))
+                                .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
-        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(75.0));
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));
         copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
 
         }

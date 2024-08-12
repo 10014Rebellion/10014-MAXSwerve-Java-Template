@@ -170,13 +170,13 @@ public final class Constants {
     public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     
-    public static final double kArmLowerLimit = -35.5;
+    public static final double kArmLowerLimit = -35;
     public static final double kArmUpperLimit = 90;
 
     public static final double kArmParallelPosition = 0;
-    public static final double kArmZeroOffset = 124.5;
+    public static final double kArmZeroOffset = 126;
 
-    public static final double kArmIntakePosition = -35;
+    public static final double kArmIntakePosition = -34;
     public static final double kArmSubwooferShotPosition = 0;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;
