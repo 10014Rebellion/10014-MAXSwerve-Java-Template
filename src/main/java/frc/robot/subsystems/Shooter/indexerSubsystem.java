@@ -15,8 +15,8 @@ public class indexerSubsystem extends SubsystemBase{
 
     public CANSparkMax indexerMotor;
     public PowerDistribution pdh;
-    public DigitalInput noteDetector1 = new DigitalInput(IndexerConstants.kNoteDetector1Port);
-    public DigitalInput noteDetector2 = new DigitalInput(IndexerConstants.kNoteDetector2Port);
+    public DigitalInput noteDetector1;
+    public DigitalInput noteDetector2;
     public double indexerSpeed = 1.5;
 
     public indexerSubsystem() {
@@ -27,6 +27,9 @@ public class indexerSubsystem extends SubsystemBase{
 
         pdh = new PowerDistribution(1, ModuleType.kRev);
         pdh.setSwitchableChannel(false);
+
+        noteDetector1 = new DigitalInput(IndexerConstants.kNoteDetector1Port);
+        noteDetector2 = new DigitalInput(IndexerConstants.kNoteDetector2Port);
     }
 
     public void runIndexer() {

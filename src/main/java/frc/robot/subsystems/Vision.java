@@ -90,10 +90,10 @@ public class Vision extends SubsystemBase{
     public double getYaw() {
         if (aprilTagResult.hasTargets()) {
             for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
-                if (i.getFiducialId() == 3) { //&& DriverStation.getAlliance().toString().equals("Red"))
+                if (i.getFiducialId() == 4) { //&& DriverStation.getAlliance().toString().equals("Red"))
                     return i.getYaw();
                 }
-                else if (i.getFiducialId() == 8 ) {//&& DriverStation.getAlliance().toString().equals("Blue")) 
+                else if (i.getFiducialId() == 7 ) {//&& DriverStation.getAlliance().toString().equals("Blue")) 
                     return i.getYaw();
                 }
             }

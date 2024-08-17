@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.PivotPIDConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.photonConstants;
+import frc.robot.utils.TunableNumber;
 
 public class profiledArmPID extends ProfiledPIDSubsystem{
 
@@ -45,6 +46,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     //public DigitalInput noteDetector2 = new DigitalInput(1);
     
     public double setpoint = ShooterConstants.kArmParallelPosition;
+    public TunableNumber tunableSetpoint;
     public double pivotPos = 0;
 
     private InterpolatingDoubleTreeMap pivotAngleMap;
@@ -80,7 +82,10 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         // Disables the PID to start in order to avoid any weird accidental movement.
         m_controller.reset(pivotPos);
         disable();
-        //goToSetpoint(ShooterConstants.kArmIntakePosition);
+
+        tunableSetpoint = new TunableNumber("Arm Tunable Setpoint");
+        tunableSetpoint.setDefault(0);
+
         setGoal(ShooterConstants.kArmParallelPosition);
         SmartDashboard.putNumber("kP", PivotPIDConstants.kP);
         pivotAngleMap = new InterpolatingDoubleTreeMap();
@@ -171,6 +176,10 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             setGoal(setpoint);
             this.setpoint = setpoint;
         }
+    }
+
+    public double getTunableSetpoint() {
+        return tunableSetpoint.get();
     }
     
     public Command goToSetpointCommand(double setpoint) {
