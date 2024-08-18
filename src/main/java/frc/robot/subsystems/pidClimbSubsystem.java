@@ -66,7 +66,7 @@ public class pidClimbSubsystem extends SubsystemBase{
         leftClimbD.setDefault(0);
 
         rightClimbP = new TunableNumber("Right Climb P");
-        rightClimbP = new TunableNumber("Right Climb P");
+        rightClimbD = new TunableNumber("Right Climb D");
         rightClimbP.setDefault(0);
         rightClimbD.setDefault(0);
 

@@ -176,10 +176,24 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             setGoal(setpoint);
             this.setpoint = setpoint;
         }
+        enable();
     }
 
-    public double getTunableSetpoint() {
-        return tunableSetpoint.get();
+    public void goToTunableSetpoint() {
+        double tunableSetpointNum = tunableSetpoint.get();
+        if (tunableSetpointNum > ShooterConstants.kArmUpperLimit) {
+            setGoal(ShooterConstants.kArmUpperLimit);
+            this.setpoint = ShooterConstants.kArmUpperLimit;
+        }
+        else if (tunableSetpointNum < ShooterConstants.kArmLowerLimit) {
+            setGoal(ShooterConstants.kArmLowerLimit);
+            this.setpoint = ShooterConstants.kArmLowerLimit;
+        }
+        else {
+            setGoal(tunableSetpointNum);
+            this.setpoint = tunableSetpointNum;
+        }
+        enable();
     }
     
     public Command goToSetpointCommand(double setpoint) {

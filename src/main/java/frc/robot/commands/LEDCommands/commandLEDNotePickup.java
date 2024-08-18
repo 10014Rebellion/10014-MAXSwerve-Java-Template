@@ -16,18 +16,18 @@ public class commandLEDNotePickup extends Command{
     public void initialize() {
         if (IndexerConstants.robotHasNote) {
             if (DriverStation.getAlliance().equals("RED")) {
-                LED.setTransitionHueToHueValues(0, 10, 1);
+                LED.setTransitionHueToHueValues(10, 1);
             }
             else {
-                LED.setTransitionHueToHueValues(100, 10, 1);
+                LED.setTransitionHueToHueValues(10, 1);
             }
         }
         else {
             if (DriverStation.getAlliance().equals("RED")) {
-                LED.setTransitionHueToHueValues(0, 0, 1);
+                LED.setTransitionHueToHueValues(0, 1);
             }
             else {
-                LED.setTransitionHueToHueValues(100, 100, 1);
+                LED.setTransitionHueToHueValues(100, 1);
             }
         }
     }
@@ -36,18 +36,18 @@ public class commandLEDNotePickup extends Command{
     public void end(boolean interrupted) {   
         if (IndexerConstants.robotHasNote) {
             if (DriverStation.getAlliance().equals("RED")) {
-                LED.setTransitionHueToHueValues(0, 10, 1);
+                LED.setTransitionHueToHueValues(10, 1);
             }
             else {
-                LED.setTransitionHueToHueValues(100, 10, 1);
+                LED.setTransitionHueToHueValues(10, 1);
             }
         }
         else {
             if (DriverStation.getAlliance().equals("RED")) {
-                LED.setTransitionHueToHueValues(0, 0, 1);
+                LED.setTransitionHueToHueValues(0, 1);
             }
             else {
-                LED.setTransitionHueToHueValues(100, 100, 1);
+                LED.setTransitionHueToHueValues(100, 1);
             }
         }
         

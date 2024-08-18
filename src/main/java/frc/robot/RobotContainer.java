@@ -60,6 +60,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
+import java.time.Instant;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -193,7 +194,12 @@ public class RobotContainer {
         driverController.y().whileTrue(
             new InstantCommand(() -> robotLED.resetStartingLED())
         );
-        driverController.b().whileTrue(robotShooter.goToSetpointCommand(robotShooter.getTunableSetpoint()));
+        driverController.b().whileTrue(
+            new InstantCommand(() -> robotShooter.goToTunableSetpoint())
+        );
+        driverController.a().whileTrue(
+            robotShooter.goToSetpointCommand(0)
+        );
         //driverController.a().whileTrue(new commandClimbAutoZero(robotClimb));
         /*driverController.b().whileTrue(
             robotLED.redToOrangeTransition()
@@ -252,20 +258,26 @@ public class RobotContainer {
             ));
         
         copilotController.rightTrigger().whileTrue(
-            new commandManualFlywheels(robotFlywheels));
+            new ParallelCommandGroup(
+                new commandManualFlywheels(robotFlywheels),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.1),
+                    new commandIndexerStart(robotIndexer)
+                )
+            ));
 
         copilotController.leftBumper().whileTrue(
-            new InstantCommand(() -> robotClimb.moveLeftClimb(3)))
+            new InstantCommand(() -> robotClimb.moveLeftClimb(0.1)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveLeftClimb(0)));
         
         copilotController.rightBumper().whileTrue(
-             new InstantCommand(() -> robotClimb.moveRightClimb(3)))
+             new InstantCommand(() -> robotClimb.moveRightClimb(0.1)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
 
-        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(6)))
+        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(0.25)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
 
-        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-3)))
+        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-0.5)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
         copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));

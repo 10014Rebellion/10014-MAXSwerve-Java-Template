@@ -13,7 +13,7 @@ public class commandManualFlywheels extends Command {
 
     @Override
     public void initialize() {
-        flywheels.setFlywheelVoltage(12);
+        flywheels.setFlywheelVoltage(8);
     }
 
     @Override

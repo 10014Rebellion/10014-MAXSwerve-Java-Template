@@ -267,8 +267,8 @@ public final class Constants {
     public static final double baseSetpoint = 90;
 
     //Feed Forward constants
-    public static final double kS = 0.0;
-    public static final double kG = 0.4; // 0.5 is good for 75:1
+    public static final double kS = 0;
+    public static final double kG = 0.3; // 0.5 is good for 75:1
     public static final double kV = 0.0;
     public static final double kA = 0.0;
 

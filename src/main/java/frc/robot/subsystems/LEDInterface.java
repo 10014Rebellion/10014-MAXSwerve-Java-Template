@@ -39,9 +39,9 @@ public class LEDInterface extends SubsystemBase{
         led.setData(ledBuffer);
     }
 
-    public void setTransitionHueToHueValues(int initialHue, int finalHue, int transitionSpeed) {
+    public void setTransitionHueToHueValues(int finalHue, int transitionSpeed) {
         startingLED = 0;
-        this.initialHue = initialHue % hueVariation;
+        this.initialHue = currentHue;
         this.finalHue = finalHue % hueVariation;
         this.transitionSpeed = transitionSpeed;
     }
@@ -85,18 +85,18 @@ public class LEDInterface extends SubsystemBase{
     }
     
     public Command colorToBlueTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 108, 1));
+        return new InstantCommand(() -> setTransitionHueToHueValues(108, 1));
     }
     public Command colorToRedTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 0, 1));
+        return new InstantCommand(() -> setTransitionHueToHueValues(0, 1));
     }
 
     public Command colorToOrangeTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 10, 1));
+        return new InstantCommand(() -> setTransitionHueToHueValues(10, 1));
     }
 
     public Command colorToPurpleTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 170, 1));
+        return new InstantCommand(() -> setTransitionHueToHueValues(170, 1));
     }
 
     @Override
