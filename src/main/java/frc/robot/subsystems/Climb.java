@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
 public class Climb extends SubsystemBase{
-    private final CANSparkMax leftClimbMotor;
+    /*private final CANSparkMax leftClimbMotor;
     private final CANSparkMax rightClimbMotor;
     //private final CANSparkMax rollerClimbMotor;
 
@@ -63,7 +63,7 @@ public class Climb extends SubsystemBase{
 
     /*public void runClimbRoller(double targetVoltage) {
         rollerClimbMotor.setVoltage(targetVoltage);
-    }*/
+    }
 
     public void moveClimbSeparate(double leftClimbVoltage, double rightClimbVoltage) {
         leftClimbMotor.setVoltage(-leftClimbVoltage);

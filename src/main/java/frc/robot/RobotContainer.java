@@ -28,6 +28,7 @@ import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.LEDInterface;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.pidClimbSubsystem;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 import frc.robot.subsystems.Shooter.intakeSubsystem;
@@ -38,6 +39,7 @@ import frc.robot.commands.IndexerCommands.commandIndexerStart;
 import frc.robot.commands.ArmCommands.commandArmAmp;
 import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
+import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
@@ -79,7 +81,7 @@ public class RobotContainer {
     // Robot Subsystem Creations
     private final DriveSubsystem m_robotDrive;
     private final profiledArmPID robotShooter;
-    private final Climb robotClimb;
+    private final pidClimbSubsystem robotClimb;
     private final doubleShooterFlywheels robotFlywheels;
     private final indexerSubsystem robotIndexer;
     private final intakeSubsystem robotIntake;
@@ -117,7 +119,7 @@ public class RobotContainer {
         // Robot subsystem initialization.
         m_robotDrive = new DriveSubsystem(centralCamera);
         robotShooter = new profiledArmPID();
-        robotClimb = new Climb();
+        robotClimb = new pidClimbSubsystem();
         robotFlywheels = new doubleShooterFlywheels();
         robotIndexer = new indexerSubsystem();
         robotIntake = new intakeSubsystem();
@@ -182,15 +184,7 @@ public class RobotContainer {
         configureCompetitionButtonBindings();
         //configureTestButtonBindings();
     }
-    /**
-     * Use this method to define your button->command mappings. Buttons can be
-     * created by
-     * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its
-     * subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling
-     * passing it to a
-     * {@link JoystickButton}.
-     */
+
     private void configureCompetitionButtonBindings() {
         driverController.x()
             .whileTrue(new RunCommand(
@@ -199,18 +193,14 @@ public class RobotContainer {
         driverController.y().whileTrue(
             new InstantCommand(() -> robotLED.resetStartingLED())
         );
-        driverController.b().whileTrue(
-            robotLED.colorToRedTransition()
+        driverController.b().whileTrue(robotShooter.goToSetpointCommand(robotShooter.getTunableSetpoint()));
+        //driverController.a().whileTrue(new commandClimbAutoZero(robotClimb));
+        /*driverController.b().whileTrue(
+            robotLED.redToOrangeTransition()
         );
         driverController.a().whileTrue(
-            robotLED.colorToBlueTransition()
-        );
-        driverController.povRight().whileTrue(
-            robotLED.colorToOrangeTransition()
-        );
-        driverController.povLeft().whileTrue(
-            robotLED.colorToPurpleTransition()
-        );
+            robotLED.orangeToRedTransition()
+        );*/
 
         // First gets the arm into intake position, then allows the intake and indexer to run
         driverController.rightBumper().whileTrue(
@@ -234,22 +224,16 @@ public class RobotContainer {
                 )
             ));
 
+        // When holding the right trigger, the robot will:
+        // Have the drivetrain rotate toward the speaker
+        // Have the arm get to the correct angle
+        // Rev the flywheels up to speed
         driverController.rightTrigger().whileTrue(
             new ParallelCommandGroup(
                 new commandArmAutoAim(robotShooter),
                 new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
                 new commandFlywheelShoot(robotFlywheels)
             ));
-
-        /*driverController.rightTrigger().whileTrue(new commandFlywheelShoot(robotFlywheels))
-                                        .whileFalse(new commandFlywheelIdle(robotFlywheels));
-        
-        driverController.leftTrigger().whileTrue(
-                new ParallelCommandGroup(
-                    new commandIndexerStart(robotIndexer),
-                    new commandIntakeStart(robotIntake)
-                ));*/
-        
 
 
         // Copilot Shooter Commands
@@ -261,49 +245,32 @@ public class RobotContainer {
 
         copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
 
-        /*copilotController.leftTrigger().whileTrue(robotClimb.moveLeftClimbCommand(3))
-                                    .whileFalse(robotClimb.moveLeftClimbCommand(0));
-        copilotController.leftBumper().whileTrue(robotClimb.moveLeftClimbCommand(-3))
-                                    .whileFalse(robotClimb.moveLeftClimbCommand(0));
-        copilotController.rightTrigger().whileTrue(robotClimb.moveRightClimbCommand(3))
-                                    .whileFalse(robotClimb.moveRightClimbCommand(0));
-        copilotController.rightBumper().whileTrue(robotClimb.moveRightClimbCommand(-3))
-                                    .whileFalse(robotClimb.moveRightClimbCommand(0));*/
         copilotController.leftTrigger().whileTrue(
             new ParallelCommandGroup(
                 new commandIndexerStart(robotIndexer),
                 new commandIntakeStart(robotIntake)
             ));
-        // When holding the right trigger, the robot will:
-        // Have the drivetrain rotate toward the speaker
-        // Have the arm get to the correct angle
-        // Rev the flywheels up to speed
-        /*copilotController.rightTrigger().whileTrue(
-            new ParallelCommandGroup(
-                new commandArmAutoAim(robotShooter),
-                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
-                new commandFlywheelShoot(robotFlywheels)
-            ));*/
         
         copilotController.rightTrigger().whileTrue(
             new commandManualFlywheels(robotFlywheels));
 
         copilotController.leftBumper().whileTrue(
-            new InstantCommand(() -> robotClimb.moveRightClimb(3)))
-        .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
-        copilotController.rightBumper().whileTrue(
-             new InstantCommand(() -> robotClimb.moveLeftClimb(3)))
+            new InstantCommand(() -> robotClimb.moveLeftClimb(3)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveLeftClimb(0)));
+        
+        copilotController.rightBumper().whileTrue(
+             new InstantCommand(() -> robotClimb.moveRightClimb(3)))
+        .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
+
         copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(6)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
 
         copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-3)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
-        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmTrapPosition));
-        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmTrapPrepPosition));
-
-        }
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));
+        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
+    }
 
     private void configureTestButtonBindings() {
         System.out.println("YOU ARE IN TESTING MODE");

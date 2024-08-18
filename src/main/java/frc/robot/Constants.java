@@ -284,13 +284,23 @@ public final class Constants {
   }
 
   public static final class ClimbConstants {
-    public static final int kLeftClimbMotorCanID = 41;
-    public static final int kRightClimbMotorCanID = 42;
-    public static final int kClimbRollerMotorCanID = 44;
+    public static final int kLeftClimbMotorCanID = 42;
+    public static final int kRightClimbMotorCanID = 41;
 
-    public static final int kLeftClimbMotorCurrentLimit = 60;
-    public static final int kRightClimbMotorCurrentLimit = 60;
-    public static final int kClimbRollerMotorCurrentLimit = 60;
+    public static final int kLeftClimbMotorCurrentLimit = 80;
+    public static final int kRightClimbMotorCurrentLimit = 80;
+
+    public static final int kLeftClimbDetector = 2;
+    public static final int kRightClimbDetector = 3;
+
+    public static climbState currentClimbState = climbState.IDLE;
+    public enum climbState {
+      IDLE,
+      ZEROING,
+      CLIMBING,
+      MOVING,
+      ATZERO
+    }
   }
 
   public static final class FieldConstants {
@@ -308,5 +318,15 @@ public final class Constants {
         new Rotation3d(0,                                         
         Units.degreesToRadians(17.5), 0));
     public static double speakerDistance;
+  }
+
+  public static final class LEDColor {
+    public static final int red = 0;
+    public static final int orange = 10;
+    public static final int yellow = 40;
+    public static final int green = 70;
+    public static final int blue = 100;
+    public static final int indigo = 130;
+    public static final int purple = 160;
   }
 }
