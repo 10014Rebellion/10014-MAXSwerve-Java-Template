@@ -171,7 +171,7 @@ public final class Constants {
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     
     public static final double kArmLowerLimit = -35;
-    public static final double kArmUpperLimit = 90;
+    public static final double kArmUpperLimit = 92.5;
 
     public static final double kArmParallelPosition = 0;
     public static final double kArmZeroOffset = 126;
@@ -182,7 +182,8 @@ public final class Constants {
     public static final double kArmYeetPosition = -10;
     public static final double kArmDefensePosition = 0;
     public static final double kArmAmpPosition = 85;
-    public static final double kArmTrapPosition = 85;
+    public static final double kArmTrapPrepPosition = 90;
+    public static final double kArmTrapPosition = 80;
 
     public static flywheelState currentFlywheelState = flywheelState.IDLE;
     public enum flywheelState {

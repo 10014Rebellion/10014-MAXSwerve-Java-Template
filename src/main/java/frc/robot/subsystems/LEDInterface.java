@@ -13,12 +13,14 @@ public class LEDInterface extends SubsystemBase{
 
     private int initialHue;
     private int finalHue;
+    private int currentHue;
+    private int transitionSpeed;
     private int hueVariation = 180;
     private int startingLED;
 
     public LEDInterface() {
         led = new AddressableLED(0);
-        ledBuffer = new AddressableLEDBuffer(72); // Update this with the correct lenth later
+        ledBuffer = new AddressableLEDBuffer(36); // Update this with the correct lenth later
 
         led.setLength(ledBuffer.getLength());
 
@@ -37,10 +39,11 @@ public class LEDInterface extends SubsystemBase{
         led.setData(ledBuffer);
     }
 
-    public void setTransitionHueToHueValues(int initialHue, int finalHue) {
+    public void setTransitionHueToHueValues(int initialHue, int finalHue, int transitionSpeed) {
         startingLED = 0;
         this.initialHue = initialHue % hueVariation;
         this.finalHue = finalHue % hueVariation;
+        this.transitionSpeed = transitionSpeed;
     }
 
     public void transitionHueToHue() {
@@ -54,7 +57,7 @@ public class LEDInterface extends SubsystemBase{
         else {
             increment = 1;
         }
-        startingLED += 2;
+        startingLED += transitionSpeed;
         //(initialHue - finalHue) / (ledBuffer.getLength() - startingLED);
 
         for (int i = 0; i < ledBuffer.getLength(); i++) {
@@ -68,6 +71,7 @@ public class LEDInterface extends SubsystemBase{
                 }
                 
                 ledBuffer.setHSV(i, -Math.abs((finalHue - initialHue) / 2), 255, 128);
+                currentHue = finalHue;
             }
 
             /*else {
@@ -80,19 +84,19 @@ public class LEDInterface extends SubsystemBase{
         startingLED = 0;
     }
     
-    public Command redToBlueTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(0, 108));
+    public Command colorToBlueTransition() {
+        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 108, 1));
     }
-    public Command blueToRedTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(108, 0));
-    }
-
-    public Command redToOrangeTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(0, 10));
+    public Command colorToRedTransition() {
+        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 0, 1));
     }
 
-    public Command orangeToRedTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(10, 0));
+    public Command colorToOrangeTransition() {
+        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 10, 1));
+    }
+
+    public Command colorToPurpleTransition() {
+        return new InstantCommand(() -> setTransitionHueToHueValues(this.currentHue, 170, 1));
     }
 
     @Override

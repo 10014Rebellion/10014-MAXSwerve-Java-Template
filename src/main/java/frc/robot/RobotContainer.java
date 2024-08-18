@@ -200,17 +200,17 @@ public class RobotContainer {
             new InstantCommand(() -> robotLED.resetStartingLED())
         );
         driverController.b().whileTrue(
-            robotLED.redToOrangeTransition()
+            robotLED.colorToRedTransition()
         );
         driverController.a().whileTrue(
-            robotLED.orangeToRedTransition()
+            robotLED.colorToBlueTransition()
         );
-        /*driverController.a().whileTrue(
-            new ParallelCommandGroup(
-                new commandArmAutoAim(robotShooter),
-                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, m_driverController),
-                new commandFlywheelShoot(robotFlywheels)
-            ));*/
+        driverController.povRight().whileTrue(
+            robotLED.colorToOrangeTransition()
+        );
+        driverController.povLeft().whileTrue(
+            robotLED.colorToPurpleTransition()
+        );
 
         // First gets the arm into intake position, then allows the intake and indexer to run
         driverController.rightBumper().whileTrue(
@@ -300,8 +300,8 @@ public class RobotContainer {
         copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-3)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
-        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));
-        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmTrapPosition));
+        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmTrapPrepPosition));
 
         }
 
