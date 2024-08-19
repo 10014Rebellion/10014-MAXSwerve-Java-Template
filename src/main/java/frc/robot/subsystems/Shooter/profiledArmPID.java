@@ -176,7 +176,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             setGoal(setpoint);
             this.setpoint = setpoint;
         }
-        enable();
     }
 
     public void goToTunableSetpoint() {
@@ -235,10 +234,9 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
 
     public void populatePivotAngleMap() {
         // THESE ARE TEST ANGLES. THEY WILL NOT BE ACCURATE.
-        pivotAngleMap.put(1.0, -30.0);
-        pivotAngleMap.put(1.5, -20.0);
-        pivotAngleMap.put(2.0, -10.0);
-        pivotAngleMap.put(2.5, 0.0);
-        pivotAngleMap.put(3.0, 10.0);
+        pivotAngleMap.put(1.12, -15.0);
+        pivotAngleMap.put(2.0, -2.5);
+        pivotAngleMap.put(3.0, 6.0);
+        pivotAngleMap.put(4.0, 12.5);
     }
 }
