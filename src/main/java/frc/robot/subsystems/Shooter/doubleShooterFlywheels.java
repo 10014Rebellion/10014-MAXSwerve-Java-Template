@@ -53,15 +53,7 @@ public class doubleShooterFlywheels extends SubsystemBase{
         setLeftFlywheelVelocity(leftTargetVelocity);
         setRightFlywheelVelocity(rightTargetVelocity);
     }
-
-    public void setVelocityOffset(double offsetPercent) {
-        flywheelVelocityOffset = offsetPercent;
-    }
-
-    public void tuneFlywheelVelocityOffset() {
-        setVelocityOffset(flywheelVelocityOffset);
-    }
-
+    
     public boolean flywheelsAtSetpoint() {
         //double offsetVelocityReference = flywheelVelocityReference * flywheelVelocityOffset;
         return (leftFlywheel.isAtSetpoint() && rightFlywheel.isAtSetpoint());
