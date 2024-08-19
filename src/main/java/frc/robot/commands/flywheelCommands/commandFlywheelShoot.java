@@ -31,7 +31,10 @@ public class commandFlywheelShoot extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        if (IndexerConstants.robotHasNote) {
+        if (ShooterConstants.currentFlywheelState == ShooterConstants.flywheelState.SHOOT) {
+            flywheels.setBothFlywheelVelocity(5800, 2000);
+        }
+        else if (IndexerConstants.robotHasNote) {
             flywheels.setBothFlywheelVelocity(1000, 1000);
             ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.IDLE;
         }

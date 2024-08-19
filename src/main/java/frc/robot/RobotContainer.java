@@ -195,7 +195,10 @@ public class RobotContainer {
             new InstantCommand(() -> robotLED.resetStartingLED())
         );
         driverController.b().whileTrue(
-            new InstantCommand(() -> robotShooter.goToTunableSetpoint())
+            new ParallelCommandGroup(
+                new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
+                new commandFlywheelShoot(robotFlywheels)
+            )
         );
         driverController.a().whileTrue(
             robotShooter.goToSetpointCommand(0)
@@ -243,11 +246,19 @@ public class RobotContainer {
 
 
         // Copilot Shooter Commands
-        copilotController.x().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
+        copilotController.x().whileTrue(
+            new ParallelCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmParallelPosition),
+                new commandFlywheelShoot(robotFlywheels))
+            );
         
         copilotController.y().whileTrue(new commandArmAmp(robotShooter));
 
-        copilotController.b().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmParallelPosition));
+        copilotController.b().whileTrue(
+            new ParallelCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
+                new commandFlywheelShoot(robotFlywheels))
+            );
 
         copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
 

@@ -177,7 +177,7 @@ public final class Constants {
     public static final double kArmZeroOffset = 126;
 
     public static final double kArmIntakePosition = -34;
-    public static final double kArmSubwooferShotPosition = 0;
+    public static final double kArmSubwooferShotPosition = -15;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;
     public static final double kArmDefensePosition = 0;
@@ -316,7 +316,7 @@ public final class Constants {
         Units.inchesToMeters(0),                                                               
         Units.inchesToMeters(15.75)),                                                     
         new Rotation3d(0,                                         
-        Units.degreesToRadians(17.5), 0));
+        Units.degreesToRadians(22.5), 0));
     public static double speakerDistance;
   }
 
