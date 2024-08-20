@@ -1,8 +1,10 @@
 package frc.robot.subsystems.Shooter;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.photonConstants;
 import frc.robot.utils.TunableNumber;
 
 public class doubleShooterFlywheels extends SubsystemBase{ 
@@ -12,6 +14,7 @@ public class doubleShooterFlywheels extends SubsystemBase{
 
     //private TunableNumber leftFlywheelVelocityTunableNumber, rightFlywheelVelocityTunableNumber;
     private TunableNumber flywheelP, flywheelV, flywheelD;
+    private InterpolatingDoubleTreeMap flywheelVelocityMap;
 
     public doubleShooterFlywheels() {
         flywheelP = new TunableNumber("Flywheel P");
@@ -26,6 +29,9 @@ public class doubleShooterFlywheels extends SubsystemBase{
         leftFlywheel.initPID(flywheelP.get(), flywheelD.get(), flywheelV.get());
         rightFlywheel = new Flywheel(FlywheelConstants.kRightFlywheelMotorCanID, FlywheelConstants.kRightFlywheelMotorCurrentLimit, true);
         leftFlywheel.initPID(flywheelP.get(), flywheelD.get(), flywheelV.get());
+
+        flywheelVelocityMap = new InterpolatingDoubleTreeMap();
+        populateFlywheelVelocityMap();
 
         //leftFlywheelVelocityTunableNumber = new TunableNumber("Tunable Left Flywheel Velocity");
         //rightFlywheelVelocityTunableNumber = new TunableNumber("Tunable Right Flywheel Velocity");
@@ -56,7 +62,7 @@ public class doubleShooterFlywheels extends SubsystemBase{
     
     public boolean flywheelsAtSetpoint() {
         //double offsetVelocityReference = flywheelVelocityReference * flywheelVelocityOffset;
-        return (leftFlywheel.isAtSetpoint() && rightFlywheel.isAtSetpoint());
+        return (leftFlywheel.atSetpoint() && rightFlywheel.atSetpoint());
         
     }
 
@@ -123,5 +129,18 @@ public class doubleShooterFlywheels extends SubsystemBase{
     public void setFlywheelVoltage(double leftTargetVoltage, double rightTargetVoltage) {
         leftFlywheel.setVoltage(leftTargetVoltage);
         rightFlywheel.setVoltage(rightTargetVoltage);
+    }
+
+    public double getCalculatedVelocity() {
+        if (flywheelVelocityMap != null) return flywheelVelocityMap.get(photonConstants.speakerDistance);
+        return 2900;
+    }
+
+    public void populateFlywheelVelocityMap() {
+        // TEST VALUES
+        flywheelVelocityMap.put(1.12, 2600.0);
+        flywheelVelocityMap.put(2.0, 2700.0);
+        flywheelVelocityMap.put(3.0, 2800.0);
+        flywheelVelocityMap.put(4.0, 2900.0);
     }
 }

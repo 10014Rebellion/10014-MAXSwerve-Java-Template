@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7365015087811937,
+        "y": 4.4057046969192335
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5148426719035912,
+        "y": 3.5245637575353865
+      },
+      "isLocked": false,
+      "linkedName": "Source Side Start"
+    },
+    {
+      "anchor": {
+        "x": 4.378550724901093,
+        "y": 3.2749071580432965
+      },
+      "prevControl": {
+        "x": 3.312882118721984,
+        "y": 2.1679479978678273
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Bottom Stage"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 3.0,
+    "rotation": 0.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Source Side Start Paths",
+  "previewStartingState": {
+    "rotation": -61.38954033403483,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

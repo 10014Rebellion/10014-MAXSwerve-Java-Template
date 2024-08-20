@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.7365015087811937,
+        "y": 4.4057046969192335
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7190686223948486,
+        "y": 1.9385100666444632
+      },
+      "isLocked": false,
+      "linkedName": "Source Side Start"
+    },
+    {
+      "anchor": {
+        "x": 8.04997130566712,
+        "y": 2.276280760074938
+      },
+      "prevControl": {
+        "x": 6.126146921345722,
+        "y": 0.8370838924146553
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "C2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Start",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Pickup Note"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 34.59228868750994,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Source Side Start Paths",
+  "previewStartingState": {
+    "rotation": -60.10109816138543,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

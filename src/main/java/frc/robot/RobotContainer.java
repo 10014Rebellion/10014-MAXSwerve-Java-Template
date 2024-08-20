@@ -39,6 +39,7 @@ import frc.robot.commands.IndexerCommands.commandIndexerStart;
 import frc.robot.commands.ArmCommands.commandArmAmp;
 import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
+import frc.robot.commands.ArmCommands.commandArmSubwoofer;
 import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
@@ -90,21 +91,7 @@ public class RobotContainer {
     private final Vision centralCamera;
     private final LEDInterface robotLED;
 
-    private final Pose2d defaultPose;
-
-    //private final indexerCommand robotIndexer = new indexerCommand();
-    //private final forceIndexCommand forceRobotIndexer = new forceIndexCommand(robotIndexer);
-    //private final intakeCommand robotIntake = new intakeCommand();
-
-    //private final indexerCommand robotIndexer;
-    //private final forceIndexCommand forceRobotIndexer;
-    //private final flywheelCommand commandShoot;
-
-    private ParallelCommandGroup indexAndCheckNoteCommand;
-    private ParallelCommandGroup shootSubwooferCommand;
-    private ParallelCommandGroup stopAllNoteMotorsCommand;
-
-                                                        
+    private final Pose2d defaultPose;                                               
 
     // The driver's controller
     CommandXboxController driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -129,30 +116,8 @@ public class RobotContainer {
         robotLED = new LEDInterface();
         defaultPose = new Pose2d(0, 0, new Rotation2d(0));
         
-        
-
-
-        //robotIndexer = new indexerCommand();
-        //forceRobotIndexer = new forceIndexCommand(robotIndexer);
-        //robotIntake = new intakeCommand();
-
-        //commandShoot = new flywheelCommand(robotFlywheels);
-
-        indexAndCheckNoteCommand = new ParallelCommandGroup(new commandIndexerStart(robotIndexer))
-                    //.alongWith(new InstantCommand(() -> robotIndexer.ignoreDetection(false)))
-                    //.alongWith(robotIndexer)
-                    .alongWith(new commandIntakePickup(robotIntake));
-
-        shootSubwooferCommand = new ParallelCommandGroup(robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition), 
-                                new commandManualFlywheels(robotFlywheels));
-        //ParallelCommandGroup prepSubwooferCommand = new ParallelCommandGroup( );
-        //Registers commands for use with pathplanner
-        NamedCommands.registerCommand("Prep Subwoofer Shot", shootSubwooferCommand);
-        NamedCommands.registerCommand("Index Note", new commandIndexerStart(robotIndexer));
-        //NamedCommands.registerCommand("Stop Pickup", new InstantCommand(robotIntake.end(true)_);
-        NamedCommands.registerCommand("Pickup Note", indexAndCheckNoteCommand);
-        NamedCommands.registerCommand("Go To Subwoofer Shot Position", robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition));
         // Configure the button bindings
+        registerNamedCommands();
         configureButtonBindings();
 
         // Auton Sendable Chooser
@@ -312,6 +277,47 @@ public class RobotContainer {
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
     }
 
+    public void registerNamedCommands() {
+        //Registers commands for use with pathplanner
+        NamedCommands.registerCommand("Subwoofer Shot", 
+        new ParallelCommandGroup(
+            new commandFlywheelShoot(robotFlywheels),
+            new SequentialCommandGroup(
+                new commandArmSubwoofer(robotShooter),
+                new WaitCommand(0.2),
+                new commandIndexerStart(robotIndexer)
+            )
+        ));
+        NamedCommands.registerCommand("Fire Note", new commandIndexerStart(robotIndexer));
+        NamedCommands.registerCommand("Pickup Note", 
+        new SequentialCommandGroup(
+            new commandArmIntake(robotShooter),
+            new ParallelCommandGroup(
+                new commandIntakePickup(robotIntake),
+                new commandIndexerPickup(robotIndexer)
+            )
+        ));
+        NamedCommands.registerCommand("Auto Fire", 
+        new ParallelCommandGroup(
+            new ParallelCommandGroup(
+                new commandArmAutoAim(robotShooter),
+                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
+                new commandFlywheelShoot(robotFlywheels)
+            ),
+            new SequentialCommandGroup(
+                new WaitCommand(0.5),
+                new commandIndexerStart(robotIndexer)
+            )
+        ));
+        NamedCommands.registerCommand("EMPTY THE PAYLOAD", 
+        new ParallelCommandGroup(
+            new commandArmIntake(robotShooter),
+            new commandIndexerStart(robotIndexer),
+            new commandIntakeStart(robotIntake),
+            new commandManualFlywheels(robotFlywheels)
+        ));
+    }
+
     /**
      * 
      * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -363,7 +369,7 @@ public class RobotContainer {
         //WaitCommand autonWait = new WaitCommand(1);
         //m_robotDrive.
         return new SequentialCommandGroup(
-            robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition - 5),
+            robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
             new WaitCommand(2),
             new commandManualFlywheels(robotFlywheels),
             new WaitCommand(1),

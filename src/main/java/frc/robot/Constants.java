@@ -77,9 +77,11 @@ public final class Constants {
     // Turning PID Controller Values. This controls aiming at things like the speaker or amp.
     public static final double kAngularP = 0.02;
     public static final double kAngularD = 0.0;
+    public static boolean aimedAtTarget;
 
     public static final Pose2d kInitialRedPose = new Pose2d(15.57, 5.547, new Rotation2d(0));
     public static final Pose2d kInitialBluePose = new Pose2d(1.0381, 5.587, new Rotation2d(180));
+
   }
 
 
@@ -186,13 +188,7 @@ public final class Constants {
     public static final double kArmTrapPrepPosition = 90;
     public static final double kArmTrapPosition = 80;
 
-    public static flywheelState currentFlywheelState = flywheelState.IDLE;
-    public enum flywheelState {
-      IDLE,
-      SHOOT,
-      REVERSE,
-      NOTHING
-    }
+    public static boolean atSetpoint;
 
     public static armState currentArmState = armState.IDLE;
     public enum armState {
@@ -212,9 +208,19 @@ public final class Constants {
     public static final int kLeftFlywheelMotorCurrentLimit = 60;
     public static final int kRightFlywheelMotorCurrentLimit = 60;
 
+    public static boolean leftAtSetpoint;
+    public static boolean rightAtSetpoint;
+
     public static final double kFlywheelP = 0.0001;
     public static final double kFlywheelD = 0.0;
     public static final double kFlywheelFF = 0.00017;
+    public static flywheelState currentFlywheelState = flywheelState.IDLE;
+    public enum flywheelState {
+      IDLE,
+      SHOOT,
+      REVERSE,
+      NOTHING
+    }
   }
 
   public static class IndexerConstants {

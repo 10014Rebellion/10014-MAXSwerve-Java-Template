@@ -1,6 +1,7 @@
 package frc.robot.commands.flywheelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
@@ -16,12 +17,12 @@ public class commandFlywheelShoot extends Command{
     @Override
     public void initialize() {
         if (IndexerConstants.robotHasNote) {
-            flywheels.setBothFlywheelVelocity(5800, 2000);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.SHOOT;
+            flywheels.setBothFlywheelVelocity(5800, flywheels.getCalculatedVelocity());
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.SHOOT;
         }
         else {
             flywheels.setBothFlywheelVelocity(0, 0);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.NOTHING;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
         
     }
@@ -31,21 +32,21 @@ public class commandFlywheelShoot extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        if (ShooterConstants.currentFlywheelState == ShooterConstants.flywheelState.SHOOT) {
-            flywheels.setBothFlywheelVelocity(5800, 2000);
+        if (FlywheelConstants.currentFlywheelState == FlywheelConstants.flywheelState.SHOOT) {
+            flywheels.setBothFlywheelVelocity(5800, flywheels.getCalculatedVelocity());
         }
         else if (IndexerConstants.robotHasNote) {
             flywheels.setBothFlywheelVelocity(1000, 1000);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.IDLE;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.IDLE;
         }
         else {
             flywheels.setBothFlywheelVelocity(0, 0);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.NOTHING;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
     }
 
     @Override
     public boolean isFinished() {
-        return false;  
+        return flywheels.flywheelsAtSetpoint();  
     }
 }

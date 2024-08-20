@@ -1,6 +1,7 @@
 package frc.robot.commands.ArmCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter.profiledArmPID;
 
 public class commandArmAutoAim extends Command {
@@ -13,6 +14,7 @@ public class commandArmAutoAim extends Command {
 
     @Override
     public void initialize() {
+        ShooterConstants.currentArmState = ShooterConstants.armState.SPEAKER;
         arm.enable();
     }
 

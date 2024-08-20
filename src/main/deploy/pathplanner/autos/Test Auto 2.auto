@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 2.9382201799008745,
+      "y": 7.00011877397313
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Subwoofer Shot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Test Path 1 Pt 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Test Path 1 Pt 2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Test Autos",
+  "choreoAuto": false
+}

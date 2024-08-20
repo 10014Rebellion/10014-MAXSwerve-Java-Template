@@ -1,0 +1,76 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.86729904765713,
+        "y": 3.260221475720233
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.423981373901926,
+        "y": 1.7769675610907583
+      },
+      "isLocked": false,
+      "linkedName": "Close Shot"
+    },
+    {
+      "anchor": {
+        "x": 8.04997130566712,
+        "y": 2.276280760074938
+      },
+      "prevControl": {
+        "x": 5.421234169838644,
+        "y": 1.409825503014156
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "C2"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Start",
+      "waypointRelativePos": 0.7,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Pickup Note"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 21.037511025421693,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Bottom Center Note Paths",
+  "previewStartingState": {
+    "rotation": -41.98721249581669,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

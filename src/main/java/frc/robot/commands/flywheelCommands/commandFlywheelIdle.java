@@ -1,6 +1,7 @@
 package frc.robot.commands.flywheelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
@@ -17,11 +18,11 @@ public class commandFlywheelIdle extends Command{
     public void initialize() {
         if (IndexerConstants.robotHasNote) {
             flywheels.setBothFlywheelVelocity(1000, 1000);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.IDLE;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.IDLE;
         }
         else {
             flywheels.setBothFlywheelVelocity(0, 0);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.NOTHING;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
         
     }
@@ -33,11 +34,11 @@ public class commandFlywheelIdle extends Command{
     public void end(boolean interrupted) {
         if (IndexerConstants.robotHasNote) {
             flywheels.setBothFlywheelVelocity(1000, 1000);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.IDLE;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.IDLE;
         }
         else {
             flywheels.setBothFlywheelVelocity(0, 0);
-            ShooterConstants.currentFlywheelState = ShooterConstants.flywheelState.NOTHING;
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
     }
 

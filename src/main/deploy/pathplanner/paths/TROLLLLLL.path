@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.270256540513081,
+        "y": 0.6359314127078965
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 8.284709527165534,
+        "y": 1.6620934650320012
+      },
+      "isLocked": false,
+      "linkedName": "Troll Start"
+    },
+    {
+      "anchor": {
+        "x": 8.270256540513081,
+        "y": 7.587817992537394
+      },
+      "prevControl": {
+        "x": 8.313615500470439,
+        "y": 6.5616559402132895
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "The TROLL paths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

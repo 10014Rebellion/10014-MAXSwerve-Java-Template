@@ -1,0 +1,43 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7365015087811937,
+      "y": 4.4057046969192335
+    },
+    "rotation": -59.94672484336501
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Subwoofer Shot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source Side to Troll Start"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "EMPTY THE PAYLOAD"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TROLLLLLL"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Source Side Autos",
+  "choreoAuto": false
+}

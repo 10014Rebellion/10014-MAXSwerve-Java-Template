@@ -134,7 +134,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
                 }
                 
             }
-        
+        ShooterConstants.atSetpoint = atSetpoint();
         SmartDashboard.putNumber("PID+FF output", totalOutput);
         SmartDashboard.putNumber("PID Output", outputVoltage);
         SmartDashboard.putNumber("FF Output", FFOutput);
@@ -232,7 +232,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     }
 
     public void populatePivotAngleMap() {
-        // THESE ARE TEST ANGLES. THEY WILL NOT BE ACCURATE.
+        // These values are from first set of testing. needs more work.
         pivotAngleMap.put(1.12, -15.0);
         pivotAngleMap.put(2.0, -2.5);
         pivotAngleMap.put(3.0, 6.0);

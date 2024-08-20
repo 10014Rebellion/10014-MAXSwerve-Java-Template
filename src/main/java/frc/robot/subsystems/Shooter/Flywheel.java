@@ -51,7 +51,7 @@ public class Flywheel {
         controller.setReference(targetVelo, ControlType.kVelocity);
     }
 
-    public boolean isAtSetpoint() {
+    public boolean atSetpoint() {
         return (Math.abs(targetVelo - getVelo()) < 200
                 && targetVelo != 0
         );

@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.7365015087811937,
+      "y": 4.4057046969192335
+    },
+    "rotation": -59.94672484336501
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Subwoofer Shot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Source Side - C1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C1 - Close Shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Close Shot - C2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C2 - Close Shot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Source Side Autos",
+  "choreoAuto": false
+}
