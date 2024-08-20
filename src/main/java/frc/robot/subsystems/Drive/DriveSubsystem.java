@@ -78,7 +78,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
   
   // Odometry class for tracking robot pose
-  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  /*SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
       m_gyro.getRotation2d(),
       new SwerveModulePosition[] {
@@ -86,27 +86,29 @@ public class DriveSubsystem extends SubsystemBase {
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      });
+      });*/
 
   private Field2d field = new Field2d();
   private Vision centralCamera;
   private SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics, 
-      new Rotation2d(m_gyro.getAngle()),
-       new SwerveModulePosition[] {
+      m_gyro.getRotation2d(),
+      new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
         m_rearLeft.getPosition(),
         m_rearRight.getPosition()
-       }, getPose());
+      }, DriverStation.getAlliance().toString().equals("Red")
+      ? DriveConstants.kInitialRedPose
+      : DriveConstants.kInitialBluePose);
 
   
       
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
     
-    AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry,
-     this::getRobotRelativeSpeeds, this::driveRobotRelative, 
+    AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
+     this::getChassisSpeed, this::driveRobotRelative, 
      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // Rotation PID constants
@@ -131,8 +133,8 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem(Vision centralCamera) {
     this.centralCamera = centralCamera;
     
-    AutoBuilder.configureHolonomic(this::getPose, this::resetOdometry,
-     this::getRobotRelativeSpeeds, this::driveRobotRelative, 
+    AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
+     this::getChassisSpeed, this::driveRobotRelative, 
      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // Rotation PID constants
@@ -159,14 +161,14 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    m_odometry.update(
+    /*m_odometry.update(
         m_gyro.getRotation2d(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
-        });
+        });*/
 
     swervePoseEstimator.update(
       Rotation2d.fromDegrees(
@@ -185,7 +187,7 @@ public class DriveSubsystem extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(centralCamPoseEstimate.get().estimatedPose.toPose2d(), visionResult.getTimestampSeconds());
     }
 
-    field.setRobotPose(swervePoseEstimator.getEstimatedPosition());
+    field.setRobotPose(getPose());
     
     SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
     SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
@@ -199,7 +201,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return The pose.
    */
   public Pose2d getPose() {
-    return m_odometry.getPoseMeters();
+    return swervePoseEstimator.getEstimatedPosition();
   }
 
   /**
@@ -207,15 +209,15 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @param pose The pose to which to set the odometry.
    */
-  public void resetOdometry(Pose2d pose) {
-    m_odometry.resetPosition(
-        m_gyro.getRotation2d(),
+  public void resetPoseEstimator(Pose2d pose) {
+        swervePoseEstimator.resetPosition(
+        m_gyro.getRotation2d(), 
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
-        },
+        }, 
         pose);
   }
 
@@ -338,8 +340,12 @@ public class DriveSubsystem extends SubsystemBase {
     setModuleStates(swerveModuleStates);
 }
 
-  private ChassisSpeeds getRobotRelativeSpeeds() {
-    return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
+  private ChassisSpeeds getChassisSpeed() {
+    return DriveConstants.kDriveKinematics.toChassisSpeeds(
+      m_frontLeft.getState(),
+      m_frontRight.getState(),
+      m_rearLeft.getState(),
+      m_rearRight.getState());
   }
 
   private SwerveModuleState[] getModuleStates() {
@@ -382,13 +388,13 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
-  public Command followPathCommand(String pathName) {
+  /*public Command followPathCommand(String pathName) {
     PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
 
     return new FollowPathHolonomic(
             path,
             this::getPose, // Robot pose supplier
-            this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            this::getChassisSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
@@ -410,5 +416,5 @@ public class DriveSubsystem extends SubsystemBase {
             },
             this // Reference to this subsystem to set requirements
     );
-  }
+  }*/
 }

@@ -90,6 +90,8 @@ public class RobotContainer {
     private final Vision centralCamera;
     private final LEDInterface robotLED;
 
+    private final Pose2d defaultPose;
+
     //private final indexerCommand robotIndexer = new indexerCommand();
     //private final forceIndexCommand forceRobotIndexer = new forceIndexCommand(robotIndexer);
     //private final intakeCommand robotIntake = new intakeCommand();
@@ -125,6 +127,7 @@ public class RobotContainer {
         robotIndexer = new indexerSubsystem();
         robotIntake = new intakeSubsystem();
         robotLED = new LEDInterface();
+        defaultPose = new Pose2d(0, 0, new Rotation2d(0));
         
         
 
@@ -192,7 +195,7 @@ public class RobotContainer {
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));
         driverController.y().whileTrue(
-            new InstantCommand(() -> robotLED.resetStartingLED())
+            new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
         );
         driverController.b().whileTrue(
             new ParallelCommandGroup(
@@ -350,7 +353,7 @@ public class RobotContainer {
             m_robotDrive);
 
         // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        m_robotDrive.resetPoseEstimator(exampleTrajectory.getInitialPose());
 
         // Run path following command, then stop at the end.
         return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));

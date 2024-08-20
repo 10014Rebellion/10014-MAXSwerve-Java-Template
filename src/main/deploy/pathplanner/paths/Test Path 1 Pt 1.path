@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.9382201799008745,
+        "y": 7.00011877397313
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.938220179900874,
+        "y": 7.00011877397313
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.9434401495244873,
+        "y": 7.00011877397313
+      },
+      "prevControl": {
+        "x": 2.9434401495244873,
+        "y": 7.00011877397313
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Test 3 Pt 1 End"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

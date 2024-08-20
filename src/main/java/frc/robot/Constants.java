@@ -78,7 +78,8 @@ public final class Constants {
     public static final double kAngularP = 0.02;
     public static final double kAngularD = 0.0;
 
-    
+    public static final Pose2d kInitialRedPose = new Pose2d(15.57, 5.547, new Rotation2d(0));
+    public static final Pose2d kInitialBluePose = new Pose2d(1.0381, 5.587, new Rotation2d(180));
   }
 
 

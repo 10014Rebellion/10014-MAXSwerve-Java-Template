@@ -192,7 +192,6 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             setGoal(tunableSetpointNum);
             this.setpoint = tunableSetpointNum;
         }
-        enable();
     }
     
     public Command goToSetpointCommand(double setpoint) {
