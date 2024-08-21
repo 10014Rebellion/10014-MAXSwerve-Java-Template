@@ -55,6 +55,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -117,10 +119,11 @@ public class RobotContainer {
         defaultPose = new Pose2d(0, 0, new Rotation2d(0));
         
         // Configure the button bindings
-        registerNamedCommands();
+        
         configureButtonBindings();
 
         // Auton Sendable Chooser
+        registerNamedCommands();
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.addOption("Shoot, no move", shootNoMoveAuton());
         SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -280,33 +283,41 @@ public class RobotContainer {
     public void registerNamedCommands() {
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Subwoofer Shot", 
-        new ParallelCommandGroup(
-            new commandFlywheelShoot(robotFlywheels),
-            new SequentialCommandGroup(
-                new commandArmSubwoofer(robotShooter),
-                new WaitCommand(0.2),
-                new commandIndexerStart(robotIndexer)
-            )
+        new ParallelRaceGroup(
+            new WaitCommand(0.5),
+            new ParallelCommandGroup(
+                new commandManualFlywheels(robotFlywheels),
+                new SequentialCommandGroup(
+                    new commandArmSubwoofer(robotShooter),
+                    new WaitCommand(0.2),
+                    new commandIndexerStart(robotIndexer)
+                ))
         ));
         NamedCommands.registerCommand("Fire Note", new commandIndexerStart(robotIndexer));
         NamedCommands.registerCommand("Pickup Note", 
-        new SequentialCommandGroup(
-            new commandArmIntake(robotShooter),
-            new ParallelCommandGroup(
-                new commandIntakePickup(robotIntake),
-                new commandIndexerPickup(robotIndexer)
+        new ParallelRaceGroup(
+            new WaitCommand(5),
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakePickup(robotIntake),
+                    new commandIndexerPickup(robotIndexer)
+                )
             )
         ));
         NamedCommands.registerCommand("Auto Fire", 
-        new ParallelCommandGroup(
+        new ParallelRaceGroup(
+            new WaitCommand(3), 
             new ParallelCommandGroup(
-                new commandArmAutoAim(robotShooter),
-                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
-                new commandFlywheelShoot(robotFlywheels)
-            ),
-            new SequentialCommandGroup(
-                new WaitCommand(0.5),
-                new commandIndexerStart(robotIndexer)
+                new ParallelCommandGroup(
+                    new commandArmAutoAim(robotShooter),
+                    new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
+                    new commandFlywheelShoot(robotFlywheels)
+                ),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.5),
+                    new commandIndexerStart(robotIndexer)
+                )
             )
         ));
         NamedCommands.registerCommand("EMPTY THE PAYLOAD", 

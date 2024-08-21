@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 3.9434401495244873,
-        "y": 7.00011877397313
+        "y": 7.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4140530252891494,
-        "y": 7.024151513091758
+        "x": 3.644787839708776,
+        "y": 7.284202678431977
       },
       "isLocked": false,
       "linkedName": "Test 3 Pt 1 End"
     },
     {
       "anchor": {
-        "x": 2.864839532495967,
-        "y": 7.00011877397313
+        "x": 2.8580939504381226,
+        "y": 7.291486881110408
       },
       "prevControl": {
-        "x": 3.864839532495968,
-        "y": 7.00011877397313
+        "x": 3.858093950438124,
+        "y": 7.291486881110408
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,10 +32,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0
+    "maxVelocity": 0.5,
+    "maxAcceleration": 1.0,
+    "maxAngularVelocity": 120.0,
+    "maxAngularAcceleration": 240.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Test Paths",
+  "folder": null,
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

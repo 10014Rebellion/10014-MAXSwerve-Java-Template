@@ -193,6 +193,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
     SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
+    //SmartDashboard.putNumber("Rotation goal", getRotationToPose(getPose()))
   }
 
   /**
@@ -219,6 +220,15 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
         }, 
         pose);
+  }
+
+  public double getRotationToPose(Pose2d target) {
+    double robotPoseX = swervePoseEstimator.getEstimatedPosition().getX();
+    double robotPoseY = swervePoseEstimator.getEstimatedPosition().getY();
+    double targetPoseX = target.getX();
+    double targetPoseY = target.getY();
+    double rotationToPose = Math.atan2(targetPoseY-robotPoseY, targetPoseX-robotPoseX);
+    return rotationToPose;
   }
 
   /**
