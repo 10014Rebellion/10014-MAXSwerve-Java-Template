@@ -1,0 +1,63 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.542840434518079,
+        "y": 5.551187918118234
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.0875842825030917,
+        "y": 5.683359059025811
+      },
+      "isLocked": false,
+      "linkedName": "A2"
+    },
+    {
+      "anchor": {
+        "x": 2.6309545284564635,
+        "y": 6.740728186286426
+      },
+      "prevControl": {
+        "x": 1.8819847299801933,
+        "y": 5.947701340840964
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Start",
+      "waypointRelativePos": 0.3,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": []
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 37.05652818940958,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Mid Subwoofer Start Paths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

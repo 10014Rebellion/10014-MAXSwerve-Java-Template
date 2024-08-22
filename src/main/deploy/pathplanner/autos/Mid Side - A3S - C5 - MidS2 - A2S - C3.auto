@@ -1,0 +1,85 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3679858486729504,
+      "y": 5.53650223579517
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Subwoofer Shot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid Side Start - A1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A1 - C5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C5 - MidS 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MidS2 - A2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A2 rear - C3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C3 - A2S"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "Mid Side Autos",
+  "choreoAuto": false
+}

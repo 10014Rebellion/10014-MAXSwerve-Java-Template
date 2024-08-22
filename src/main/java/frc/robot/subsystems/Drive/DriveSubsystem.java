@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -193,7 +194,8 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
     SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
-    //SmartDashboard.putNumber("Rotation goal", getRotationToPose(getPose()))
+    SmartDashboard.putNumber("Rotation To Hit Blue speaker", getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
+    SmartDashboard.putNumber("Distance To Blue Speaker", getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
   }
 
   /**
@@ -229,6 +231,15 @@ public class DriveSubsystem extends SubsystemBase {
     double targetPoseY = target.getY();
     double rotationToPose = Math.atan2(targetPoseY-robotPoseY, targetPoseX-robotPoseX);
     return rotationToPose;
+  }
+
+  public double getDistanceToPose(Pose2d target) {
+    double robotPoseX = swervePoseEstimator.getEstimatedPosition().getX();
+    double robotPoseY = swervePoseEstimator.getEstimatedPosition().getY();
+    double targetPoseX = target.getX();
+    double targetPoseY = target.getY();
+    double targetDistance = Math.sqrt(Math.pow(robotPoseX+targetPoseX,2) + Math.pow(robotPoseY + targetPoseY,2));
+    return targetDistance;
   }
 
   /**
@@ -377,7 +388,18 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
+    
     m_gyro.reset();
+    swervePoseEstimator.resetPosition(
+      m_gyro.getRotation2d(),
+      new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+      swervePoseEstimator.getEstimatedPosition()
+    );
   }
 
   /**
@@ -387,6 +409,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     return m_gyro.getRotation2d().getDegrees();
+  }
+
+  public void setHeading(Pose2d pose) {
+    m_gyro.setYaw(pose.getRotation().getDegrees());
   }
 
   /**

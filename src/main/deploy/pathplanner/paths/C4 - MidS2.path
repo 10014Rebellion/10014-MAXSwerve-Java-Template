@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.005914258697928,
+        "y": 5.786158835287259
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.493288979422324,
+        "y": 6.402957492855952
+      },
+      "isLocked": false,
+      "linkedName": "C4"
+    },
+    {
+      "anchor": {
+        "x": 4.040780031470618,
+        "y": 6.35890044588676
+      },
+      "prevControl": {
+        "x": 5.098149158731234,
+        "y": 6.417643175179016
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Mid Shot 2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 10.304846468766069,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Mid Subwoofer Start Paths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -4,17 +4,19 @@
   "holonomicMode": true,
   "pathFolders": [
     "Bottom Center Note Paths",
+    "Mid Subwoofer Start Paths",
     "Source Side Start Paths",
     "Test Paths",
     "The TROLL paths"
   ],
   "autoFolders": [
+    "Mid Side Autos",
     "Source Side Autos",
     "Test Autos"
   ],
-  "defaultMaxVel": 0.5,
-  "defaultMaxAccel": 1.0,
-  "defaultMaxAngVel": 120.0,
-  "defaultMaxAngAccel": 240.0,
-  "maxModuleSpeed": 3.0
+  "defaultMaxVel": 3.0,
+  "defaultMaxAccel": 4.0,
+  "defaultMaxAngVel": 270.0,
+  "defaultMaxAngAccel": 540.0,
+  "maxModuleSpeed": 4.5
 }

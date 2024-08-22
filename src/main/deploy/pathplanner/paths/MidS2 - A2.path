@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.040780031470618,
+        "y": 6.35890044588676
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.9921724913872363,
+        "y": 5.853459594243133
+      },
+      "isLocked": false,
+      "linkedName": "Mid Shot 2"
+    },
+    {
+      "anchor": {
+        "x": 3.144953409763708,
+        "y": 5.565873600441298
+      },
+      "prevControl": {
+        "x": 3.8765485981676187,
+        "y": 5.622211807803898
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A2 Rear"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Start",
+      "waypointRelativePos": 0,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Pickup Note"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -0.1737800999146936,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "Mid Subwoofer Start Paths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
