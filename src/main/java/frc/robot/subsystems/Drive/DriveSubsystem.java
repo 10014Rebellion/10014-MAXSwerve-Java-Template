@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -34,9 +35,12 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import frc.robot.subsystems.Vision;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 import frc.robot.Constants.OIConstants;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.Vector;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -90,6 +94,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   private Field2d field = new Field2d();
   private Vision centralCamera;
+
+  Vector<N3> stateStdDevs = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)); // Increase for less trust
+  Vector<N3> visionStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(0.1)); // Increase for less vision trust
+
   private SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics, 
       m_gyro.getRotation2d(),
@@ -100,7 +108,9 @@ public class DriveSubsystem extends SubsystemBase {
         m_rearRight.getPosition()
       }, DriverStation.getAlliance().toString().equals("Red")
       ? DriveConstants.kInitialRedPose
-      : DriveConstants.kInitialBluePose);
+      : DriveConstants.kInitialBluePose,
+      stateStdDevs,
+      visionStdDevs);
 
   
       
@@ -378,6 +388,10 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
     m_gyro.reset();
+    swervePoseEstimator.resetPosition(
+      m_gyro.getRotation2d(),
+      
+    )
   }
 
   /**

@@ -12,8 +12,8 @@
     "Source Side Autos",
     "Test Autos"
   ],
-  "defaultMaxVel": 0.5,
-  "defaultMaxAccel": 1.0,
+  "defaultMaxVel": 2.0,
+  "defaultMaxAccel": 2.5,
   "defaultMaxAngVel": 120.0,
   "defaultMaxAngAccel": 240.0,
   "maxModuleSpeed": 3.0

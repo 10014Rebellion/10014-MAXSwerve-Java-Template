@@ -243,23 +243,23 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 new commandManualFlywheels(robotFlywheels),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.1),
+                    new WaitCommand(0.5),
                     new commandIndexerStart(robotIndexer)
                 )
             ));
 
         copilotController.leftBumper().whileTrue(
-            new InstantCommand(() -> robotClimb.moveLeftClimb(0.1)))
+            new InstantCommand(() -> robotClimb.moveLeftClimb(0.2)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveLeftClimb(0)));
         
         copilotController.rightBumper().whileTrue(
-             new InstantCommand(() -> robotClimb.moveRightClimb(0.1)))
+             new InstantCommand(() -> robotClimb.moveRightClimb(0.2)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
 
-        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(0.25)))
+        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-0.5)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
 
-        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-0.5)))
+        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(0.25)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
         copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));
@@ -284,7 +284,7 @@ public class RobotContainer {
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Subwoofer Shot", 
         new ParallelRaceGroup(
-            new WaitCommand(0.5),
+            new WaitCommand(2),
             new ParallelCommandGroup(
                 new commandManualFlywheels(robotFlywheels),
                 new SequentialCommandGroup(
