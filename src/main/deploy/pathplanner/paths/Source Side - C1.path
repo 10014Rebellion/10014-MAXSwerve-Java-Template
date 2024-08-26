@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7365015087811937,
-        "y": 4.4057046969192335
+        "x": 0.7456751736928494,
+        "y": 4.370521607059185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.3533001663498863,
-        "y": 3.3336498873355533
+        "x": 1.3624738312615416,
+        "y": 3.298466797475505
       },
       "isLocked": false,
       "linkedName": "Source Side Start"
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "Intake Start",
-      "waypointRelativePos": 0.75,
+      "waypointRelativePos": 0.3,
       "command": {
         "type": "parallel",
         "data": {
@@ -50,10 +50,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.5,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
   },
   "goalEndState": {
     "velocity": 0,
@@ -63,7 +63,7 @@
   "reversed": false,
   "folder": null,
   "previewStartingState": {
-    "rotation": -59.62087398863167,
+    "rotation": -59.13910831165049,
     "velocity": 0
   },
   "useDefaultConstraints": true

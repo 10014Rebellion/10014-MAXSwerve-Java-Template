@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,6 +40,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.photonConstants;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.Vector;
 
@@ -82,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double m_prevTime = WPIUtilJNI.now() * 1e-6;
   
   // Odometry class for tracking robot pose
-  /*SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
+  SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
       m_gyro.getRotation2d(),
       new SwerveModulePosition[] {
@@ -90,13 +92,13 @@ public class DriveSubsystem extends SubsystemBase {
           m_frontRight.getPosition(),
           m_rearLeft.getPosition(),
           m_rearRight.getPosition()
-      });*/
+      });
 
   private Field2d field = new Field2d();
   private Vision centralCamera;
 
   Vector<N3> stateStdDevs = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)); // Increase for less trust
-  Vector<N3> visionStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(0.1)); // Increase for less vision trust
+  Vector<N3> visionStdDevs = VecBuilder.fill(0.2, 0.2, Units.degreesToRadians(0.2)); // Increase for less vision trust
 
   private SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics, 
@@ -115,7 +117,7 @@ public class DriveSubsystem extends SubsystemBase {
   
       
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
+  /*public DriveSubsystem() {
     
     AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
      this::getChassisSpeed, this::driveRobotRelative, 
@@ -138,11 +140,11 @@ public class DriveSubsystem extends SubsystemBase {
     this // Reference to this subsystem to set requirements);
     );
     
-  }
+  }*/
 
   public DriveSubsystem(Vision centralCamera) {
     this.centralCamera = centralCamera;
-    
+    m_gyro.setYaw(swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
     AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
      this::getChassisSpeed, this::driveRobotRelative, 
      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
@@ -157,9 +159,10 @@ public class DriveSubsystem extends SubsystemBase {
       // THE ORIGIN WILL REMAIN ON THE BLUE S
       var alliance = DriverStation.getAlliance();
       if (alliance.isPresent()) {
+        //System.out.println("CURRENT ALLIANCE: " + alliance.get());
         return alliance.get() == DriverStation.Alliance.Red;
       }
-      return false;
+      else return false;
     },
     this // Reference to this subsystem to set requirements);
     );
@@ -171,18 +174,17 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
-    /*m_odometry.update(
+    m_odometry.update(
         m_gyro.getRotation2d(),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
             m_rearLeft.getPosition(),
             m_rearRight.getPosition()
-        });*/
+        });
 
     swervePoseEstimator.update(
-      Rotation2d.fromDegrees(
-        m_gyro.getAngle()),
+      m_gyro.getRotation2d(),
       new SwerveModulePosition[] {
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
@@ -203,7 +205,11 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
     SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
-    //SmartDashboard.putNumber("Rotation goal", getRotationToPose(getPose()))
+    SmartDashboard.putNumber("Drivetrain Yaw", swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    //SmartDashboard.putNumber("Drivetrain Gyro Yaw", m_gyro.getRotation2d().getDegrees());
+    //photonConstants.speakerDistance = getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation);
+    SmartDashboard.putNumber("Rotation To Hit Blue speaker", getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
+    SmartDashboard.putNumber("Distance To Blue Speaker", getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
   }
 
   /**
@@ -239,6 +245,15 @@ public class DriveSubsystem extends SubsystemBase {
     double targetPoseY = target.getY();
     double rotationToPose = Math.atan2(targetPoseY-robotPoseY, targetPoseX-robotPoseX);
     return rotationToPose;
+  }
+
+  public double getDistanceToPose(Pose2d target) {
+    double robotPoseX = swervePoseEstimator.getEstimatedPosition().getX();
+    double robotPoseY = swervePoseEstimator.getEstimatedPosition().getY();
+    double targetPoseX = target.getX();
+    double targetPoseY = target.getY();
+    double targetDistance = Math.sqrt(Math.pow(robotPoseX+targetPoseX,2) + Math.pow(robotPoseY + targetPoseY,2));
+    return targetDistance;
   }
 
   /**
@@ -387,11 +402,18 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
+    
     m_gyro.reset();
     swervePoseEstimator.resetPosition(
       m_gyro.getRotation2d(),
-      
-    )
+      new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+        },
+      new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
+    );
   }
 
   /**
@@ -401,6 +423,10 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     return m_gyro.getRotation2d().getDegrees();
+  }
+
+  public void setHeading(Pose2d pose) {
+    m_gyro.setYaw(pose.getRotation().getDegrees());
   }
 
   /**

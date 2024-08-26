@@ -293,17 +293,17 @@ public class RobotContainer {
                     new commandIndexerStart(robotIndexer)
                 ))
         ));
+        
+        NamedCommands.registerCommand("Prep Subwoofer Shot", new commandFlywheelShoot(robotFlywheels));
+        NamedCommands.registerCommand("Index Note", new commandIndexerStart(robotIndexer));
         NamedCommands.registerCommand("Fire Note", new commandIndexerStart(robotIndexer));
         NamedCommands.registerCommand("Pickup Note", 
-        new ParallelRaceGroup(
-            new WaitCommand(5),
-            new SequentialCommandGroup(
-                new commandArmIntake(robotShooter),
-                new ParallelCommandGroup(
-                    new commandIntakePickup(robotIntake),
-                    new commandIndexerPickup(robotIndexer)
-                )
-            )
+        new ParallelCommandGroup(
+            new commandArmIntake(robotShooter),
+            //new ParallelCommandGroup(
+                new commandIntakePickup(robotIntake),
+                new commandIndexerPickup(robotIndexer)
+            //)
         ));
         NamedCommands.registerCommand("Auto Fire", 
         new ParallelRaceGroup(
@@ -315,10 +315,15 @@ public class RobotContainer {
                     new commandFlywheelShoot(robotFlywheels)
                 ),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.5),
+                    new WaitCommand(2.0),
                     new commandIndexerStart(robotIndexer)
                 )
             )
+        ));
+        NamedCommands.registerCommand("Prep Fire", 
+        new ParallelCommandGroup(
+            new commandArmAutoAim(robotShooter),
+            new commandFlywheelShoot(robotFlywheels)
         ));
         NamedCommands.registerCommand("EMPTY THE PAYLOAD", 
         new ParallelCommandGroup(

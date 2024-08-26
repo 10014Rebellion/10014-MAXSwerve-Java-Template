@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.974975583753984,
-        "y": 4.104648209296419
+        "x": 5.225459820928515,
+        "y": 4.27582697223957
       },
       "isLocked": false,
       "linkedName": "Bottom Stage"
@@ -30,30 +30,12 @@
   ],
   "rotationTargets": [],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake Start",
-      "waypointRelativePos": 0.35,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Pickup Note"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.5,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
   },
   "goalEndState": {
     "velocity": 0,

@@ -97,10 +97,11 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.07493;
+    public static final double kWheelDiameterMeters = 0.07336;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
-    // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the bevel pinion
-    public static final double kDrivingMotorReduction = (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
+    // 45 teeth on the wheel's bevel gear, 20 teeth on the first-stage spur gear, 14 teeth on the bevel pinion
+    // pose estimator was off by ~10%. changed from 22T spur to 20T spur.
+    public static final double kDrivingMotorReduction = (45.0 * 20) / (kDrivingMotorPinionTeeth * 15);
     public static final double kDriveWheelFreeSpeedRps = (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters)
         / kDrivingMotorReduction;
 
@@ -152,7 +153,7 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 0.2;
+    public static final double kPXController = 0.26;
     public static final double kPYController = 0.2;
     public static final double kPThetaController = 0.2;
 
@@ -177,7 +178,7 @@ public final class Constants {
     public static final double kArmUpperLimit = 92.5;
 
     public static final double kArmParallelPosition = 0;
-    public static final double kArmZeroOffset = 126;
+    public static final double kArmZeroOffset = 235;
 
     public static final double kArmIntakePosition = -34;
     public static final double kArmSubwooferShotPosition = -15;
@@ -319,11 +320,11 @@ public final class Constants {
   public static final class photonConstants {
     public static final String kCameraName = "centralCamera";
       public static final Transform3d kCameraLocation = new Transform3d(
-        new Translation3d(Units.inchesToMeters(14),                                                                
+        new Translation3d(Units.inchesToMeters(-14),                                                                
         Units.inchesToMeters(0),                                                               
         Units.inchesToMeters(15.75)),                                                     
         new Rotation3d(0,                                         
-        Units.degreesToRadians(22.5), 0));
+        Units.degreesToRadians(22.5), Units.degreesToRadians(180)));
     public static double speakerDistance;
   }
 

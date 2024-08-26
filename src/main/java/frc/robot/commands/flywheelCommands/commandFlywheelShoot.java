@@ -17,7 +17,7 @@ public class commandFlywheelShoot extends Command{
     @Override
     public void initialize() {
         if (IndexerConstants.robotHasNote) {
-            flywheels.setBothFlywheelVelocity(5800, flywheels.getCalculatedVelocity());
+            flywheels.setBothFlywheelVelocity(5800, 2900);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.SHOOT;
         }
         else {
@@ -33,7 +33,7 @@ public class commandFlywheelShoot extends Command{
     @Override
     public void end(boolean interrupted) {
         if (FlywheelConstants.currentFlywheelState == FlywheelConstants.flywheelState.SHOOT) {
-            flywheels.setBothFlywheelVelocity(5800, flywheels.getCalculatedVelocity());
+            flywheels.setBothFlywheelVelocity(5800, 2900);
         }
         else if (IndexerConstants.robotHasNote) {
             flywheels.setBothFlywheelVelocity(1000, 1000);

@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3679858486729504,
+        "y": 5.53650223579517
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.1022699648261556,
+        "y": 5.184045860041631
+      },
+      "isLocked": false,
+      "linkedName": "Mid Start"
+    },
+    {
+      "anchor": {
+        "x": 2.557526116841143,
+        "y": 4.346961967626977
+      },
+      "prevControl": {
+        "x": 2.0288415532108353,
+        "y": 4.758161072672772
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A3 - 1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Start",
+      "waypointRelativePos": 0.1,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Pickup Note"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -32.735226272107646,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

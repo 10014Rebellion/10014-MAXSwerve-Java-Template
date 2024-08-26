@@ -1,0 +1,70 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.040780031470618,
+        "y": 6.35890044588676
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.553405310746221,
+        "y": 6.623242727701913
+      },
+      "isLocked": false,
+      "linkedName": "Mid Shot 2"
+    },
+    {
+      "anchor": {
+        "x": 8.005914258697928,
+        "y": 5.786158835287259
+      },
+      "prevControl": {
+        "x": 6.507974661745388,
+        "y": 5.918329976194836
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "C4"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "Intake Start",
+      "waypointRelativePos": 0.15,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "Pickup Note"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 8.88065915052022,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

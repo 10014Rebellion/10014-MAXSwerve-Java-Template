@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 8.04997130566712,
-        "y": 2.276280760074938
+        "x": 8.23383552712092,
+        "y": 2.3965026812041206
       },
       "prevControl": {
-        "x": 5.421234169838644,
-        "y": 1.409825503014156
+        "x": 5.605098391292445,
+        "y": 1.5300474241433386
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "Intake Start",
-      "waypointRelativePos": 0.7,
+      "waypointRelativePos": 0.1,
       "command": {
         "type": "parallel",
         "data": {
@@ -56,10 +56,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.5,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
   },
   "goalEndState": {
     "velocity": 0,

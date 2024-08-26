@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.7365015087811937,
-        "y": 4.4057046969192335
+        "x": 0.7456751736928494,
+        "y": 4.370521607059185
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5148426719035912,
-        "y": 3.5245637575353865
+        "x": 1.5240163368152466,
+        "y": 3.4893806676753383
       },
       "isLocked": false,
       "linkedName": "Source Side Start"
@@ -32,10 +32,10 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 2.5,
-    "maxAngularVelocity": 120.0,
-    "maxAngularAcceleration": 240.0
+    "maxVelocity": 3.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
   },
   "goalEndState": {
     "velocity": 3.0,

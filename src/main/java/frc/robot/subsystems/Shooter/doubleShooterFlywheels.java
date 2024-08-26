@@ -138,9 +138,13 @@ public class doubleShooterFlywheels extends SubsystemBase{
 
     public void populateFlywheelVelocityMap() {
         // TEST VALUES
-        flywheelVelocityMap.put(1.12, 2600.0);
-        flywheelVelocityMap.put(2.0, 2700.0);
-        flywheelVelocityMap.put(3.0, 2800.0);
+        flywheelVelocityMap.put(1.12, 2900.0);
+        flywheelVelocityMap.put(2.0, 2900.0);
+        flywheelVelocityMap.put(3.0, 2900.0);
         flywheelVelocityMap.put(4.0, 2900.0);
     }
+
+    /*
+     * 1.1 = 
+     */
 }

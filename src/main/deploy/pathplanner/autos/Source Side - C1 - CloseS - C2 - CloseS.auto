@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7365015087811937,
-      "y": 4.4057046969192335
+      "x": 0.7456751736928494,
+      "y": 4.370521607059185
     },
-    "rotation": -60.75410834416427
+    "rotation": -55.35905248808366
   },
   "command": {
     "type": "sequential",
@@ -24,6 +24,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "C1 - Close Shot"
@@ -39,6 +45,12 @@
           "type": "path",
           "data": {
             "pathName": "Close Shot - C2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Pickup Note"
           }
         },
         {

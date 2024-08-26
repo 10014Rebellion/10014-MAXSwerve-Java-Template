@@ -1,0 +1,61 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3679858486729504,
+      "y": 5.53650223579517
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Subwoofer Shot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid Start - A3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A3 - A2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A2 - A1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Auto Fire"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

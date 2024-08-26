@@ -71,7 +71,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pivotEncoder.setPositionConversionFactor(360);
         pivotEncoder.setInverted(true);
-        pivotEncoder.setZeroOffset(ShooterConstants.kArmZeroOffset);
+        //pivotEncoder.setZeroOffset(ShooterConstants.kArmZeroOffset);
 
         // Converts the encoder readings into a -180 -> 180 deg format.
         if (pivotEncoder.getPosition() > 180) {
@@ -234,8 +234,11 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     public void populatePivotAngleMap() {
         // These values are from first set of testing. needs more work.
         pivotAngleMap.put(1.12, -15.0);
-        pivotAngleMap.put(2.0, -2.5);
-        pivotAngleMap.put(3.0, 6.0);
-        pivotAngleMap.put(4.0, 12.5);
+        pivotAngleMap.put(1.50, -10.0);
+        pivotAngleMap.put(2.0, -3.0);
+        pivotAngleMap.put(2.5, 1.5);
+        pivotAngleMap.put(3.0, 4.0);
+        pivotAngleMap.put(3.5, 6.0);
+        pivotAngleMap.put(4.0, 7.0);
     }
 }
