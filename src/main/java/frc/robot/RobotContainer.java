@@ -45,7 +45,6 @@ import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
-import frc.robot.commands.LEDCommands.commandLEDNotePickup;
 import frc.robot.commands.flywheelCommands.commandManualFlywheels;
 import frc.robot.commands.flywheelCommands.commandFlywheelIdle;
 import frc.robot.commands.flywheelCommands.commandFlywheelShoot;
@@ -188,8 +187,7 @@ public class RobotContainer {
                 new commandArmIntake(robotShooter),
                 new ParallelCommandGroup(
                     new commandIntakePickup(robotIntake),
-                    new commandIndexerPickup(robotIndexer),
-                    new commandLEDNotePickup(robotLED)
+                    new commandIndexerPickup(robotIndexer)
                 ))
             )
             .whileFalse(new commandFlywheelIdle(robotFlywheels));

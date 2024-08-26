@@ -118,6 +118,8 @@ public class doubleShooterFlywheels extends SubsystemBase{
     
         if (flywheelD.hasChanged()) setFlywheelD();
 
+        FlywheelConstants.flywheelsAtSetpoint = leftFlywheel.atSetpoint() && rightFlywheel.atSetpoint();
+
         SmartDashboard.putNumber("Left Flywheel set value", leftFlywheel.getAppliedOutput());
     }
     

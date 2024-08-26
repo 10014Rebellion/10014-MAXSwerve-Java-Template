@@ -36,6 +36,7 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import frc.robot.subsystems.Vision;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
@@ -43,6 +44,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.photonConstants;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.controller.PIDController;
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -114,33 +116,7 @@ public class DriveSubsystem extends SubsystemBase {
       stateStdDevs,
       visionStdDevs);
 
-  
-      
-  /** Creates a new DriveSubsystem. */
-  /*public DriveSubsystem() {
-    
-    AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
-     this::getChassisSpeed, this::driveRobotRelative, 
-     new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
-                    0.4759, // Drive base radius in meters. Distance from robot center to furthest module.
-                    new ReplanningConfig() // Default path replanning config. See the API for the options here
-    ),  () -> {
-      // Boolean supplier that controls when the path will be mirrored for the red alliance
-      // This will flip the path being followed to the red side of the field.
-      // THE ORIGIN WILL REMAIN ON THE BLUE S
-      var alliance = DriverStation.getAlliance();
-      if (alliance.isPresent()) {
-        return alliance.get() == DriverStation.Alliance.Red;
-      }
-      return false;
-    },
-    this // Reference to this subsystem to set requirements);
-    );
-    
-  }*/
+  private PIDController turnController;
 
   public DriveSubsystem(Vision centralCamera) {
     this.centralCamera = centralCamera;
@@ -166,7 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
     },
     this // Reference to this subsystem to set requirements);
     );
-    
+    turnController = new PIDController(DriveConstants.kAngularP, 0, DriveConstants.kAngularD);
     SmartDashboard.putData("Field", field);
 
   }
@@ -200,9 +176,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     field.setRobotPose(getPose());
-    
-    SmartDashboard.putBoolean("Cam Pose has estimate?", centralCamPoseEstimate.isPresent());
-    SmartDashboard.putBoolean("Cam Pose is empty?", centralCamPoseEstimate.isEmpty());
+
     SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
     SmartDashboard.putNumber("Drivetrain Yaw", swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
@@ -252,7 +226,7 @@ public class DriveSubsystem extends SubsystemBase {
     double robotPoseY = swervePoseEstimator.getEstimatedPosition().getY();
     double targetPoseX = target.getX();
     double targetPoseY = target.getY();
-    double targetDistance = Math.sqrt(Math.pow(robotPoseX+targetPoseX,2) + Math.pow(robotPoseY + targetPoseY,2));
+    double targetDistance = Math.sqrt(Math.pow(robotPoseX-targetPoseX,2) + Math.pow(robotPoseY - targetPoseY,2));
     return targetDistance;
   }
 
@@ -322,7 +296,16 @@ public class DriveSubsystem extends SubsystemBase {
     // Convert the commanded speeds into the correct units for the drivetrain
     double xSpeedDelivered = xSpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
-    double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
+    double rotDelivered;
+    // Tells the drivetrain to use pid instead of normal control if it's trying to aim at something.
+    if (DriveConstants.currentDriveState == DriveConstants.driveState.AIMING) {
+      double goalYaw = centralCamera.getYaw();
+      m_currentRotation = turnController.calculate(centralCamera.getYaw(), 0);
+      DriveConstants.aimedAtTarget = (Math.abs(goalYaw) < 2);
+      SmartDashboard.putNumber("Calculated Turn Speed: camera", m_currentRotation);
+      SmartDashboard.putNumber("Calculated Turn Speed: Pose Estimator", turnController.calculate(m_gyro.getAngle(), getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation)));
+    }
+    rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative

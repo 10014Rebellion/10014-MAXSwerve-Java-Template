@@ -134,7 +134,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
                 }
                 
             }
-        ShooterConstants.atSetpoint = atSetpoint();
+        ShooterConstants.armAtSetpoint = atSetpoint();
         SmartDashboard.putNumber("PID+FF output", totalOutput);
         SmartDashboard.putNumber("PID Output", outputVoltage);
         SmartDashboard.putNumber("FF Output", FFOutput);

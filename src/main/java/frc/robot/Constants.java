@@ -82,6 +82,13 @@ public final class Constants {
     public static final Pose2d kInitialRedPose = new Pose2d(15.57, 5.547, new Rotation2d(0));
     public static final Pose2d kInitialBluePose = new Pose2d(1.0381, 5.587, new Rotation2d(180));
 
+    public static driveState currentDriveState = driveState.DRIVING;
+    public static enum driveState {
+      DRIVING,
+      AIMING,
+      AIMED,
+      MOVINGTOPOSE
+    }
   }
 
 
@@ -97,7 +104,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.07336;
+    public static final double kWheelDiameterMeters = 0.0762; // Wheel Diameter of 3 inches
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 20 teeth on the first-stage spur gear, 14 teeth on the bevel pinion
     // pose estimator was off by ~10%. changed from 22T spur to 20T spur.
@@ -189,7 +196,7 @@ public final class Constants {
     public static final double kArmTrapPrepPosition = 90;
     public static final double kArmTrapPosition = 80;
 
-    public static boolean atSetpoint;
+    public static boolean armAtSetpoint;
 
     public static armState currentArmState = armState.IDLE;
     public enum armState {
@@ -209,8 +216,7 @@ public final class Constants {
     public static final int kLeftFlywheelMotorCurrentLimit = 60;
     public static final int kRightFlywheelMotorCurrentLimit = 60;
 
-    public static boolean leftAtSetpoint;
-    public static boolean rightAtSetpoint;
+    public static boolean flywheelsAtSetpoint;
 
     public static final double kFlywheelP = 0.0001;
     public static final double kFlywheelD = 0.0;
