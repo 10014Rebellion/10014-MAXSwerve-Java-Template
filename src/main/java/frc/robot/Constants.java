@@ -77,7 +77,7 @@ public final class Constants {
     // Turning PID Controller Values. This controls aiming at things like the speaker or amp.
     public static final double kAngularP = 0.02;
     public static final double kAngularD = 0.0;
-    public static boolean aimedAtTarget;
+    public static boolean aimedAtTarget = false;
 
     public static final Pose2d kInitialRedPose = new Pose2d(15.57, 5.547, new Rotation2d(0));
     public static final Pose2d kInitialBluePose = new Pose2d(1.0381, 5.587, new Rotation2d(180));
@@ -196,7 +196,7 @@ public final class Constants {
     public static final double kArmTrapPrepPosition = 90;
     public static final double kArmTrapPosition = 80;
 
-    public static boolean armAtSetpoint;
+    public static boolean armAtSetpoint = false;
 
     public static armState currentArmState = armState.IDLE;
     public enum armState {
@@ -216,7 +216,7 @@ public final class Constants {
     public static final int kLeftFlywheelMotorCurrentLimit = 60;
     public static final int kRightFlywheelMotorCurrentLimit = 60;
 
-    public static boolean flywheelsAtSetpoint;
+    public static boolean flywheelsAtSetpoint = false;
 
     public static final double kFlywheelP = 0.0001;
     public static final double kFlywheelD = 0.0;
@@ -334,13 +334,23 @@ public final class Constants {
     public static double speakerDistance;
   }
 
-  public static final class LEDColor {
-    public static final int red = 0;
-    public static final int orange = 10;
-    public static final int yellow = 40;
-    public static final int green = 70;
-    public static final int blue = 100;
-    public static final int indigo = 130;
-    public static final int purple = 160;
+  public static final class HSVLEDColor {
+    public static final int red = 90;
+    public static final int orange = 100;
+    public static final int yellow = 70;
+    public static final int green = 30;
+    public static final int blue = 0;
+    public static final int indigo = 120;
+    public static final int purple = 140;
+  }
+  
+  public static final class RGBLEDColor {
+    // These colors are gotten online / through trial and error
+    // Please dont touch them it would be a pain to fix ;-;
+    public static final int[] red = {240,0,0};
+    public static final int[] orange = {255,45,0};
+    public static final int[] yellow = {255, 191, 0};
+    public static final int[] green = {0, 128, 0};
+    public static final int[] blue = {25, 25, 150};
   }
 }

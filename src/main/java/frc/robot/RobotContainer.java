@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.photonConstants;
@@ -152,8 +153,8 @@ public class RobotContainer {
         
     }
     private void configureButtonBindings() {
-        configureCompetitionButtonBindings();
-        //configureTestButtonBindings();
+        //configureCompetitionButtonBindings();
+        configureTestButtonBindings();
     }
 
     private void configureCompetitionButtonBindings() {
@@ -266,7 +267,7 @@ public class RobotContainer {
 
     private void configureTestButtonBindings() {
         System.out.println("YOU ARE IN TESTING MODE");
-        driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))
+        /*driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
         driverController.a().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(-12)))
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
@@ -275,7 +276,32 @@ public class RobotContainer {
         driverController.leftTrigger().whileTrue(new commandIndexerPickup(robotIndexer));
         driverController.rightBumper().whileTrue(new commandIntakeStart(robotIntake));
         driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runArmFFOnly()))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
+                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));*/
+        /*driverController.a().onTrue(new ParallelCommandGroup(
+            new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
+            new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
+            new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
+        ));
+        driverController.b().onTrue(new ParallelCommandGroup(
+            new InstantCommand(() -> ShooterConstants.armAtSetpoint = false),
+            new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = false),
+              new InstantCommand(() -> DriveConstants.aimedAtTarget = false)
+        ));*/
+        driverController.a().whileTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
+                new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
+                new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
+            )
+        );
+        driverController.b().whileTrue(
+            robotLED.colorToRedTransition()
+        );
+        driverController.x().whileTrue(
+            robotLED.colorToOrangeTransition()
+        );
+
+
     }
 
     public void registerNamedCommands() {

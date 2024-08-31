@@ -101,8 +101,7 @@ public class doubleShooterFlywheels extends SubsystemBase{
 
         SmartDashboard.putNumber("Current Left Flywheel Velocity", getLeftFlywheelVelocity());
         SmartDashboard.putNumber("Current Right Flywheel Velocity", getRightFlywheelVelocity());
-        SmartDashboard.putNumber("Left Flywheel Current", leftFlywheel.getCurrent());
-        SmartDashboard.putNumber("Right Flywheel Current", rightFlywheel.getCurrent());
+        SmartDashboard.putBoolean("Flywheels at Setpoint", FlywheelConstants.flywheelsAtSetpoint);
 
         /*if (leftFlywheelVelocityTunableNumber.hasChanged()) {
             tuneLeftFlywheelVelocity();
@@ -119,7 +118,7 @@ public class doubleShooterFlywheels extends SubsystemBase{
         if (flywheelD.hasChanged()) setFlywheelD();
 
         FlywheelConstants.flywheelsAtSetpoint = leftFlywheel.atSetpoint() && rightFlywheel.atSetpoint();
-
+        
         SmartDashboard.putNumber("Left Flywheel set value", leftFlywheel.getAppliedOutput());
     }
     

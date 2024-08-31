@@ -184,6 +184,7 @@ public class DriveSubsystem extends SubsystemBase {
     //photonConstants.speakerDistance = getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation);
     SmartDashboard.putNumber("Rotation To Hit Blue speaker", getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
     SmartDashboard.putNumber("Distance To Blue Speaker", getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
+    SmartDashboard.putBoolean("Aimed At Target", DriveConstants.aimedAtTarget);
   }
 
   /**
