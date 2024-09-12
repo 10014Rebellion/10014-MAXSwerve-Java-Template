@@ -14,7 +14,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -43,6 +45,7 @@ import frc.robot.commands.ArmCommands.commandArmIntake;
 import frc.robot.commands.ArmCommands.commandArmSubwoofer;
 import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
+import frc.robot.commands.IndexerCommands.commandIndexBrakeMode;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
@@ -118,6 +121,7 @@ public class RobotContainer {
         robotLED = new LEDInterface();
         defaultPose = new Pose2d(0, 0, new Rotation2d(0));
         
+        
         // Configure the button bindings
         
         configureButtonBindings();
@@ -153,8 +157,8 @@ public class RobotContainer {
         
     }
     private void configureButtonBindings() {
-        //configureCompetitionButtonBindings();
-        configureTestButtonBindings();
+        configureCompetitionButtonBindings();
+        //configureTestButtonBindings();
     }
 
     private void configureCompetitionButtonBindings() {
@@ -165,15 +169,24 @@ public class RobotContainer {
         driverController.y().whileTrue(
             new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
         );
-        driverController.b().whileTrue(
+        /*driverController.b().whileTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
                 new commandFlywheelShoot(robotFlywheels)
             )
+        );*/
+        driverController.b().whileTrue(
+            new InstantCommand(() ->
+            robotIndexer.getOuttaHere())
         );
-        driverController.a().whileTrue(
-            robotShooter.goToSetpointCommand(0)
+        /*driverController.povRight().whileTrue(
+            new InstantCommand(() ->
+            robotIndexer.enableBrake())
         );
+        driverController.povLeft().whileTrue(
+            new InstantCommand(() -> 
+            robotIndexer.disableBrake())
+        );*/
         //driverController.a().whileTrue(new commandClimbAutoZero(robotClimb));
         /*driverController.b().whileTrue(
             robotLED.redToOrangeTransition()
@@ -211,7 +224,11 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 new commandArmAutoAim(robotShooter),
                 new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
-                new commandFlywheelShoot(robotFlywheels)
+                new commandFlywheelShoot(robotFlywheels),
+                new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                )
             ));
 
 
@@ -222,15 +239,30 @@ public class RobotContainer {
                 new commandFlywheelShoot(robotFlywheels))
             );
         
-        copilotController.y().whileTrue(new commandArmAmp(robotShooter));
+        copilotController.y().whileTrue(
+            new ParallelCommandGroup(
+            new commandArmAmp(robotShooter),
+            new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                ))
+        );
 
         copilotController.b().whileTrue(
             new ParallelCommandGroup(
                 robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
-                new commandFlywheelShoot(robotFlywheels))
-            );
+                new commandFlywheelShoot(robotFlywheels),
+                new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                )
+            ));
 
-        copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
+        copilotController.a().whileTrue(
+            new ParallelCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition),
+                new commandFlywheelShoot(robotFlywheels)
+            ));
 
         copilotController.leftTrigger().whileTrue(
             new ParallelCommandGroup(
@@ -255,13 +287,13 @@ public class RobotContainer {
              new InstantCommand(() -> robotClimb.moveRightClimb(0.2)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
 
-        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-0.5)))
+        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-6)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
 
-        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(0.25)))
+        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(3)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
-        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
         copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
     }
 
@@ -405,15 +437,19 @@ public class RobotContainer {
         return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
     }
 
-    public SequentialCommandGroup shootNoMoveAuton() {
+    public ParallelDeadlineGroup shootNoMoveAuton() {
         //WaitCommand autonWait = new WaitCommand(1);
         //m_robotDrive.
-        return new SequentialCommandGroup(
-            robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
-            new WaitCommand(2),
-            new commandManualFlywheels(robotFlywheels),
-            new WaitCommand(1),
-            new commandIndexerStart(robotIndexer));
+        return 
+        new ParallelDeadlineGroup(
+            new WaitCommand(5),
+            new ParallelCommandGroup(
+            new SequentialCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
+                new WaitCommand(2),
+                new commandIndexerStart(robotIndexer)),
+            new commandManualFlywheels(robotFlywheels)
+        ));
     }
 
     public Command getAutonomousCommand() {

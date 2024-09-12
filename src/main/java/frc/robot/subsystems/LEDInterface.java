@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.sql.Driver;
+
 import org.w3c.dom.css.RGBColor;
 
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -34,7 +36,7 @@ public class LEDInterface extends SubsystemBase{
 
     public LEDInterface() {
         led = new AddressableLED(0);
-        ledBuffer = new AddressableLEDBuffer(6); // Update this with the correct lenth later
+        ledBuffer = new AddressableLEDBuffer(18); // Update this with the correct lenth later
 
         led.setLength(ledBuffer.getLength());
 
@@ -195,8 +197,11 @@ public class LEDInterface extends SubsystemBase{
         transitionRGB();
         //rainbowUnicornVomit();
         led.setData(ledBuffer);
-        SmartDashboard.putNumber("Current R Color", finalRGB[0]);
+        /*SmartDashboard.putNumber("Current R Color", finalRGB[0]);
         SmartDashboard.putNumber("Current G Color", finalRGB[1]);
-        SmartDashboard.putNumber("Current B Color", finalRGB[2]);
+        SmartDashboard.putNumber("Current B Color", finalRGB[2]);*/
+        SmartDashboard.putBooleanArray("Aimed, Flywheels, Arm", 
+        new boolean[] {DriveConstants.aimedAtTarget, FlywheelConstants.flywheelsAtSetpoint, ShooterConstants.armAtSetpoint});
+        //System.out.println("GRELEKJLDKSJ");
     }
 }

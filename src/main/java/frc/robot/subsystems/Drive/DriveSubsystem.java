@@ -29,6 +29,7 @@ import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.FieldCentric;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathHolonomic;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -288,9 +289,36 @@ public class DriveSubsystem extends SubsystemBase {
       m_currentRotation = m_rotLimiter.calculate(rot);
 
 
-    } else {
+    } 
+    else {
       xSpeedCommanded = xSpeed;
       ySpeedCommanded = ySpeed;
+      /*if (DriveConstants.currentDriveState == DriveConstants.driveState.AIMING) {
+        if (centralCamera.hasSpeakerTag()) {
+          
+        }
+        /*else {
+          double rawYaw = swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees();
+          //double rawYaw = m_gyro.getAngle();
+          double currentYaw;
+          if (DriverStation.getAlliance().get().toString().equals("Red")) {
+            currentYaw = rawYaw < 0 ? -(rawYaw % 180) : (rawYaw % 180);
+            m_currentRotation = -(1.0/12.0) * turnController.calculate(currentYaw, getRotationToPose(FieldConstants.kRedSpeakerAprilTagLocation));
+            DriveConstants.aimedAtTarget = Math.abs(m_currentRotation) <= 0.05;
+          }
+          else {
+            currentYaw = rawYaw < 0 ? -(rawYaw % 180) : (rawYaw % 180);
+            m_currentRotation = (1.0/12.0) * turnController.calculate(currentYaw, getRotationToPose(FieldConstants.kRedSpeakerAprilTagLocation));
+            DriveConstants.aimedAtTarget = Math.abs(m_currentRotation) <= 0.05;
+          }
+          System.out.println("Current Yaw: " + currentYaw);
+          System.out.println("Goal Yaw: " + getRotationToPose(FieldConstants.kRedSpeakerAprilTagLocation));
+          System.out.println("Calculated Turn Speed: Pose Estimator" + m_currentRotation);
+          System.out.println("Current driverstation color: " + DriverStation.getAlliance().get().toString());
+        }
+        //System.out.println("Calculated Turn Speed: camera - " + turnController.calculate(centralCamera.getYaw(), 0));
+        
+      }*/
       m_currentRotation = rot;
     }
 
@@ -299,13 +327,7 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered;
     // Tells the drivetrain to use pid instead of normal control if it's trying to aim at something.
-    if (DriveConstants.currentDriveState == DriveConstants.driveState.AIMING) {
-      double goalYaw = centralCamera.getYaw();
-      m_currentRotation = turnController.calculate(centralCamera.getYaw(), 0);
-      DriveConstants.aimedAtTarget = (Math.abs(goalYaw) < 2);
-      SmartDashboard.putNumber("Calculated Turn Speed: camera", m_currentRotation);
-      SmartDashboard.putNumber("Calculated Turn Speed: Pose Estimator", turnController.calculate(m_gyro.getAngle(), getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation)));
-    }
+    
     rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -389,15 +411,44 @@ public class DriveSubsystem extends SubsystemBase {
     
     m_gyro.reset();
     swervePoseEstimator.resetPosition(
-      m_gyro.getRotation2d(),
-      new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        },
-      new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
+        m_gyro.getRotation2d(), 
+        new SwerveModulePosition[] {
+              m_frontLeft.getPosition(),
+              m_frontRight.getPosition(),
+              m_rearLeft.getPosition(),
+              m_rearRight.getPosition()
+          },
+        new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
     );
+    
+    /*if (DriverStation.getAlliance().get().toString().equals("Red")) {
+      m_gyro.reset(); 
+      m_gyro.setYaw(0);
+      swervePoseEstimator.resetPosition(
+        m_gyro.getRotation2d(), 
+        new SwerveModulePosition[] {
+              m_frontLeft.getPosition(),
+              m_frontRight.getPosition(),
+              m_rearLeft.getPosition(),
+              m_rearRight.getPosition()
+          },
+        new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
+      );
+    }
+    else {
+      m_gyro.reset();
+      m_gyro.setYaw(180);
+      swervePoseEstimator.resetPosition(
+        m_gyro.getRotation2d(),
+        new SwerveModulePosition[] {
+              m_frontLeft.getPosition(),
+              m_frontRight.getPosition(),
+              m_rearLeft.getPosition(),
+              m_rearRight.getPosition()
+          },
+        new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
+      ); 
+    }*/
   }
 
   /**

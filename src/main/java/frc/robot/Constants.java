@@ -140,7 +140,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 50; // amps
+    public static final int kDrivingMotorCurrentLimit = 45; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 
@@ -160,7 +160,7 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 0.26;
+    public static final double kPXController = 0.28;
     public static final double kPYController = 0.2;
     public static final double kPThetaController = 0.2;
 
@@ -178,16 +178,16 @@ public final class Constants {
     //public static final int kFlywheelMotorCanID = 33;
     public static final int kPivotMotorCanID = 31;
     
-    public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
+    public static final int kFlywheelMotorCurrentLimit = 60; // Original: 60, too low
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     
     public static final double kArmLowerLimit = -35;
-    public static final double kArmUpperLimit = 92.5;
+    public static final double kArmUpperLimit = 97.5;
 
     public static final double kArmParallelPosition = 0;
     public static final double kArmZeroOffset = 235;
 
-    public static final double kArmIntakePosition = -34;
+    public static final double kArmIntakePosition = -35;
     public static final double kArmSubwooferShotPosition = -15;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;
@@ -213,8 +213,8 @@ public final class Constants {
     public static final int kLeftFlywheelMotorCanID = 33;
     public static final int kRightFlywheelMotorCanID = 34;
 
-    public static final int kLeftFlywheelMotorCurrentLimit = 60;
-    public static final int kRightFlywheelMotorCurrentLimit = 60;
+    public static final int kLeftFlywheelMotorCurrentLimit = 40;
+    public static final int kRightFlywheelMotorCurrentLimit = 40;
 
     public static boolean flywheelsAtSetpoint = false;
 
@@ -294,15 +294,15 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final int kIntakeMotorCanID = 43;
-    public static final int kIntakeMotorCurrentLimit = 60;
+    public static final int kIntakeMotorCurrentLimit = 40;
   }
 
   public static final class ClimbConstants {
     public static final int kLeftClimbMotorCanID = 42;
     public static final int kRightClimbMotorCanID = 41;
 
-    public static final int kLeftClimbMotorCurrentLimit = 80;
-    public static final int kRightClimbMotorCurrentLimit = 80;
+    public static final int kLeftClimbMotorCurrentLimit = 60;
+    public static final int kRightClimbMotorCurrentLimit = 60;
 
     public static final int kLeftClimbDetector = 2;
     public static final int kRightClimbDetector = 3;
@@ -319,18 +319,19 @@ public final class Constants {
 
   public static final class FieldConstants {
     public static final AprilTagFieldLayout kAprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    public static final Pose2d kBlueSpeakerAprilTagLocation = new Pose2d(0.0381, 5.547, new Rotation2d(0));
+    public static final Pose2d kBlueSpeakerAprilTagLocation = new Pose2d(0.0381, 5.547, new Rotation2d(180));
     public static final Pose2d kRedSpeakerAprilTagLocation = new Pose2d(16.57, 5.547, new Rotation2d(0));
+    public static final Pose2d kTestID3AprilTagLocation = new Pose2d(0.0381,5.0, new Rotation2d(180));
   }
 
   public static final class photonConstants {
     public static final String kCameraName = "centralCamera";
       public static final Transform3d kCameraLocation = new Transform3d(
-        new Translation3d(Units.inchesToMeters(-14),                                                                
+        new Translation3d(Units.inchesToMeters(-11.06),                                                                
         Units.inchesToMeters(0),                                                               
-        Units.inchesToMeters(15.75)),                                                     
+        Units.inchesToMeters(16)),                                                     
         new Rotation3d(0,                                         
-        Units.degreesToRadians(22.5), Units.degreesToRadians(180)));
+        Units.degreesToRadians(-23.0), Units.degreesToRadians(-180)));
     public static double speakerDistance;
   }
 

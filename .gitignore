@@ -252,3 +252,4 @@ coverage_report/
 
 # ctest
 /Testing/
+bin/main/frc/robot/subsystems/Shooter/doubleShooterFlywheels.class

@@ -24,7 +24,7 @@ public class commandDrivetrainAimAtSpeaker extends Command {
         this.swerveDrive = swerveDrive;
         this.centralCamera = centralCamera;
         this.driverController = driverController;
-        
+        turnController = new PIDController(DriveConstants.kAngularP, 0, DriveConstants.kAngularD);
         addRequirements(swerveDrive, centralCamera);
     }
 
@@ -35,7 +35,15 @@ public class commandDrivetrainAimAtSpeaker extends Command {
 
     @Override
     public void execute() {
-        
+        double goalYaw = centralCamera.getYaw();
+        calculatedTurnSpeed = turnController.calculate(centralCamera.getYaw(), 0);
+        swerveDrive.drive(
+                    -MathUtil.applyDeadband(driverController.getLeftY()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
+                    -MathUtil.applyDeadband(driverController.getLeftX()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
+                    calculatedTurnSpeed, true, false);
+        //System.out.println("Camera Yaw: " + centralCamera.getYaw());
+        //System.out.println("Calculated output: " + calculatedTurnSpeed);
+        DriveConstants.aimedAtTarget = (Math.abs(calculatedTurnSpeed) < 0.1);
  //       SmartDashboard.putNumber("Current Yaw Offset", driverController.get)
     }
 

@@ -70,7 +70,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         // Initializes the Encoder
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pivotEncoder.setPositionConversionFactor(360);
-        pivotEncoder.setInverted(true);
+        pivotEncoder.setInverted(false);
         //pivotEncoder.setZeroOffset(ShooterConstants.kArmZeroOffset);
 
         // Converts the encoder readings into a -180 -> 180 deg format.

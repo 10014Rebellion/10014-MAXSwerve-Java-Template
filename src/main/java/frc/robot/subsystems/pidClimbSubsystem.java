@@ -107,9 +107,9 @@ public class pidClimbSubsystem extends SubsystemBase{
         rightClimbMotor.set(outputPercent);
     }
 
-    public void moveBothClimb(double outputPercent) {
-        leftClimbMotor.set(outputPercent);
-        rightClimbMotor.set(outputPercent);
+    public void moveBothClimb(double outputVoltage) {
+        leftClimbMotor.setVoltage(outputVoltage);
+        rightClimbMotor.setVoltage(outputVoltage);
     }
 
     public boolean getLeftBottomSensor() {
