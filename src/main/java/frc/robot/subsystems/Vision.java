@@ -65,6 +65,9 @@ public class Vision extends SubsystemBase{
         photonPoseEstimator.setReferencePose(previousPose);
         return photonPoseEstimator.update();
     }
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+        return photonPoseEstimator.update();
+    }
 
     public double getImageTimestamp() {
         return aprilTagResult.getTimestampSeconds();

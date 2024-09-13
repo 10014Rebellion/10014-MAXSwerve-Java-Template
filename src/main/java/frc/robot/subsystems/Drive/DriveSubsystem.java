@@ -17,6 +17,7 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -162,7 +164,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     swervePoseEstimator.update(
       m_gyro.getRotation2d(),
-      new SwerveModulePosition[] {
+      new SwerveModulePosition[]{
         m_frontLeft.getPosition(),
         m_frontRight.getPosition(),
         m_rearLeft.getPosition(),
@@ -176,18 +178,36 @@ public class DriveSubsystem extends SubsystemBase {
       swervePoseEstimator.addVisionMeasurement(centralCamPoseEstimate.get().estimatedPose.toPose2d(), visionResult.getTimestampSeconds());
     }
 
-    field.setRobotPose(getPose());
+    //field.setRobotPose(getPose());
 
     SmartDashboard.putNumber("Estimated Tag Distance", centralCamera.getDistanceToTag());
     SmartDashboard.putNumber("Drive Back Left Motor Temp", m_rearLeft.getMotorTemp());
     SmartDashboard.putNumber("Drivetrain Yaw", swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
     //SmartDashboard.putNumber("Drivetrain Gyro Yaw", m_gyro.getRotation2d().getDegrees());
     //photonConstants.speakerDistance = getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation);
-    SmartDashboard.putNumber("Rotation To Hit Blue speaker", getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
-    SmartDashboard.putNumber("Distance To Blue Speaker", getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
-    SmartDashboard.putBoolean("Aimed At Target", DriveConstants.aimedAtTarget);
+    //SmartDashboard.putNumber("Rotation To Hit Blue speaker", getRotationToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
+    //SmartDashboard.putNumber("Distance To Blue Speaker", getDistanceToPose(FieldConstants.kBlueSpeakerAprilTagLocation));
+    //SmartDashboard.putBoolean("Aimed At Target", DriveConstants.aimedAtTarget);
   }
 
+  public Command alignToTargetCommand(Supplier<Pose2d> robotPose, Supplier<Double> targetYaw) {
+    return
+    run(() -> {
+      double robotYaw = robotPose.get().getRotation().getDegrees();
+      double speedRotation = turnController.calculate(robotYaw);
+      speedRotation += Math.copySign(0.15, speedRotation);
+      if (turnController.atSetpoint()) {
+        speedRotation = 0.0;
+        Constants.DriveConstants.aimedAtTarget = true;
+      }
+      //setSwerveModuleStates(Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, speedRotation)));
+    })
+    .beforeStarting(() -> {
+      Constants.DriveConstants.aimedAtTarget = false;
+      turnController.setSetpoint(targetYaw.get());
+      turnController.reset();
+    });
+  }
   /**
    * Returns the currently-estimated pose of the robot.
    *
@@ -293,32 +313,6 @@ public class DriveSubsystem extends SubsystemBase {
     else {
       xSpeedCommanded = xSpeed;
       ySpeedCommanded = ySpeed;
-      /*if (DriveConstants.currentDriveState == DriveConstants.driveState.AIMING) {
-        if (centralCamera.hasSpeakerTag()) {
-          
-        }
-        /*else {
-          double rawYaw = swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees();
-          //double rawYaw = m_gyro.getAngle();
-          double currentYaw;
-          if (DriverStation.getAlliance().get().toString().equals("Red")) {
-            currentYaw = rawYaw < 0 ? -(rawYaw % 180) : (rawYaw % 180);
-            m_currentRotation = -(1.0/12.0) * turnController.calculate(currentYaw, getRotationToPose(FieldConstants.kRedSpeakerAprilTagLocation));
-            DriveConstants.aimedAtTarget = Math.abs(m_currentRotation) <= 0.05;
-          }
-          else {
-            currentYaw = rawYaw < 0 ? -(rawYaw % 180) : (rawYaw % 180);
-            m_currentRotation = (1.0/12.0) * turnController.calculate(currentYaw, getRotationToPose(FieldConstants.kRedSpeakerAprilTagLocation));
-            DriveConstants.aimedAtTarget = Math.abs(m_currentRotation) <= 0.05;
-          }
-          System.out.println("Current Yaw: " + currentYaw);
-          System.out.println("Goal Yaw: " + getRotationToPose(FieldConstants.kRedSpeakerAprilTagLocation));
-          System.out.println("Calculated Turn Speed: Pose Estimator" + m_currentRotation);
-          System.out.println("Current driverstation color: " + DriverStation.getAlliance().get().toString());
-        }
-        //System.out.println("Calculated Turn Speed: camera - " + turnController.calculate(centralCamera.getYaw(), 0));
-        
-      }*/
       m_currentRotation = rot;
     }
 
@@ -420,35 +414,6 @@ public class DriveSubsystem extends SubsystemBase {
           },
         new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
     );
-    
-    /*if (DriverStation.getAlliance().get().toString().equals("Red")) {
-      m_gyro.reset(); 
-      m_gyro.setYaw(0);
-      swervePoseEstimator.resetPosition(
-        m_gyro.getRotation2d(), 
-        new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_rearLeft.getPosition(),
-              m_rearRight.getPosition()
-          },
-        new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
-      );
-    }
-    else {
-      m_gyro.reset();
-      m_gyro.setYaw(180);
-      swervePoseEstimator.resetPosition(
-        m_gyro.getRotation2d(),
-        new SwerveModulePosition[] {
-              m_frontLeft.getPosition(),
-              m_frontRight.getPosition(),
-              m_rearLeft.getPosition(),
-              m_rearRight.getPosition()
-          },
-        new Pose2d(swervePoseEstimator.getEstimatedPosition().getTranslation(), m_gyro.getRotation2d())
-      ); 
-    }*/
   }
 
   /**
@@ -460,10 +425,23 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getRotation2d().getDegrees();
   }
 
+  public Rotation2d getRotation2d() {
+    return m_gyro.getRotation2d();
+  }
+
   public void setHeading(Pose2d pose) {
     m_gyro.setYaw(pose.getRotation().getDegrees());
   }
 
+  public SwerveModulePosition[] getSwerveModulePositions() {
+    return new SwerveModulePosition[] {
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
+    };
+  }
+  
   /**
    * Returns the turn rate of the robot.
    *
@@ -472,34 +450,4 @@ public class DriveSubsystem extends SubsystemBase {
   public double getTurnRate() {
     return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
-
-  /*public Command followPathCommand(String pathName) {
-    PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-
-    return new FollowPathHolonomic(
-            path,
-            this::getPose, // Robot pose supplier
-            this::getChassisSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-            this::driveRobotRelative, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-            new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
-                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
-                    new ReplanningConfig() // Default path replanning config. See the API for the options here
-            ),
-            () -> {
-              // Boolean supplier that controls when the path will be mirrored for the red alliance
-              // This will flip the path being followed to the red side of the field.
-              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-              var alliance = DriverStation.getAlliance();
-              if (alliance.isPresent()) {
-                return alliance.get() == DriverStation.Alliance.Red;
-              }
-              return false;
-            },
-            this // Reference to this subsystem to set requirements
-    );
-  }*/
 }

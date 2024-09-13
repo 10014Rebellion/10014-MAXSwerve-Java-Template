@@ -4,19 +4,26 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.Matrix;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -322,17 +329,32 @@ public final class Constants {
     public static final Pose2d kBlueSpeakerAprilTagLocation = new Pose2d(0.0381, 5.547, new Rotation2d(180));
     public static final Pose2d kRedSpeakerAprilTagLocation = new Pose2d(16.57, 5.547, new Rotation2d(0));
     public static final Pose2d kTestID3AprilTagLocation = new Pose2d(0.0381,5.0, new Rotation2d(180));
+
+    public static final Pose3d kBlueSpeaker = kAprilTagFieldLayout.getTagPose(7).orElse(new Pose3d());
+    public static final Pose3d kRedSpeaker = kAprilTagFieldLayout.getTagPose(4).orElse(new Pose3d());
+    public static final Pose3d kBlueAmp = kAprilTagFieldLayout.getTagPose(5).orElse(new Pose3d());
+    public static final Pose3d kRedAmp = kAprilTagFieldLayout.getTagPose(6).orElse(new Pose3d());
+
+    public static final double kSpeakerTargetYawTransformX = Units.inchesToMeters(0); // NOTE: I dont know what this does lol
+    public static final double kSpeakerTargetYTransform = Units.inchesToMeters(0);
+    public static final double kSpeakerTargetPitchTransformZ = Units.inchesToMeters(0);
+    public static final double kSpeakerTargetDistanceTransformX = Units.inchesToMeters(0);
   }
 
   public static final class photonConstants {
     public static final String kCameraName = "centralCamera";
-      public static final Transform3d kCameraLocation = new Transform3d(
-        new Translation3d(Units.inchesToMeters(-11.06),                                                                
-        Units.inchesToMeters(0),                                                               
-        Units.inchesToMeters(16)),                                                     
-        new Rotation3d(0,                                         
-        Units.degreesToRadians(-23.0), Units.degreesToRadians(-180)));
+    public static final Transform3d kCameraLocation = new Transform3d(
+      new Translation3d(Units.inchesToMeters(-11.06),                                                                
+      Units.inchesToMeters(0),                                                               
+      Units.inchesToMeters(16)),                                                     
+      new Rotation3d(0,                                         
+      Units.degreesToRadians(-23.0), Units.degreesToRadians(-180)));
     public static double speakerDistance;
+    public static final PoseStrategy kPoseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    public static final PoseStrategy kFallbackPoseStrategy = PoseStrategy.LOWEST_AMBIGUITY;
+    public static final Matrix<N3, N1> kVisionSingleTagStandardDeviations = VecBuilder.fill(1, 1, 2); 
+    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.2, 0.2, 0.5); 
+    public static final double kVisionMaxPoseAmbiguity = 0.2;
   }
 
   public static final class HSVLEDColor {

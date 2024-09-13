@@ -30,6 +30,7 @@ import frc.robot.subsystems.Shooter.profiledArmPID;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.LEDInterface;
+import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.pidClimbSubsystem;
 import frc.robot.subsystems.Drive.DriveSubsystem;
@@ -45,6 +46,7 @@ import frc.robot.commands.ArmCommands.commandArmIntake;
 import frc.robot.commands.ArmCommands.commandArmSubwoofer;
 import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
+import frc.robot.commands.DriveCommands.commandDrivetrainAlignToTarget;
 import frc.robot.commands.IndexerCommands.commandIndexBrakeMode;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
@@ -94,6 +96,8 @@ public class RobotContainer {
     private final intakeSubsystem robotIntake;
 
     private final Vision centralCamera;
+    private final PoseSubsystem poseSubsystem;
+
     private final LEDInterface robotLED;
 
     private final Pose2d defaultPose;                                               
@@ -120,6 +124,7 @@ public class RobotContainer {
         robotIntake = new intakeSubsystem();
         robotLED = new LEDInterface();
         defaultPose = new Pose2d(0, 0, new Rotation2d(0));
+        poseSubsystem = new PoseSubsystem(centralCamera, m_robotDrive::getRotation2d, m_robotDrive::getSwerveModulePositions);
         
         
         // Configure the button bindings
@@ -163,9 +168,12 @@ public class RobotContainer {
 
     private void configureCompetitionButtonBindings() {
         driverController.x()
-            .whileTrue(new RunCommand(
-                () -> m_robotDrive.zeroHeading(),
-                m_robotDrive));
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new InstantCommand(() -> m_robotDrive.zeroHeading()),
+                    new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
+                )
+            );
         driverController.y().whileTrue(
             new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
         );
@@ -220,7 +228,7 @@ public class RobotContainer {
         // Have the drivetrain rotate toward the speaker
         // Have the arm get to the correct angle
         // Rev the flywheels up to speed
-        driverController.rightTrigger().whileTrue(
+        /*driverController.rightTrigger().whileTrue(
             new ParallelCommandGroup(
                 new commandArmAutoAim(robotShooter),
                 new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
@@ -229,7 +237,10 @@ public class RobotContainer {
                     new WaitCommand(0.5), 
                     new commandIndexBrakeMode(robotIndexer)
                 )
-            ));
+            ));*/
+        driverController.rightTrigger().whileTrue(
+            new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
+        );
 
 
         // Copilot Shooter Commands
