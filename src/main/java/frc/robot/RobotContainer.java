@@ -40,6 +40,7 @@ import frc.robot.subsystems.Shooter.intakeSubsystem;
 //import frc.robot.commands.forceIndexCommand;
 import frc.robot.commands.IndexerCommands.commandIndexerReverse;
 import frc.robot.commands.IndexerCommands.commandIndexerStart;
+import frc.robot.commands.ArmCommands.commandArmAlignToTarget;
 import frc.robot.commands.ArmCommands.commandArmAmp;
 import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
@@ -51,7 +52,7 @@ import frc.robot.commands.IndexerCommands.commandIndexBrakeMode;
 import frc.robot.commands.IndexerCommands.commandIndexerPickup;
 import frc.robot.commands.IntakeCommands.commandIntakePickup;
 import frc.robot.commands.IntakeCommands.commandIntakeStart;
-import frc.robot.commands.flywheelCommands.commandManualFlywheels;
+import frc.robot.commands.flywheelCommands.CommandManualFlywheels;
 import frc.robot.commands.flywheelCommands.commandFlywheelIdle;
 import frc.robot.commands.flywheelCommands.commandFlywheelShoot;
 import frc.robot.commands.IntakeCommands.commandIntakeReverse;
@@ -239,7 +240,11 @@ public class RobotContainer {
                 )
             ));*/
         driverController.rightTrigger().whileTrue(
-            new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
+            new ParallelCommandGroup(
+                new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw),
+                new commandArmAlignToTarget(robotShooter, poseSubsystem::getTargetDistance, centralCamera::getDistanceToTag)
+            )
+            
         );
 
 
@@ -283,7 +288,7 @@ public class RobotContainer {
         
         copilotController.rightTrigger().whileTrue(
             new ParallelCommandGroup(
-                new commandManualFlywheels(robotFlywheels),
+                new CommandManualFlywheels(robotFlywheels),
                 new SequentialCommandGroup(
                     new WaitCommand(0.5),
                     new commandIndexerStart(robotIndexer)
@@ -353,7 +358,7 @@ public class RobotContainer {
         new ParallelRaceGroup(
             new WaitCommand(2),
             new ParallelCommandGroup(
-                new commandManualFlywheels(robotFlywheels),
+                new CommandManualFlywheels(robotFlywheels),
                 new SequentialCommandGroup(
                     new commandArmSubwoofer(robotShooter),
                     new WaitCommand(0.2),
@@ -397,7 +402,7 @@ public class RobotContainer {
             new commandArmIntake(robotShooter),
             new commandIndexerStart(robotIndexer),
             new commandIntakeStart(robotIntake),
-            new commandManualFlywheels(robotFlywheels)
+            new CommandManualFlywheels(robotFlywheels)
         ));
     }
 
@@ -459,7 +464,7 @@ public class RobotContainer {
                 robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
                 new WaitCommand(2),
                 new commandIndexerStart(robotIndexer)),
-            new commandManualFlywheels(robotFlywheels)
+            new CommandManualFlywheels(robotFlywheels)
         ));
     }
 

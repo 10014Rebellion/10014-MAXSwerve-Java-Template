@@ -224,6 +224,13 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         }
         else return ShooterConstants.kArmParallelPosition;
     }
+    public double getCalculatedSpeakerAngle(double speakerDistance) {
+        
+        if (pivotAngleMap != null) {
+            return pivotAngleMap.get(speakerDistance);
+        }
+        else return ShooterConstants.kArmSubwooferShotPosition;
+    }
 
     public void goToCalculatedSpeakerAngle() {
         goToSetpoint(getCalculatedSpeakerAngle());

@@ -3,10 +3,10 @@ package frc.robot.commands.flywheelCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 
-public class commandManualFlywheels extends Command {
+public class CommandManualFlywheels extends Command {
     private final doubleShooterFlywheels flywheels;
 
-    public commandManualFlywheels (doubleShooterFlywheels f) {
+    public CommandManualFlywheels (doubleShooterFlywheels f) {
         flywheels = f;
         addRequirements(flywheels);
     }
