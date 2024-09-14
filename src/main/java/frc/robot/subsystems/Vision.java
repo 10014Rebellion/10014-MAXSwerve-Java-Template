@@ -9,7 +9,7 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -65,7 +65,6 @@ public class Vision extends SubsystemBase{
         photonPoseEstimator.setReferencePose(previousPose);
         return photonPoseEstimator.update();
     }
-
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         return photonPoseEstimator.update();
     }
@@ -78,8 +77,10 @@ public class Vision extends SubsystemBase{
         trackedTagDist = PhotonUtils.calculateDistanceToTargetMeters(
             cameraLocation.getZ(), 
             trackedTagPose.getZ(),
-            cameraLocation.getRotation().getY(),
-            Units.degreesToRadians(aprilTagResult.getBestTarget().getPitch()));
+            -cameraLocation.getRotation().getY(),
+            Units.degreesToRadians(aprilTagResult.getBestTarget().getYaw()));
+        //System.out.println(-cameraLocation.getRotation().getY());
+        //System.out.println("Tracked tag rotation: " + trackedTagPose.getRotation().getY());
         photonConstants.speakerDistance = trackedTagDist;
     }
 
@@ -91,20 +92,32 @@ public class Vision extends SubsystemBase{
         return cameraLocation;
     }
 
-    
-
     public double getYaw() {
         if (aprilTagResult.hasTargets()) {
             for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
-                if (i.getFiducialId() == 4) { //&& DriverStation.getAlliance().toString().equals("Red"))
+                if (i.getFiducialId() == 4 && DriverStation.getAlliance().get().toString().equals("Red")) {
                     return i.getYaw();
                 }
-                else if (i.getFiducialId() == 7 ) {//&& DriverStation.getAlliance().toString().equals("Blue")) 
+                else if (i.getFiducialId() == 7 && DriverStation.getAlliance().get().toString().equals("Blue")) {
                     return i.getYaw();
                 }
             }
         }
         return 0.0;
+    }
+
+    public boolean hasSpeakerTag() {
+        if (aprilTagResult.hasTargets()) {
+            for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
+                if ((i.getFiducialId() == 4) && DriverStation.getAlliance().get().toString().equals("Red")) {
+                    return true;
+                }
+                else if (i.getFiducialId() == 7 && DriverStation.getAlliance().get().toString().equals("Blue")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -113,18 +126,22 @@ public class Vision extends SubsystemBase{
         if(aprilTagResult.hasTargets()) {
             for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
                 // These IDs are only the central speakers for each alliance.
-                if (i.getFiducialId() == 3) { //&& DriverStation.getAlliance().toString().equals("Red")) {
+                if ((i.getFiducialId() == 4) && DriverStation.getAlliance().get().toString().equals("Red")) {
                     trackedTag = i;
-                    trackedTagPose = aprilTagFieldLayout.getTagPose(3).get();
+                    trackedTagPose = aprilTagFieldLayout.getTagPose(4).get();
                     updateDistanceToTag();
+                    //System.out.println(trackedTagPose.toString());
                 }
-                else if (i.getFiducialId() == 7 ) {//&& DriverStation.getAlliance().toString().equals("Blue")) {
+                else if (i.getFiducialId() == 7 && DriverStation.getAlliance().get().toString().equals("Blue")) {
                     trackedTag = i;
                     trackedTagPose = aprilTagFieldLayout.getTagPose(7).get();
                     updateDistanceToTag();
                 }
+               // System.out.println(i.getFiducialId());
             }
+            SmartDashboard.putNumber("Current Tracked ID", aprilTagResult.getBestTarget().getFiducialId());
         }
         SmartDashboard.putNumber("Robot Distance from Speaker (Meters)", trackedTagDist);
+        
     }
 }

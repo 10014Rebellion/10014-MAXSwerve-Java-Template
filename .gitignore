@@ -14,7 +14,6 @@ networktables.json
 
 ntcore/connectionlistenertest.json
 ntcore/timesynctest.json
-.bin
 
 # Created by the jenkins test script
 test-reports
@@ -157,6 +156,7 @@ gradle-app.setting
 *.pydevproject
 .metadata
 .gradle
+bin/
 tmp/
 *.tmp
 *.bak
@@ -252,3 +252,4 @@ coverage_report/
 
 # ctest
 /Testing/
+bin/main/frc/robot/subsystems/Shooter/doubleShooterFlywheels.class

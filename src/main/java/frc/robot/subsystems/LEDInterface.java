@@ -1,15 +1,21 @@
 package frc.robot.subsystems;
 
+import java.sql.Driver;
+
+import org.w3c.dom.css.RGBColor;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.IndexerConstants;
-import frc.robot.Constants.LEDColor;
+import frc.robot.Constants.HSVLEDColor;
+import frc.robot.Constants.RGBLEDColor;
 import frc.robot.Constants.ShooterConstants;
 
 public class LEDInterface extends SubsystemBase{
@@ -19,6 +25,8 @@ public class LEDInterface extends SubsystemBase{
 
     private int initialHue;
     private int finalHue;
+    private int[] currentRGB = {0,0,0};
+    private int[] finalRGB = {0,0,0};
     private int currentHue;
     private int transitionSpeed;
     private int hueVariation = 180;
@@ -28,7 +36,7 @@ public class LEDInterface extends SubsystemBase{
 
     public LEDInterface() {
         led = new AddressableLED(0);
-        ledBuffer = new AddressableLEDBuffer(36); // Update this with the correct lenth later
+        ledBuffer = new AddressableLEDBuffer(18); // Update this with the correct lenth later
 
         led.setLength(ledBuffer.getLength());
 
@@ -48,11 +56,18 @@ public class LEDInterface extends SubsystemBase{
     }
 
     public void setTransitionHueToHueValues(int finalHue, int transitionSpeed) {
-        startingLED = 0;
+        this.startingLED = 0;
         this.initialHue = currentHue;
         this.finalHue = finalHue % hueVariation;
         this.transitionSpeed = transitionSpeed;
         this.instantTransition = false;
+    }
+
+    public void setTransitionRGBValues (int[] color, int transitionSpeed) {
+        this.startingLED = 0;
+        this.finalRGB = color;
+        this.transitionSpeed = transitionSpeed;
+        this.instantTransition = true;
     }
 
     public void setInstantHueTransitionValues(int finalHue) {
@@ -95,12 +110,52 @@ public class LEDInterface extends SubsystemBase{
             }
         }
         else {
-
             for (int i = 0; i < ledBuffer.getLength(); i++) {
                 ledBuffer.setHSV(i, finalHue, 255, 128);
             }
         }
         
+    }
+    public void transitionRGB() {
+        if (instantTransition == false) {
+            startingLED += transitionSpeed;
+            if (startingLED >= ledBuffer.getLength()) {
+                startingLED = ledBuffer.getLength();
+            }
+            
+            //(initialHue - finalHue) / (ledBuffer.getLength() - startingLED);
+
+            for (int i = 0; i < ledBuffer.getLength(); i++) {
+                // NOTE: For some reason the chinese manufacturers decided
+                // That RGB was no good and so the order is GRB,
+                // Hence the weird list addresses
+                if (i >= (ledBuffer.getLength() - startingLED) - 1) {
+                    ledBuffer.setRGB(i, finalRGB[1], finalRGB[0], finalRGB[2]);
+                }
+                else {
+                    if (i >= 1) {
+                        ledBuffer.setRGB(i - 1, currentRGB[1], currentRGB[0], currentRGB[2]);
+                    }
+                    currentRGB = finalRGB; 
+                }
+                //System.out.println(i);
+            }
+        }
+        else {
+            for (int i = 0; i < ledBuffer.getLength(); i++) {
+                ledBuffer.setRGB(i, finalRGB[1], finalRGB[0], finalRGB[2]);
+            }
+        }
+        
+    }
+
+    public void rainbowUnicornVomit() {
+        startingLED += 1;
+        for (int i = 0; i < ledBuffer.getLength(); i++) {
+            int currentID = (startingLED + i) % ledBuffer.getLength();
+            ledBuffer.setHSV(currentID, i*(180/ledBuffer.getLength()), 255, 128);
+            //System.out.println(i*(180/ledBuffer.getLength()));
+        }
     }
 
     public void resetStartingLED() {
@@ -108,38 +163,45 @@ public class LEDInterface extends SubsystemBase{
     }
     
     public Command colorToBlueTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(108, 1));
+        return new InstantCommand(() -> setTransitionRGBValues(RGBLEDColor.blue, transitionSpeed));
     }
     public Command colorToRedTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(0, 1));
+        return new InstantCommand(() -> setTransitionRGBValues(RGBLEDColor.red, transitionSpeed));
     }
 
     public Command colorToOrangeTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(10, 1));
+        return new InstantCommand(() -> setTransitionRGBValues(RGBLEDColor.orange, transitionSpeed));
     }
 
-    public Command colorToPurpleTransition() {
-        return new InstantCommand(() -> setTransitionHueToHueValues(170, 1));
+    public Command colorToGreenTransition() {
+        return new InstantCommand(() -> setTransitionRGBValues(RGBLEDColor.green, transitionSpeed));
     }
 
     @Override
     public void periodic() {
         if (DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
         && ShooterConstants.armAtSetpoint) {
-            setInstantHueTransitionValues(LEDColor.green);
+            setTransitionRGBValues(RGBLEDColor.green, 1);
         }
         else if (IndexerConstants.robotHasNote) {
-            setTransitionHueToHueValues(LEDColor.orange, 2);
+            setTransitionRGBValues(RGBLEDColor.orange, 1);
         }
         else {
             if (DriverStation.getAlliance().toString().equals("Red")) {
-                setTransitionHueToHueValues(LEDColor.red, 1);
+                setTransitionRGBValues(RGBLEDColor.red, 1);
             }
             else {
-                setTransitionHueToHueValues(LEDColor.blue, 1);
+                setTransitionRGBValues(RGBLEDColor.blue, 1);
             }
         }
-        transitionHueToHue();
+        transitionRGB();
+        //rainbowUnicornVomit();
         led.setData(ledBuffer);
+        /*SmartDashboard.putNumber("Current R Color", finalRGB[0]);
+        SmartDashboard.putNumber("Current G Color", finalRGB[1]);
+        SmartDashboard.putNumber("Current B Color", finalRGB[2]);*/
+        SmartDashboard.putBooleanArray("Aimed, Flywheels, Arm", 
+        new boolean[] {DriveConstants.aimedAtTarget, FlywheelConstants.flywheelsAtSetpoint, ShooterConstants.armAtSetpoint});
+        //System.out.println("GRELEKJLDKSJ");
     }
 }

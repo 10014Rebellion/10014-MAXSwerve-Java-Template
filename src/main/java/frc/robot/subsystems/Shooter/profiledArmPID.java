@@ -139,11 +139,9 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             }
         ShooterConstants.armAtSetpoint = atSetpoint();
         SmartDashboard.putNumber("PID+FF output", totalOutput);
-        SmartDashboard.putNumber("PID Output", outputVoltage);
-        SmartDashboard.putNumber("FF Output", FFOutput);
         SmartDashboard.putNumber("Arm Position", pivotPos);
         SmartDashboard.putNumber("PID Setpoint", setpoint);
-        SmartDashboard.putNumber("Pivot Current", pivotMotor.getOutputCurrent());
+        SmartDashboard.putBoolean("Arm At Setpoint", ShooterConstants.armAtSetpoint);
         if (pivotAngleMap != null) {
             SmartDashboard.putNumber("Current Pivot Map Setpoint", pivotAngleMap.get(photonConstants.speakerDistance));
         }
