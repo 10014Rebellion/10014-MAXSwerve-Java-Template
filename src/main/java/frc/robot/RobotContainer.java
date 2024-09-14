@@ -14,15 +14,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.photonConstants;
@@ -71,6 +68,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.time.Instant;
 import java.util.List;
+
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -124,9 +123,8 @@ public class RobotContainer {
         robotIndexer = new indexerSubsystem();
         robotIntake = new intakeSubsystem();
         robotLED = new LEDInterface();
+        poseSubsystem = new PoseSubsystem(centralCamera, m_robotDrive::getRotation2d, m_robotDrive::getModulePositions);
         defaultPose = new Pose2d(0, 0, new Rotation2d(0));
-        poseSubsystem = new PoseSubsystem(centralCamera, m_robotDrive::getRotation2d, m_robotDrive::getSwerveModulePositions);
-        
         
         // Configure the button bindings
         
@@ -169,33 +167,21 @@ public class RobotContainer {
 
     private void configureCompetitionButtonBindings() {
         driverController.x()
-            .whileTrue(
-                new ParallelCommandGroup(
-                    new InstantCommand(() -> m_robotDrive.zeroHeading()),
-                    new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
-                )
-            );
+            .whileTrue(new RunCommand(
+                () -> m_robotDrive.zeroHeading(),
+                m_robotDrive));
         driverController.y().whileTrue(
             new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
         );
-        /*driverController.b().whileTrue(
+        driverController.b().whileTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
                 new commandFlywheelShoot(robotFlywheels)
             )
-        );*/
-        driverController.b().whileTrue(
-            new InstantCommand(() ->
-            robotIndexer.getOuttaHere())
         );
-        /*driverController.povRight().whileTrue(
-            new InstantCommand(() ->
-            robotIndexer.enableBrake())
+        driverController.a().whileTrue(
+            robotShooter.goToSetpointCommand(0)
         );
-        driverController.povLeft().whileTrue(
-            new InstantCommand(() -> 
-            robotIndexer.disableBrake())
-        );*/
         //driverController.a().whileTrue(new commandClimbAutoZero(robotClimb));
         /*driverController.b().whileTrue(
             robotLED.redToOrangeTransition()
@@ -256,30 +242,15 @@ public class RobotContainer {
                 new commandFlywheelShoot(robotFlywheels))
             );
         
-        copilotController.y().whileTrue(
-            new ParallelCommandGroup(
-            new commandArmAmp(robotShooter),
-            new ParallelDeadlineGroup(
-                    new WaitCommand(0.5), 
-                    new commandIndexBrakeMode(robotIndexer)
-                ))
-        );
+        copilotController.y().whileTrue(new commandArmAmp(robotShooter));
 
         copilotController.b().whileTrue(
             new ParallelCommandGroup(
                 robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
-                new commandFlywheelShoot(robotFlywheels),
-                new ParallelDeadlineGroup(
-                    new WaitCommand(0.5), 
-                    new commandIndexBrakeMode(robotIndexer)
-                )
-            ));
+                new commandFlywheelShoot(robotFlywheels))
+            );
 
-        copilotController.a().whileTrue(
-            new ParallelCommandGroup(
-                robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition),
-                new commandFlywheelShoot(robotFlywheels)
-            ));
+        copilotController.a().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition));
 
         copilotController.leftTrigger().whileTrue(
             new ParallelCommandGroup(
@@ -304,19 +275,19 @@ public class RobotContainer {
              new InstantCommand(() -> robotClimb.moveRightClimb(0.2)))
         .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
 
-        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-6)))
+        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-0.5)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
 
-        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(3)))
+        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(0.25)))
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
-        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(80.0));
         copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
     }
 
     private void configureTestButtonBindings() {
         System.out.println("YOU ARE IN TESTING MODE");
-        /*driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))
+        driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
         driverController.a().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(-12)))
                                 .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
@@ -325,32 +296,7 @@ public class RobotContainer {
         driverController.leftTrigger().whileTrue(new commandIndexerPickup(robotIndexer));
         driverController.rightBumper().whileTrue(new commandIntakeStart(robotIntake));
         driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runArmFFOnly()))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));*/
-        /*driverController.a().onTrue(new ParallelCommandGroup(
-            new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
-            new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
-            new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
-        ));
-        driverController.b().onTrue(new ParallelCommandGroup(
-            new InstantCommand(() -> ShooterConstants.armAtSetpoint = false),
-            new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = false),
-              new InstantCommand(() -> DriveConstants.aimedAtTarget = false)
-        ));*/
-        driverController.a().whileTrue(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
-                new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
-                new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
-            )
-        );
-        driverController.b().whileTrue(
-            robotLED.colorToRedTransition()
-        );
-        driverController.x().whileTrue(
-            robotLED.colorToOrangeTransition()
-        );
-
-
+                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
     }
 
     public void registerNamedCommands() {

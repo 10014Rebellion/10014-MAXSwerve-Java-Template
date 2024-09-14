@@ -27,7 +27,7 @@ public class indexerSubsystem extends SubsystemBase{
     }
 
     public void runIndexer() {
-        indexerMotor.setVoltage(1.4);
+        indexerMotor.setVoltage(1.25);
     }
     public void runIndexerFast() {
         indexerMotor.setVoltage(12);
@@ -48,9 +48,6 @@ public class indexerSubsystem extends SubsystemBase{
         indexerMotor.setIdleMode(IdleMode.kCoast);
     }
 
-    public void getOuttaHere() {
-        indexerMotor.setVoltage(-12);
-    }
     @Override
     public void periodic() {
         IndexerConstants.robotHasNote = !noteDetector1.get() || !noteDetector2.get();

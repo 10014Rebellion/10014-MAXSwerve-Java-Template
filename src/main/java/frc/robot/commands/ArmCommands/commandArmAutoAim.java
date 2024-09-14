@@ -20,7 +20,7 @@ public class commandArmAutoAim extends Command {
 
     @Override
     public void execute() {
-        double calculatedArmAngle = arm.getCalculatedSpeakerAngle(); // Shot map seems off, adjust as needed.
+        double calculatedArmAngle = arm.getCalculatedSpeakerAngle();
         arm.altGoToSetpoint(calculatedArmAngle);
     }
 

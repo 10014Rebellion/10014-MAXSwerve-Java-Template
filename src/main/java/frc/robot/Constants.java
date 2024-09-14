@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -49,9 +47,9 @@ public final class Constants {
     public static final double kRotationalSlewRate = 4.0; // percent per second (1 = 100%) // Originally 2.0
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(26.5);
+    public static final double kTrackWidth = Units.inchesToMeters(25.5);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(26.5);
+    public static final double kWheelBase = Units.inchesToMeters(25.5);
     // Distance between front and back wheels on robot
     public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
         new Translation2d(kWheelBase / 2, kTrackWidth / 2),
@@ -84,7 +82,7 @@ public final class Constants {
     // Turning PID Controller Values. This controls aiming at things like the speaker or amp.
     public static final double kAngularP = 0.02;
     public static final double kAngularD = 0.0;
-    public static boolean aimedAtTarget = false;
+    public static boolean aimedAtTarget;
 
     public static final Pose2d kInitialRedPose = new Pose2d(15.57, 5.547, new Rotation2d(0));
     public static final Pose2d kInitialBluePose = new Pose2d(1.0381, 5.587, new Rotation2d(180));
@@ -111,7 +109,7 @@ public final class Constants {
 
     // Calculations required for driving motor conversion factors and feed forward
     public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
-    public static final double kWheelDiameterMeters = 0.0762; // Wheel Diameter of 3 inches
+    public static final double kWheelDiameterMeters = Units.inchesToMeters(2.9); // Wheel Diameter of 2.9 inches
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 20 teeth on the first-stage spur gear, 14 teeth on the bevel pinion
     // pose estimator was off by ~10%. changed from 22T spur to 20T spur.
@@ -147,7 +145,7 @@ public final class Constants {
     public static final IdleMode kDrivingMotorIdleMode = IdleMode.kBrake;
     public static final IdleMode kTurningMotorIdleMode = IdleMode.kBrake;
 
-    public static final int kDrivingMotorCurrentLimit = 45; // amps
+    public static final int kDrivingMotorCurrentLimit = 50; // amps
     public static final int kTurningMotorCurrentLimit = 20; // amps
   }
 
@@ -167,7 +165,7 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 0.28;
+    public static final double kPXController = 0.26;
     public static final double kPYController = 0.2;
     public static final double kPThetaController = 0.2;
 
@@ -185,16 +183,16 @@ public final class Constants {
     //public static final int kFlywheelMotorCanID = 33;
     public static final int kPivotMotorCanID = 31;
     
-    public static final int kFlywheelMotorCurrentLimit = 60; // Original: 60, too low
+    public static final int kFlywheelMotorCurrentLimit = 80; // Original: 60, too low
     public static final int kPivotMotorCurrentLimit = 60; // Original: 60
     
     public static final double kArmLowerLimit = -35;
-    public static final double kArmUpperLimit = 97.5;
+    public static final double kArmUpperLimit = 92.5;
 
     public static final double kArmParallelPosition = 0;
     public static final double kArmZeroOffset = 235;
 
-    public static final double kArmIntakePosition = -35;
+    public static final double kArmIntakePosition = -34;
     public static final double kArmSubwooferShotPosition = -15;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;
@@ -203,7 +201,7 @@ public final class Constants {
     public static final double kArmTrapPrepPosition = 90;
     public static final double kArmTrapPosition = 80;
 
-    public static boolean armAtSetpoint = false;
+    public static boolean armAtSetpoint;
 
     public static armState currentArmState = armState.IDLE;
     public enum armState {
@@ -220,10 +218,10 @@ public final class Constants {
     public static final int kLeftFlywheelMotorCanID = 33;
     public static final int kRightFlywheelMotorCanID = 34;
 
-    public static final int kLeftFlywheelMotorCurrentLimit = 40;
-    public static final int kRightFlywheelMotorCurrentLimit = 40;
+    public static final int kLeftFlywheelMotorCurrentLimit = 60;
+    public static final int kRightFlywheelMotorCurrentLimit = 60;
 
-    public static boolean flywheelsAtSetpoint = false;
+    public static boolean flywheelsAtSetpoint;
 
     public static final double kFlywheelP = 0.0001;
     public static final double kFlywheelD = 0.0;
@@ -301,15 +299,15 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final int kIntakeMotorCanID = 43;
-    public static final int kIntakeMotorCurrentLimit = 40;
+    public static final int kIntakeMotorCurrentLimit = 60;
   }
 
   public static final class ClimbConstants {
     public static final int kLeftClimbMotorCanID = 42;
     public static final int kRightClimbMotorCanID = 41;
 
-    public static final int kLeftClimbMotorCurrentLimit = 60;
-    public static final int kRightClimbMotorCurrentLimit = 60;
+    public static final int kLeftClimbMotorCurrentLimit = 80;
+    public static final int kRightClimbMotorCurrentLimit = 80;
 
     public static final int kLeftClimbDetector = 2;
     public static final int kRightClimbDetector = 3;
@@ -326,54 +324,39 @@ public final class Constants {
 
   public static final class FieldConstants {
     public static final AprilTagFieldLayout kAprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    public static final Pose2d kBlueSpeakerAprilTagLocation = new Pose2d(0.0381, 5.547, new Rotation2d(180));
+    public static final Pose2d kBlueSpeakerAprilTagLocation = new Pose2d(0.0381, 5.547, new Rotation2d(0));
     public static final Pose2d kRedSpeakerAprilTagLocation = new Pose2d(16.57, 5.547, new Rotation2d(0));
-    public static final Pose2d kTestID3AprilTagLocation = new Pose2d(0.0381,5.0, new Rotation2d(180));
-
     public static final Pose3d kBlueSpeaker = kAprilTagFieldLayout.getTagPose(7).orElse(new Pose3d());
     public static final Pose3d kRedSpeaker = kAprilTagFieldLayout.getTagPose(4).orElse(new Pose3d());
     public static final Pose3d kBlueAmp = kAprilTagFieldLayout.getTagPose(5).orElse(new Pose3d());
     public static final Pose3d kRedAmp = kAprilTagFieldLayout.getTagPose(6).orElse(new Pose3d());
-
-    public static final double kSpeakerTargetYawTransformX = Units.inchesToMeters(0); // NOTE: I dont know what this does lol
-    public static final double kSpeakerTargetYTransform = Units.inchesToMeters(0);
-    public static final double kSpeakerTargetPitchTransformZ = Units.inchesToMeters(0);
+    public static final double kSpeakerTargetYawTransformX = Units.inchesToMeters(6.0); // NOTE: If we change this, retune launcher arm 
+    public static final double kSpeakerTargetYTransform = Units.inchesToMeters(-6.0);
+    public static final double kSpeakerTargetPitchTransformZ = Units.inchesToMeters(24);
     public static final double kSpeakerTargetDistanceTransformX = Units.inchesToMeters(0);
   }
 
   public static final class photonConstants {
     public static final String kCameraName = "centralCamera";
-    public static final Transform3d kCameraLocation = new Transform3d(
-      new Translation3d(Units.inchesToMeters(-11.06),                                                                
-      Units.inchesToMeters(0),                                                               
-      Units.inchesToMeters(16)),                                                     
-      new Rotation3d(0,                                         
-      Units.degreesToRadians(-23.0), Units.degreesToRadians(-180)));
+      public static final Transform3d kCameraLocation = new Transform3d(
+        new Translation3d(Units.inchesToMeters(-14),                                                                
+        Units.inchesToMeters(0),                                                               
+        Units.inchesToMeters(15.75)),                                                     
+        new Rotation3d(0,                                         
+        Units.degreesToRadians(22.5), Units.degreesToRadians(180)));
     public static double speakerDistance;
-    public static final PoseStrategy kPoseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-    public static final PoseStrategy kFallbackPoseStrategy = PoseStrategy.LOWEST_AMBIGUITY;
     public static final Matrix<N3, N1> kVisionSingleTagStandardDeviations = VecBuilder.fill(1, 1, 2); 
-    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.2, 0.2, 0.5); 
+    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.5, 0.5, 1); 
     public static final double kVisionMaxPoseAmbiguity = 0.2;
   }
 
-  public static final class HSVLEDColor {
-    public static final int red = 90;
-    public static final int orange = 100;
-    public static final int yellow = 70;
-    public static final int green = 30;
-    public static final int blue = 0;
-    public static final int indigo = 120;
-    public static final int purple = 140;
-  }
-  
-  public static final class RGBLEDColor {
-    // These colors are gotten online / through trial and error
-    // Please dont touch them it would be a pain to fix ;-;
-    public static final int[] red = {240,0,0};
-    public static final int[] orange = {255,45,0};
-    public static final int[] yellow = {255, 191, 0};
-    public static final int[] green = {0, 128, 0};
-    public static final int[] blue = {25, 25, 150};
+  public static final class LEDColor {
+    public static final int red = 0;
+    public static final int orange = 10;
+    public static final int yellow = 40;
+    public static final int green = 70;
+    public static final int blue = 100;
+    public static final int indigo = 130;
+    public static final int purple = 160;
   }
 }
