@@ -28,6 +28,7 @@ public class commandArmAlignToTarget extends Command {
     public void execute() {
         System.out.println("Difference in distance calculations: " + (poseSpeakerDistance.get() - cameraSpeakerDistance.get()));
         double calculatedArmAngle = arm.getCalculatedSpeakerAngle(poseSpeakerDistance.get()); // Shot map seems off, adjust as needed.
+        System.out.println("Arm calculated movement: " + calculatedArmAngle);
         arm.altGoToSetpoint(calculatedArmAngle);
     }
 

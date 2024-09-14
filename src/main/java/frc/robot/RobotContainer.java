@@ -242,7 +242,8 @@ public class RobotContainer {
         driverController.rightTrigger().whileTrue(
             new ParallelCommandGroup(
                 new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw),
-                new commandArmAlignToTarget(robotShooter, poseSubsystem::getTargetDistance, centralCamera::getDistanceToTag)
+                new commandArmAlignToTarget(robotShooter, poseSubsystem::getTargetDistance, centralCamera::getDistanceToTag),
+                new commandFlywheelShoot(robotFlywheels)
             )
             
         );

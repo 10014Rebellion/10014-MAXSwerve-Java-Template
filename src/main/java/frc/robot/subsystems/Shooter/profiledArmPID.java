@@ -66,12 +66,15 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotMotor = new CANSparkMax(ShooterConstants.kPivotMotorCanID, MotorType.kBrushless);
         pivotMotor.setIdleMode(IdleMode.kBrake);
         pivotMotor.setSmartCurrentLimit(ShooterConstants.kPivotMotorCurrentLimit);
+        
 
         // Initializes the Encoder
         pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
         pivotEncoder.setPositionConversionFactor(360);
         pivotEncoder.setInverted(false);
+        pivotMotor.burnFlash(); 
         //pivotEncoder.setZeroOffset(ShooterConstants.kArmZeroOffset);
+    
 
         // Converts the encoder readings into a -180 -> 180 deg format.
         if (pivotEncoder.getPosition() > 180) {
