@@ -173,6 +173,7 @@ public class RobotContainer {
     }
 
     private void configureTriggers(){
+        // Automatically shoot when ready
         new Trigger(() -> 
         DriveConstants.aimedAtTarget && 
         FlywheelConstants.flywheelsAtSetpoint && 
@@ -181,10 +182,12 @@ public class RobotContainer {
         (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER))
             .onTrue(new commandIndexerStart(robotIndexer));
 
-        // new Trigger(() -> 
-        //     (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) &&
-        //     !IndexerConstants.robotHasNote
-        // ).whileTrue(new commandIndexerPickup(robotIndexer));
+        // Keep intaking if piece is slipping out
+        new Trigger(() -> 
+            ((ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) ||
+            (ShooterConstants.currentArmState == ShooterConstants.armState.AMP)) &&
+            !IndexerConstants.robotHasNote
+        ).whileTrue(new commandIndexerPickup(robotIndexer));
     }
 
     private void configureCompetitionButtonBindings() {
