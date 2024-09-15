@@ -21,6 +21,7 @@ public class indexerSubsystem extends SubsystemBase{
         indexerMotor.setIdleMode(IdleMode.kCoast);
         indexerMotor.setInverted(true);
         indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerMotorCurrentLimit);
+        indexerMotor.burnFlash();
 
         noteDetector1 = new DigitalInput(IndexerConstants.kNoteDetector1Port);
         noteDetector2 = new DigitalInput(IndexerConstants.kNoteDetector2Port);
@@ -55,5 +56,6 @@ public class indexerSubsystem extends SubsystemBase{
     public void periodic() {
         IndexerConstants.robotHasNote = !noteDetector1.get() || !noteDetector2.get();
         SmartDashboard.putBoolean("Note Detected", IndexerConstants.robotHasNote);
+        SmartDashboard.putBoolean("Beam break", noteDetector1.get());
     }
 }
