@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.sql.Driver;
+import java.time.Instant;
 
 import org.w3c.dom.css.RGBColor;
 
@@ -177,31 +178,63 @@ public class LEDInterface extends SubsystemBase{
         return new InstantCommand(() -> setTransitionRGBValues(RGBLEDColor.green, transitionSpeed));
     }
 
+    public Command readyToShoot(){
+        return new InstantCommand(() -> {
+            setTransitionRGBValues(RGBLEDColor.green, 1);
+            updateLEDandTelem();
+        });
+    }
+
+    public Command hasNote() {
+        return new InstantCommand(() -> {
+            setTransitionRGBValues(RGBLEDColor.orange, 1);
+            updateLEDandTelem();
+        });
+    }
+
+    public Command defaultLED(){
+        return new InstantCommand(() -> {
+            if (DriverStation.getAlliance().toString().equals("Red")) 
+                setTransitionRGBValues(RGBLEDColor.red, 1);
+            else 
+                setTransitionRGBValues(RGBLEDColor.blue, 1);
+
+            updateLEDandTelem();
+        });
+    }
+    
+    public void updateLEDandTelem(){
+        transitionRGB();
+        led.setData(ledBuffer);
+        SmartDashboard.putBooleanArray("Aimed, Flywheels, Arm", 
+        new boolean[] {DriveConstants.aimedAtTarget, FlywheelConstants.flywheelsAtSetpoint, ShooterConstants.armAtSetpoint});
+    }
+
     @Override
     public void periodic() {
-        if (DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
-        && ShooterConstants.armAtSetpoint) {
-            setTransitionRGBValues(RGBLEDColor.green, 1);
-        }
-        else if (IndexerConstants.robotHasNote) {
-            setTransitionRGBValues(RGBLEDColor.orange, 1);
-        }
-        else {
-            if (DriverStation.getAlliance().toString().equals("Red")) {
-                setTransitionRGBValues(RGBLEDColor.red, 1);
-            }
-            else {
-                setTransitionRGBValues(RGBLEDColor.blue, 1);
-            }
-        }
-        transitionRGB();
+        // if (DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
+        // && ShooterConstants.armAtSetpoint) {
+        //     setTransitionRGBValues(RGBLEDColor.green, 1);
+        // }
+        // else if (IndexerConstants.robotHasNote) {
+        //     setTransitionRGBValues(RGBLEDColor.orange, 1);
+        // }
+        // else {
+        //     if (DriverStation.getAlliance().toString().equals("Red")) {
+        //         setTransitionRGBValues(RGBLEDColor.red, 1);
+        //     }
+        //     else {
+        //         setTransitionRGBValues(RGBLEDColor.blue, 1);
+        //     }
+        // }
+        // transitionRGB();
         //rainbowUnicornVomit();
-        led.setData(ledBuffer);
+        // led.setData(ledBuffer);
         /*SmartDashboard.putNumber("Current R Color", finalRGB[0]);
         SmartDashboard.putNumber("Current G Color", finalRGB[1]);
         SmartDashboard.putNumber("Current B Color", finalRGB[2]);*/
-        SmartDashboard.putBooleanArray("Aimed, Flywheels, Arm", 
-        new boolean[] {DriveConstants.aimedAtTarget, FlywheelConstants.flywheelsAtSetpoint, ShooterConstants.armAtSetpoint});
+        // SmartDashboard.putBooleanArray("Aimed, Flywheels, Arm", 
+        // new boolean[] {DriveConstants.aimedAtTarget, FlywheelConstants.flywheelsAtSetpoint, ShooterConstants.armAtSetpoint});
         //System.out.println("GRELEKJLDKSJ");
     }
 }

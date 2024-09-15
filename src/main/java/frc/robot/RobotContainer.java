@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.photonConstants;
@@ -68,9 +69,12 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.time.Instant;
 import java.util.List;
+
+import javax.management.InstanceAlreadyExistsException;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -131,7 +135,8 @@ public class RobotContainer {
         // Configure the button bindings
         
         configureButtonBindings();
-
+        configureTriggers();
+        
         // Auton Sendable Chooser
         registerNamedCommands();
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -165,6 +170,17 @@ public class RobotContainer {
     private void configureButtonBindings() {
         configureCompetitionButtonBindings();
         //configureTestButtonBindings();
+    }
+
+    private void configureTriggers(){
+        // new Trigger(() -> DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
+        // && ShooterConstants.armAtSetpoint)
+        //     .onTrue(robotLED.readyToShoot());
+
+        // new Trigger(() -> !(DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
+        // && ShooterConstants.armAtSetpoint) && IndexerConstants.robotHasNote)
+        //     .onTrue(robotLED.hasNote())
+        //     .onFalse(robotLED.defaultLED());
     }
 
     private void configureCompetitionButtonBindings() {
