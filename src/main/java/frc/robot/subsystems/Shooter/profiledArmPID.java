@@ -180,6 +180,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     }
 
     public void goToTunableSetpoint() {
+        ShooterConstants.currentArmState = ShooterConstants.armState.TUNING;
         double tunableSetpointNum = tunableSetpoint.get();
         if (tunableSetpointNum > ShooterConstants.kArmUpperLimit) {
             setGoal(ShooterConstants.kArmUpperLimit);
@@ -230,9 +231,11 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     public double getCalculatedSpeakerAngle(double speakerDistance) {
         
         if (pivotAngleMap != null) {
-            return pivotAngleMap.get(speakerDistance);
+            //return pivotAngleMap.get(speakerDistance);
+            return -215.375*Math.pow(speakerDistance, -0.11) + 197.004;
         }
         else return ShooterConstants.kArmSubwooferShotPosition;
+        
     }
 
     public void goToCalculatedSpeakerAngle() {
@@ -244,9 +247,15 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotAngleMap.put(1.12, -15.0);
         pivotAngleMap.put(1.50, -10.0);
         pivotAngleMap.put(2.0, -3.0);
-        pivotAngleMap.put(2.5, 1.5);
+        /*pivotAngleMap.put(2.5, 1.5);
         pivotAngleMap.put(3.0, 4.0);
         pivotAngleMap.put(3.5, 6.0);
-        pivotAngleMap.put(4.0, 7.0);
+        pivotAngleMap.put(4.0, 7.0);*/
+        pivotAngleMap.put(2.55, 3.55);
+        pivotAngleMap.put(3.0, 6.4);
+        pivotAngleMap.put(3.5, 11.25);
+        pivotAngleMap.put(3.85,11.25);
+        pivotAngleMap.put(4.05, 11.25);
+        pivotAngleMap.put(4.5, 12.0);
     }
 }

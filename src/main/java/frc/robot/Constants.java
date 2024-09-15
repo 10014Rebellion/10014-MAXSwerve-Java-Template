@@ -198,6 +198,7 @@ public final class Constants {
     public static final double kArmSubwooferShotPosition = -15;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;
+    public static final double kArmShootUnderPosition = 40;
     public static final double kArmDefensePosition = 0;
     public static final double kArmAmpPosition = 85;
     public static final double kArmTrapPrepPosition = 90;
@@ -210,6 +211,7 @@ public final class Constants {
       IDLE,
       MOVING,
       SPEAKER,
+      TUNING,
       AMP,
       INTAKE,
       YEET

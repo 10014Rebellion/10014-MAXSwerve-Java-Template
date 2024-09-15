@@ -14,7 +14,7 @@ public class commandArmAutoAim extends Command {
 
     @Override
     public void initialize() {
-        ShooterConstants.currentArmState = ShooterConstants.armState.SPEAKER;
+        ShooterConstants.currentArmState = ShooterConstants.armState.MOVING;
         arm.enable();
     }
 
@@ -26,6 +26,7 @@ public class commandArmAutoAim extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        ShooterConstants.currentArmState = ShooterConstants.armState.SPEAKER;
     }
 
     @Override

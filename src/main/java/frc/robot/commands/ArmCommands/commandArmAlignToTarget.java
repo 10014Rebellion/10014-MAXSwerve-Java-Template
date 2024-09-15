@@ -2,8 +2,10 @@ package frc.robot.commands.ArmCommands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.photonConstants;
 import frc.robot.subsystems.Shooter.profiledArmPID;
 
 public class commandArmAlignToTarget extends Command {
@@ -26,8 +28,8 @@ public class commandArmAlignToTarget extends Command {
 
     @Override
     public void execute() {
-        System.out.println("Difference in distance calculations: " + (poseSpeakerDistance.get() - cameraSpeakerDistance.get()));
-        double calculatedArmAngle = arm.getCalculatedSpeakerAngle(poseSpeakerDistance.get()); // Shot map seems off, adjust as needed.
+        System.out.println("Difference in distance calculations: " + (Math.abs(poseSpeakerDistance.get()) - Math.abs(cameraSpeakerDistance.get())));
+        double calculatedArmAngle = arm.getCalculatedSpeakerAngle(poseSpeakerDistance.get() - photonConstants.kCameraLocation.getX()); // Shot map seems off, adjust as needed.
         System.out.println("Arm calculated movement: " + calculatedArmAngle);
         arm.altGoToSetpoint(calculatedArmAngle);
     }

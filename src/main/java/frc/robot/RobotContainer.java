@@ -183,9 +183,10 @@ public class RobotContainer {
             .onTrue(new commandIndexerStart(robotIndexer));
 
         // Keep intaking if piece is slipping out
-        new Trigger(() -> 
-            ((ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) ||
-            (ShooterConstants.currentArmState == ShooterConstants.armState.AMP)) &&
+        new Trigger(() ->
+            (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER ||
+             ShooterConstants.currentArmState == ShooterConstants.armState.AMP ||
+             ShooterConstants.currentArmState == ShooterConstants.armState.TUNING) &&
             !IndexerConstants.robotHasNote
         ).whileTrue(new commandIndexerPickup(robotIndexer));
     }
@@ -205,7 +206,8 @@ public class RobotContainer {
         driverController.b().whileTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
-                new commandFlywheelShoot(robotFlywheels)
+                new commandFlywheelShoot(robotFlywheels),
+                new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
             )
         );
 
@@ -302,7 +304,7 @@ public class RobotContainer {
 
         copilotController.a().whileTrue(
             new ParallelCommandGroup(
-                robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition),
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmShootUnderPosition),
                 new commandFlywheelShoot(robotFlywheels)
             ));
 
