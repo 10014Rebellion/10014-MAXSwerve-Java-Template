@@ -23,10 +23,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.photonConstants;
+import frc.robot.Constants.ShooterConstants.armState;
 import frc.robot.subsystems.Shooter.profiledArmPID;
+import frc.robot.subsystems.Shooter.Flywheel;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.LEDInterface;
@@ -68,6 +71,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import java.time.Instant;
 import java.util.List;
@@ -131,6 +135,7 @@ public class RobotContainer {
         // Configure the button bindings
         
         configureButtonBindings();
+        configureTriggers();
 
         // Auton Sendable Chooser
         registerNamedCommands();
@@ -167,6 +172,21 @@ public class RobotContainer {
         //configureTestButtonBindings();
     }
 
+    private void configureTriggers(){
+        new Trigger(() -> 
+        DriveConstants.aimedAtTarget && 
+        FlywheelConstants.flywheelsAtSetpoint && 
+        (FlywheelConstants.currentFlywheelState == FlywheelConstants.flywheelState.SHOOT) && 
+        ShooterConstants.armAtSetpoint && 
+        (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER))
+            .onTrue(new commandIndexerStart(robotIndexer));
+
+        // new Trigger(() -> 
+        //     (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) &&
+        //     !IndexerConstants.robotHasNote
+        // ).whileTrue(new commandIndexerPickup(robotIndexer));
+    }
+
     private void configureCompetitionButtonBindings() {
         driverController.x()
             .whileTrue(
@@ -178,16 +198,18 @@ public class RobotContainer {
         driverController.y().whileTrue(
             new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
         );
-        /*driverController.b().whileTrue(
+        
+        driverController.b().whileTrue(
             new ParallelCommandGroup(
                 new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
                 new commandFlywheelShoot(robotFlywheels)
             )
-        );*/
-        driverController.b().whileTrue(
-            new InstantCommand(() ->
-            robotIndexer.getOuttaHere())
         );
+
+        // driverController.b().whileTrue(
+        //     new InstantCommand(() ->
+        //     robotIndexer.getOuttaHere())
+        // );
         /*driverController.povRight().whileTrue(
             new InstantCommand(() ->
             robotIndexer.enableBrake())

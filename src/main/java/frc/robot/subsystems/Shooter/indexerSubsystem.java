@@ -23,7 +23,10 @@ public class indexerSubsystem extends SubsystemBase{
         indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerMotorCurrentLimit);
         indexerMotor.burnFlash();
 
+        // Beam Break sensor
         noteDetector1 = new DigitalInput(IndexerConstants.kNoteDetector1Port);
+
+        // IR Sensor
         noteDetector2 = new DigitalInput(IndexerConstants.kNoteDetector2Port);
     }
 
@@ -52,6 +55,7 @@ public class indexerSubsystem extends SubsystemBase{
     public void getOuttaHere() {
         indexerMotor.setVoltage(-12);
     }
+
     @Override
     public void periodic() {
         IndexerConstants.robotHasNote = !noteDetector1.get() || !noteDetector2.get();

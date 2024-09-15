@@ -204,7 +204,7 @@ public final class Constants {
     public static final double kArmTrapPosition = 80;
 
     public static boolean armAtSetpoint = false;
-
+    public static boolean isArmMoving = false;
     public static armState currentArmState = armState.IDLE;
     public enum armState {
       IDLE,
