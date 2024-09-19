@@ -338,7 +338,7 @@ public class RobotContainer {
                                 .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
         // Test trap setpoints.
         copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
-        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(70.0));
+        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmAmpPosition - 8.0));
     }
 
     private void configureTestButtonBindings() {
