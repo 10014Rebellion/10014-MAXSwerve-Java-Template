@@ -310,11 +310,14 @@ public final class Constants {
     public static final int kLeftClimbMotorCanID = 42;
     public static final int kRightClimbMotorCanID = 41;
 
-    public static final int kLeftClimbMotorCurrentLimit = 60;
-    public static final int kRightClimbMotorCurrentLimit = 60;
+    public static final int kClimbCurrentLimit = 60;
+    public static final double kSprocketSize = 2.16;
 
     public static final int kLeftClimbDetector = 2;
     public static final int kRightClimbDetector = 3;
+
+    public static final int kEncoderLimitBottom = -1340;
+    public static final int kEncoderLimitTop = 370;
 
     public static climbState currentClimbState = climbState.IDLE;
     public enum climbState {
@@ -355,7 +358,7 @@ public final class Constants {
     public static final PoseStrategy kPoseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
     public static final PoseStrategy kFallbackPoseStrategy = PoseStrategy.LOWEST_AMBIGUITY;
     public static final Matrix<N3, N1> kVisionSingleTagStandardDeviations = VecBuilder.fill(1, 1, 2); 
-    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.2, 0.2, 0.5); 
+    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.1, 0.1, 0.2); 
     public static final double kVisionMaxPoseAmbiguity = 0.2;
   }
 

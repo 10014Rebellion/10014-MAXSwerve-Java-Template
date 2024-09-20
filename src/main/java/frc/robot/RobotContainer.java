@@ -31,11 +31,10 @@ import frc.robot.Constants.ShooterConstants.armState;
 import frc.robot.subsystems.Shooter.profiledArmPID;
 import frc.robot.subsystems.Shooter.Flywheel;
 import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
-import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.LEDInterface;
 import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.pidClimbSubsystem;
+import frc.robot.subsystems.Climb.climbPIDSubsystem;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 import frc.robot.subsystems.Shooter.intakeSubsystem;
@@ -48,7 +47,7 @@ import frc.robot.commands.ArmCommands.commandArmAmp;
 import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
 import frc.robot.commands.ArmCommands.commandArmSubwoofer;
-import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
+// import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.DriveCommands.commandDrivetrainAlignToTarget;
 import frc.robot.commands.IndexerCommands.commandIndexBrakeMode;
@@ -95,7 +94,7 @@ public class RobotContainer {
     // Robot Subsystem Creations
     private final DriveSubsystem m_robotDrive;
     private final profiledArmPID robotShooter;
-    private final pidClimbSubsystem robotClimb;
+    private final climbPIDSubsystem robotClimb;
     private final doubleShooterFlywheels robotFlywheels;
     private final indexerSubsystem robotIndexer;
     private final intakeSubsystem robotIntake;
@@ -123,7 +122,7 @@ public class RobotContainer {
         // Robot subsystem initialization.
         m_robotDrive = new DriveSubsystem(centralCamera);
         robotShooter = new profiledArmPID();
-        robotClimb = new pidClimbSubsystem();
+        robotClimb = new climbPIDSubsystem();
         robotFlywheels = new doubleShooterFlywheels();
         robotIndexer = new indexerSubsystem();
         robotIntake = new intakeSubsystem();
@@ -323,19 +322,20 @@ public class RobotContainer {
                 )
             ));
 
-        copilotController.leftBumper().whileTrue(
-            new InstantCommand(() -> robotClimb.moveLeftClimb(0.2)))
-        .whileFalse(new InstantCommand(() -> robotClimb.moveLeftClimb(0)));
         
-        copilotController.rightBumper().whileTrue(
-             new InstantCommand(() -> robotClimb.moveRightClimb(0.2)))
-        .whileFalse(new InstantCommand(() -> robotClimb.moveRightClimb(0)));
 
-        copilotController.povUp().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(-6)))
-                                .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
+        copilotController.povUp()
+            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(0.25)))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
 
-        copilotController.povDown().whileTrue(new InstantCommand(() -> robotClimb.moveBothClimb(3)))
-                                .whileFalse(new InstantCommand(() -> robotClimb.moveBothClimb(0)));
+        copilotController.povDown()
+            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(-0.25)))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        copilotController.rightStick()
+            .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
+
+
         // Test trap setpoints.
         copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
         copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmAmpPosition - 8.0));
