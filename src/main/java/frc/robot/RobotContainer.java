@@ -34,7 +34,10 @@ import frc.robot.subsystems.Shooter.doubleShooterFlywheels;
 import frc.robot.subsystems.LEDInterface;
 import frc.robot.subsystems.PoseSubsystem;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Climb.climbBangBangCommand;
 import frc.robot.subsystems.Climb.climbPIDSubsystem;
+import frc.robot.subsystems.Climb.climbProfileCommand;
+import frc.robot.subsystems.Climb.climbSlowPIDCommand;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.indexerSubsystem;
 import frc.robot.subsystems.Shooter.intakeSubsystem;
@@ -47,6 +50,7 @@ import frc.robot.commands.ArmCommands.commandArmAmp;
 import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
 import frc.robot.commands.ArmCommands.commandArmSubwoofer;
+import frc.robot.commands.ClimbCommands.climbCommand;
 // import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.DriveCommands.commandDrivetrainAlignToTarget;
@@ -135,6 +139,7 @@ public class RobotContainer {
         
         configureButtonBindings();
         configureTriggers();
+        // configureTestButtonBindings();
 
         // Auton Sendable Chooser
         registerNamedCommands();
@@ -167,8 +172,9 @@ public class RobotContainer {
         
     }
     private void configureButtonBindings() {
-        configureCompetitionButtonBindings();
-        //configureTestButtonBindings();
+        // Just swap which line is commented when tetsing vs competition
+        //configureCompetitionButtonBindings();
+        configureTestButtonBindings();
     }
 
     private void configureTriggers(){
@@ -191,6 +197,8 @@ public class RobotContainer {
     }
 
     private void configureCompetitionButtonBindings() {
+        
+
         driverController.x()
             .whileTrue(
                 new ParallelCommandGroup(
@@ -363,21 +371,97 @@ public class RobotContainer {
             new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = false),
               new InstantCommand(() -> DriveConstants.aimedAtTarget = false)
         ));*/
-        driverController.a().whileTrue(
+        // driverController.a().whileTrue(
+        //     new ParallelCommandGroup(
+        //         new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
+        //         new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
+        //         new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
+        //     )
+        // );
+
+        copilotController.a().whileTrue(
             new ParallelCommandGroup(
-                new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
-                new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
-                new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
+            new commandArmAmp(robotShooter, true),
+            new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                ))
+        );
+
+
+        driverController.rightBumper().whileTrue(
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakePickup(robotIntake),
+                    new commandIndexerPickup(robotIndexer)
+                ))
             )
-        );
-        driverController.b().whileTrue(
-            robotLED.colorToRedTransition()
-        );
-        driverController.x().whileTrue(
-            robotLED.colorToOrangeTransition()
-        );
+            .whileFalse(new commandFlywheelIdle(robotFlywheels));
+        
+        // First gets the arm into intake position, then allows the intake and indexer to run
+        driverController.leftBumper() .whileTrue(
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakeReverse(robotIntake),
+                    new commandIndexerReverse(robotIndexer)
+                )
+            ));
+        // driverController.b().whileTrue(
+        //     robotLED.colorToRedTransition()
+        // );
+        // driverController.x().whileTrue(
+        //     robotLED.colorToOrangeTransition()
+        // );
 
 
+        driverController.x()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new InstantCommand(() -> m_robotDrive.zeroHeading()),
+                    new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
+                )
+            );
+
+        // Grabby
+        copilotController.b()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new climbProfileCommand(robotClimb, 400, true),
+                    new climbProfileCommand(robotClimb, 400, false)
+                ))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        // Go to zero (are you illiterate)
+        copilotController.y()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new climbProfileCommand(robotClimb, 0, true),
+                    new climbProfileCommand(robotClimb, 0, false)
+                ))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        // Pullup (btw I can't do a pullup)
+        copilotController.x()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new climbSlowPIDCommand(robotClimb, -1400, true),
+                    new climbSlowPIDCommand(robotClimb, -1400, false)
+                ))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+
+        copilotController.povUp()
+            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(0.25)))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        copilotController.povDown()
+            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(-0.25)))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        copilotController.rightStick()
+            .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
     }
 
     public void registerNamedCommands() {

@@ -21,7 +21,6 @@ public class climbPIDSubsystem extends SubsystemBase {
 
   final RelativeEncoder leftClimbEncoder;
   final RelativeEncoder rightClimbEncoder;
-  final PIDController leftPIDController, rightPIDController;
   
   public climbPIDSubsystem() {
     leftClimbMotor = new CANSparkMax(ClimbConstants.kLeftClimbMotorCanID, MotorType.kBrushless);
@@ -33,13 +32,10 @@ public class climbPIDSubsystem extends SubsystemBase {
 
     configMotor(leftClimbMotor, leftClimbEncoder, true);
     configMotor(rightClimbMotor, rightClimbEncoder, false);
-
-    leftPIDController = new PIDController(0, 0, 0);
-    rightPIDController = new PIDController(0, 0, 0);
   }
 
   private void configMotor(CANSparkBase motor, RelativeEncoder encoder, boolean isInverted) {
-    motor.setIdleMode(IdleMode.kCoast);
+    motor.setIdleMode(IdleMode.kBrake);
     motor.setInverted(isInverted);
     motor.setSmartCurrentLimit(ClimbConstants.kClimbCurrentLimit);
 
@@ -51,15 +47,15 @@ public class climbPIDSubsystem extends SubsystemBase {
     rightClimbEncoder.setPosition(0);
   }
 
-  private double getLeftEncoder(){
+  public double getLeftEncoder(){
     return leftClimbEncoder.getPosition();
   }
 
-  private double getRightEncoder(){
+  public double getRightEncoder(){
     return rightClimbEncoder.getPosition();
   }
 
-  private double getAvgEncoder() {
+  public double getAvgEncoder() {
     return (getLeftEncoder() + getRightEncoder()) / 2;
   }
 

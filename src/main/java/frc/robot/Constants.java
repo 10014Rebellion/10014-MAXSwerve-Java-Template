@@ -155,7 +155,7 @@ public final class Constants {
     
     public static final int kDriverControllerPort = 0;
     public static final double kDriveDeadband = 0.1;
-    public static final double kDriveMult = 1.0;
+    public static final double kDriveMult = 0.5;
     public static final double kTurnMult = 0.5;
 
     public static final int kCopilotControllerPort = 1;
@@ -316,7 +316,7 @@ public final class Constants {
     public static final int kLeftClimbDetector = 2;
     public static final int kRightClimbDetector = 3;
 
-    public static final int kEncoderLimitBottom = -1340;
+    public static final int kEncoderLimitBottom = -1400;
     public static final int kEncoderLimitTop = 370;
 
     public static climbState currentClimbState = climbState.IDLE;

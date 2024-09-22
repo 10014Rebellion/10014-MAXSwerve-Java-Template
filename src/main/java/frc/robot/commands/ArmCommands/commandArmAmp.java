@@ -6,15 +6,22 @@ import frc.robot.subsystems.Shooter.profiledArmPID;
 
 public class commandArmAmp extends Command{
     private final profiledArmPID arm;
+    private boolean mLess = false;
 
     public commandArmAmp(profiledArmPID arm) {
         this.arm = arm;
         addRequirements(arm);
     }
 
+    public commandArmAmp(profiledArmPID arm, boolean less) {
+        this.arm = arm;
+        mLess = less;
+        addRequirements(arm);
+    }
+
     @Override
     public void initialize() {
-        arm.goToSetpoint(ShooterConstants.kArmAmpPosition);
+        arm.goToSetpoint(ShooterConstants.kArmAmpPosition - ((mLess) ? 8 : 0));
         ShooterConstants.currentArmState = ShooterConstants.armState.MOVING;
     }
 
