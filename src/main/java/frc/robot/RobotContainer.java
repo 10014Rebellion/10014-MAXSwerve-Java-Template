@@ -349,6 +349,157 @@ public class RobotContainer {
         copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmAmpPosition - 8.0));
     }
 
+    private void configureStemGalBindings() {
+        driverController.x()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new InstantCommand(() -> m_robotDrive.zeroHeading()),
+                    new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
+                )
+            );
+        driverController.y().whileTrue(
+            new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
+        );
+        
+        driverController.b().whileTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
+                new commandFlywheelShoot(robotFlywheels),
+                new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
+            )
+        );
+
+        // driverController.b().whileTrue(
+        //     new InstantCommand(() ->
+        //     robotIndexer.getOuttaHere())
+        // );
+        /*driverController.povRight().whileTrue(
+            new InstantCommand(() ->
+            robotIndexer.enableBrake())
+        );
+        driverController.povLeft().whileTrue(
+            new InstantCommand(() -> 
+            robotIndexer.disableBrake())
+        );*/
+        //driverController.a().whileTrue(new commandClimbAutoZero(robotClimb));
+        /*driverController.b().whileTrue(
+            robotLED.redToOrangeTransition()
+        );
+        driverController.a().whileTrue(
+            robotLED.orangeToRedTransition()
+        );*/
+
+        // First gets the arm into intake position, then allows the intake and indexer to run
+        driverController.rightBumper().whileTrue(
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakePickup(robotIntake),
+                    new commandIndexerPickup(robotIndexer)
+                ))
+            )
+            .whileFalse(new commandFlywheelIdle(robotFlywheels));
+        
+        // First gets the arm into intake position, then allows the intake and indexer to run
+        driverController.leftBumper() .whileTrue(
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakeReverse(robotIntake),
+                    new commandIndexerReverse(robotIndexer)
+                )
+            ));
+
+        // When holding the right trigger, the robot will:
+        // Have the drivetrain rotate toward the speaker
+        // Have the arm get to the correct angle
+        // Rev the flywheels up to speed
+        /*driverController.rightTrigger().whileTrue(
+            new ParallelCommandGroup(
+                new commandArmAutoAim(robotShooter),
+                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
+                new commandFlywheelShoot(robotFlywheels),
+                new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                )
+            ));*/
+        driverController.rightTrigger().whileTrue(
+            new ParallelCommandGroup(
+                new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw),
+                new commandArmAlignToTarget(robotShooter, poseSubsystem::getTargetDistance, centralCamera::getDistanceToTag),
+                new commandFlywheelShoot(robotFlywheels)
+            )
+            
+        );
+
+
+        // Copilot Shooter Commands
+        copilotController.x().whileTrue(
+            new ParallelCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmParallelPosition),
+                new commandFlywheelShoot(robotFlywheels))
+            );
+        
+        copilotController.y().whileTrue(
+            new ParallelCommandGroup(
+            new commandArmAmp(robotShooter),
+            new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                ))
+        );
+
+        copilotController.b().whileTrue(
+            new ParallelCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
+                new commandFlywheelShoot(robotFlywheels),
+                new ParallelDeadlineGroup(
+                    new WaitCommand(0.5), 
+                    new commandIndexBrakeMode(robotIndexer)
+                )
+            ));
+
+        copilotController.a().whileTrue(
+            new ParallelCommandGroup(
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmShootUnderPosition),
+                new commandFlywheelShoot(robotFlywheels)
+            ));
+
+        copilotController.leftTrigger().whileTrue(
+            new ParallelCommandGroup(
+                new commandIndexerStart(robotIndexer),
+                new commandIntakeStart(robotIntake)
+            ));
+        
+        copilotController.rightTrigger().whileTrue(
+            new ParallelCommandGroup(
+                new CommandManualFlywheels(robotFlywheels),
+                new SequentialCommandGroup(
+                    new WaitCommand(0.5),
+                    new commandIndexerStart(robotIndexer)
+                )
+            ));
+
+        
+
+        copilotController.povUp()
+            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(0.25)))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        copilotController.povDown()
+            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(-0.25)))
+            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        copilotController.rightStick()
+            .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
+
+
+        // Test trap setpoints.
+        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
+        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmAmpPosition - 8.0));
+    }
+
     private void configureTestButtonBindings() {
         System.out.println("YOU ARE IN TESTING MODE");
         /*driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))

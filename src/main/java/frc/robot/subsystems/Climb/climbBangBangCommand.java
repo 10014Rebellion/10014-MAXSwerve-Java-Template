@@ -13,6 +13,9 @@ public class climbBangBangCommand extends Command {
   private final boolean mIsRight;
   private final climbPIDSubsystem mClimbSubsystem;
   private BangBangController bangController;
+  private double kTolerance = 5; // Ticks
+  private double kSpeedPercent = 75;
+  private double kChillRange = 200; // Within 200 ticks, it will be slower
 
   public climbBangBangCommand(climbPIDSubsystem climbSubsystem, double climbGoal, boolean isRightClimb) {
     this.mSetpoint = climbGoal;
@@ -23,20 +26,39 @@ public class climbBangBangCommand extends Command {
   
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    bangController = new BangBangController(3);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double measurement = (mIsRight) ? mClimbSubsystem.getRightEncoder() : mClimbSubsystem.getLeftEncoder();
-    double calculation = bangController.calculate(measurement, mSetpoint);
+    double measurement = getMeasurement();
+    double currentSpeed = kSpeedPercent / 100;
+    
+    if(!isFinished()) {
 
+      if(Math.abs(mSetpoint - measurement) < kChillRange)
+        currentSpeed *= 0.5; // Half the current speed
+
+      // If error is negative / climb pulling down
+      if(mSetpoint - measurement < 0) {
+        setOutput(-currentSpeed);
+
+      // If error is positive / climb letting go
+      } else {
+        setOutput(currentSpeed);
+      }
+    }
+  }
+
+  private double getMeasurement() {
+    return (mIsRight) ? mClimbSubsystem.getRightEncoder() : mClimbSubsystem.getLeftEncoder();
+  }
+
+  private void setOutput(double output){
     if (mIsRight)
-      mClimbSubsystem.setPercentOutputRight(calculation);
+      mClimbSubsystem.setPercentOutputRight(output);
     else
-      mClimbSubsystem.setPercentOutputLeft(calculation);
+      mClimbSubsystem.setPercentOutputLeft(output);
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +68,6 @@ public class climbBangBangCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(mSetpoint - getMeasurement()) <= kTolerance;
   }
 }
