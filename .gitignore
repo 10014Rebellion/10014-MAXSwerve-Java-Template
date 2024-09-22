@@ -255,3 +255,4 @@ coverage_report/
 bin/main/frc/robot/subsystems/Shooter/doubleShooterFlywheels.class
 *.class
 *.lock
+*.class

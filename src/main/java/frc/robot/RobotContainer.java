@@ -172,9 +172,9 @@ public class RobotContainer {
         
     }
     private void configureButtonBindings() {
-        // Just swap which line is commented when tetsing vs competition
-        //configureCompetitionButtonBindings();
-        configureTestButtonBindings();
+        // Just swap which line is commented when testing vs competition
+        configureCompetitionButtonBindings();
+        // configureTestButtonBindings();
     }
 
     private void configureTriggers(){
