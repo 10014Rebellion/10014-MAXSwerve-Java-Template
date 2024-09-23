@@ -103,7 +103,7 @@ public class DriveSubsystem extends SubsystemBase {
   private Vision centralCamera;
 
   Vector<N3> stateStdDevs = VecBuilder.fill(0.01, 0.01, Units.degreesToRadians(0.01)); // Increase for less trust
-  Vector<N3> visionStdDevs = VecBuilder.fill(0.2, 0.2, Units.degreesToRadians(0.2)); // Increase for less vision trust
+  Vector<N3> visionStdDevs = VecBuilder.fill(0.2, 0.2, Units.degreesToRadians(1)); // Increase for less vision trust
 
   private SwerveDrivePoseEstimator swervePoseEstimator = new SwerveDrivePoseEstimator(
       DriveConstants.kDriveKinematics, 
@@ -123,7 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public DriveSubsystem(Vision centralCamera) {
     this.centralCamera = centralCamera;
-    m_gyro.setYaw(swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    //m_gyro.setYaw(swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
     AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
      this::getChassisSpeed, this::driveRobotRelative, 
      new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
@@ -145,6 +145,7 @@ public class DriveSubsystem extends SubsystemBase {
     },
     this // Reference to this subsystem to set requirements);
     );
+    m_gyro.reset();
     turnController = new PIDController(DriveConstants.kAngularP, 0, DriveConstants.kAngularD);
     SmartDashboard.putData("Field", field);
 

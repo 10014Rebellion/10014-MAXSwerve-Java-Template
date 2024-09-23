@@ -153,11 +153,12 @@ public final class Constants {
 
   public static final class OIConstants {
     
-    public static final int kDriverControllerPort = 0;
+    
     public static final double kDriveDeadband = 0.1;
-    public static final double kDriveMult = 0.5;
-    public static final double kTurnMult = 0.5;
+    public static final double kDriveMult = 1.0;
+    public static final double kTurnMult = 0.9;
 
+    public static final int kDriverControllerPort = 0;
     public static final int kCopilotControllerPort = 1;
   }
 
@@ -194,7 +195,7 @@ public final class Constants {
     public static final double kArmParallelPosition = 0;
     public static final double kArmZeroOffset = 235;
 
-    public static final double kArmIntakePosition = -35;
+    public static final double kArmIntakePosition = -34;
     public static final double kArmSubwooferShotPosition = -15;
     public static final double kArmSubwooferSideShotPosition = 0;
     public static final double kArmYeetPosition = -10;
@@ -283,10 +284,10 @@ public final class Constants {
 
   public static final class PivotPIDConstants {
     //PID Constants
-    public static final double kP = 0.3;
+    public static final double kP = 0.34;
     // ALL ELSE FAILS, kP to 0.1 = good value
     public static final double kI = 0.0;
-    public static final double kD = 0.001;
+    public static final double kD = 0.002;
     public static final double baseSetpoint = 90;
 
     //Feed Forward constants

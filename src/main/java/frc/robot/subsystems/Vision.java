@@ -81,7 +81,7 @@ public class Vision extends SubsystemBase{
             Units.degreesToRadians(aprilTagResult.getBestTarget().getYaw()));
         //System.out.println(-cameraLocation.getRotation().getY());
         //System.out.println("Tracked tag rotation: " + trackedTagPose.getRotation().getY());
-        photonConstants.speakerDistance = trackedTagDist;
+        //photonConstants.speakerDistance = trackedTagDist;
     }
 
     public double getDistanceToTag() {

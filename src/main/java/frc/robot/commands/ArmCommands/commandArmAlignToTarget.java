@@ -36,6 +36,7 @@ public class commandArmAlignToTarget extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        ShooterConstants.currentArmState = ShooterConstants.armState.IDLE;
     }
 
     @Override

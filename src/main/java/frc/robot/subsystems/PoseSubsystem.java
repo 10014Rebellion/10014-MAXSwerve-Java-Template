@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.photonConstants;
 import frc.robot.utils.Utils;
 
 public class PoseSubsystem extends SubsystemBase{
@@ -45,6 +46,7 @@ public class PoseSubsystem extends SubsystemBase{
     public void periodic() {
       updatePose();
       updateTelemetry();
+      updateDistanceToSpeaker();
     }
 
     public void updatePose() {
@@ -122,6 +124,10 @@ public class PoseSubsystem extends SubsystemBase{
             )
           )
         );
+      }
+
+    public void updateDistanceToSpeaker() {
+        photonConstants.speakerDistance = getTargetDistance();
       }
 
     public void updateTelemetry() {

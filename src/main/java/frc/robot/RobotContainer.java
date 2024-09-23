@@ -184,7 +184,8 @@ public class RobotContainer {
         FlywheelConstants.flywheelsAtSetpoint && 
         (FlywheelConstants.currentFlywheelState == FlywheelConstants.flywheelState.SHOOT) && 
         ShooterConstants.armAtSetpoint && 
-        (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER))
+        (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) &&
+        (photonConstants.speakerDistance < 4.0))
             .onTrue(new commandIndexerStart(robotIndexer));
 
         // Keep intaking if piece is slipping out
@@ -369,26 +370,6 @@ public class RobotContainer {
             )
         );
 
-        // driverController.b().whileTrue(
-        //     new InstantCommand(() ->
-        //     robotIndexer.getOuttaHere())
-        // );
-        /*driverController.povRight().whileTrue(
-            new InstantCommand(() ->
-            robotIndexer.enableBrake())
-        );
-        driverController.povLeft().whileTrue(
-            new InstantCommand(() -> 
-            robotIndexer.disableBrake())
-        );*/
-        //driverController.a().whileTrue(new commandClimbAutoZero(robotClimb));
-        /*driverController.b().whileTrue(
-            robotLED.redToOrangeTransition()
-        );
-        driverController.a().whileTrue(
-            robotLED.orangeToRedTransition()
-        );*/
-
         // First gets the arm into intake position, then allows the intake and indexer to run
         driverController.rightBumper().whileTrue(
             new SequentialCommandGroup(
@@ -414,16 +395,8 @@ public class RobotContainer {
         // Have the drivetrain rotate toward the speaker
         // Have the arm get to the correct angle
         // Rev the flywheels up to speed
-        /*driverController.rightTrigger().whileTrue(
-            new ParallelCommandGroup(
-                new commandArmAutoAim(robotShooter),
-                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
-                new commandFlywheelShoot(robotFlywheels),
-                new ParallelDeadlineGroup(
-                    new WaitCommand(0.5), 
-                    new commandIndexBrakeMode(robotIndexer)
-                )
-            ));*/
+        // Once all of that is true, a command in the "Triggers()" class
+        // will tell the indexer to fire
         driverController.rightTrigger().whileTrue(
             new ParallelCommandGroup(
                 new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw),
@@ -481,7 +454,15 @@ public class RobotContainer {
                 )
             ));
 
-        
+        copilotController.rightBumper().whileTrue(
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakePickup(robotIntake),
+                    new commandIndexerPickup(robotIndexer)
+                ))
+            )
+            .whileFalse(new commandFlywheelIdle(robotFlywheels));
 
         copilotController.povUp()
             .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(0.25)))
@@ -502,33 +483,6 @@ public class RobotContainer {
 
     private void configureTestButtonBindings() {
         System.out.println("YOU ARE IN TESTING MODE");
-        /*driverController.y().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(6)))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
-        driverController.a().whileTrue(new InstantCommand(() -> robotShooter.runManualArmCommand(-12)))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));
-        driverController.rightTrigger().whileTrue(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(12, 6)))
-                            .whileFalse(new InstantCommand(() -> robotFlywheels.setFlywheelVoltage(0)));
-        driverController.leftTrigger().whileTrue(new commandIndexerPickup(robotIndexer));
-        driverController.rightBumper().whileTrue(new commandIntakeStart(robotIntake));
-        driverController.b().whileTrue(new InstantCommand(() -> robotShooter.runArmFFOnly()))
-                                .whileFalse(new InstantCommand(() -> robotShooter.runManualArmCommand(0)));*/
-        /*driverController.a().onTrue(new ParallelCommandGroup(
-            new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
-            new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
-            new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
-        ));
-        driverController.b().onTrue(new ParallelCommandGroup(
-            new InstantCommand(() -> ShooterConstants.armAtSetpoint = false),
-            new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = false),
-              new InstantCommand(() -> DriveConstants.aimedAtTarget = false)
-        ));*/
-        // driverController.a().whileTrue(
-        //     new ParallelCommandGroup(
-        //         new InstantCommand(() -> ShooterConstants.armAtSetpoint = true),
-        //         new InstantCommand(() -> FlywheelConstants.flywheelsAtSetpoint = true),
-        //         new InstantCommand(() -> DriveConstants.aimedAtTarget = true)
-        //     )
-        // );
 
         copilotController.a().whileTrue(
             new ParallelCommandGroup(

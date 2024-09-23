@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import java.sql.Driver;
 
+import org.photonvision.PhotonCamera;
 import org.w3c.dom.css.RGBColor;
 
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -17,6 +18,7 @@ import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.HSVLEDColor;
 import frc.robot.Constants.RGBLEDColor;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.photonConstants;
 
 public class LEDInterface extends SubsystemBase{
     
@@ -179,20 +181,24 @@ public class LEDInterface extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if (DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
-        && ShooterConstants.armAtSetpoint) {
+        if (photonConstants.speakerDistance > 4.0 && ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) {
+            setTransitionRGBValues(RGBLEDColor.red, 1);
+        }
+        else if (DriveConstants.aimedAtTarget && FlywheelConstants.flywheelsAtSetpoint
+        && ShooterConstants.armAtSetpoint && ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER) {
             setTransitionRGBValues(RGBLEDColor.green, 1);
         }
         else if (IndexerConstants.robotHasNote) {
             setTransitionRGBValues(RGBLEDColor.orange, 1);
         }
+        
         else {
-            if (DriverStation.getAlliance().toString().equals("Red")) {
-                setTransitionRGBValues(RGBLEDColor.red, 1);
-            }
-            else {
-                setTransitionRGBValues(RGBLEDColor.blue, 1);
-            }
+            // if (DriverStation.getAlliance().toString().equals("Red")) {
+            //     setTransitionRGBValues(RGBLEDColor.red, 1);
+            // }
+            
+            setTransitionRGBValues(RGBLEDColor.blue, 1);
+            
         }
         transitionRGB();
         //rainbowUnicornVomit();
