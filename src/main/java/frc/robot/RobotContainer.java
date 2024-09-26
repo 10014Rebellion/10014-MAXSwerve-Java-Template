@@ -173,7 +173,8 @@ public class RobotContainer {
     }
     private void configureButtonBindings() {
         // Just swap which line is commented when testing vs competition
-        configureCompetitionButtonBindings();
+        //configureCompetitionButtonBindings();
+        configureStemGalBindings();
         // configureTestButtonBindings();
     }
 
@@ -358,17 +359,17 @@ public class RobotContainer {
                     new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
                 )
             );
-        driverController.y().whileTrue(
-            new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
-        );
+        // driverController.y().whileTrue(
+        //     new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
+        // );
         
-        driverController.b().whileTrue(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
-                new commandFlywheelShoot(robotFlywheels),
-                new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
-            )
-        );
+        // driverController.b().whileTrue(
+        //     new ParallelCommandGroup(
+        //         new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
+        //         new commandFlywheelShoot(robotFlywheels),
+        //         new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
+        //     )
+        // );
 
         // First gets the arm into intake position, then allows the intake and indexer to run
         driverController.rightBumper().whileTrue(
@@ -410,7 +411,7 @@ public class RobotContainer {
         // Copilot Shooter Commands
         copilotController.x().whileTrue(
             new ParallelCommandGroup(
-                robotShooter.goToSetpointCommand(ShooterConstants.kArmParallelPosition),
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
                 new commandFlywheelShoot(robotFlywheels))
             );
         
@@ -425,7 +426,7 @@ public class RobotContainer {
 
         copilotController.b().whileTrue(
             new ParallelCommandGroup(
-                robotShooter.goToSetpointCommand(ShooterConstants.kArmSubwooferShotPosition),
+                robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition),
                 new commandFlywheelShoot(robotFlywheels),
                 new ParallelDeadlineGroup(
                     new WaitCommand(0.5), 
@@ -449,36 +450,53 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 new CommandManualFlywheels(robotFlywheels),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.5),
+                    new WaitCommand(0.25),
                     new commandIndexerStart(robotIndexer)
                 )
             ));
 
-        copilotController.rightBumper().whileTrue(
-            new SequentialCommandGroup(
-                new commandArmIntake(robotShooter),
-                new ParallelCommandGroup(
-                    new commandIntakePickup(robotIntake),
-                    new commandIndexerPickup(robotIndexer)
-                ))
-            )
-            .whileFalse(new commandFlywheelIdle(robotFlywheels));
+        // copilotController.rightBumper().whileTrue(
+        //     new SequentialCommandGroup(
+        //         new commandArmIntake(robotShooter),
+        //         new ParallelCommandGroup(
+        //             new commandIntakePickup(robotIntake),
+        //             new commandIndexerPickup(robotIndexer)
+        //         ))
+        //     )
+        //     .whileFalse(new commandFlywheelIdle(robotFlywheels));
 
+        // copilotController.povUp()
+        //     .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(0.25)))
+        //     .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+
+        // copilotController.povDown()
+        //     .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(-0.25)))
+        //     .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
         copilotController.povUp()
-            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(0.25)))
-            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
-
+            .whileTrue(new ParallelCommandGroup(
+                new climbCommand(robotClimb, 300, false),
+                new climbCommand(robotClimb, 300, true)
+            ))
+            .whileFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
         copilotController.povDown()
-            .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(-0.25)))
-            .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
-
+            .whileTrue(new ParallelCommandGroup(
+                new climbCommand(robotClimb, -1325, false),
+                new climbCommand(robotClimb, -1325, true)
+            ))
+            .whileFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+        copilotController.povRight()
+            .whileTrue(new ParallelCommandGroup(
+                new climbCommand(robotClimb, -500, false),
+                new climbCommand(robotClimb, -500, true)
+            ))
+            .whileFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
         copilotController.rightStick()
             .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
 
 
         // Test trap setpoints.
-        copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
-        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(ShooterConstants.kArmAmpPosition - 8.0));
+        //copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
+        copilotController.povLeft().whileTrue(robotShooter.goToSetpointCommand(95.0));
     }
 
     private void configureTestButtonBindings() {
