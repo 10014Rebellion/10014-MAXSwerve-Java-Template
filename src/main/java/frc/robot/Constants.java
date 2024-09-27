@@ -155,8 +155,8 @@ public final class Constants {
     
     
     public static final double kDriveDeadband = 0.1;
-    public static final double kDriveMult = 1.0;
-    public static final double kTurnMult = 0.9;
+    public static final double kDriveMult = 0.75;
+    public static final double kTurnMult = 0.75;
 
     public static final int kDriverControllerPort = 0;
     public static final int kCopilotControllerPort = 1;
@@ -168,9 +168,9 @@ public final class Constants {
     public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
     public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
-    public static final double kPXController = 0.28;
-    public static final double kPYController = 0.2;
-    public static final double kPThetaController = 0.2;
+    public static final double kPXController = 0.295; // Was .28
+    public static final double kPYController = 0.195; // Was .2
+    public static final double kPThetaController = 0.25; // Was .2
 
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(

@@ -3,16 +3,23 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
-    "Bottom Center Note Paths",
-    "Source Side Start Paths",
-    "Test Paths",
-    "The TROLL paths"
+    "AmarilloPaths",
+    "BottomPaths",
+    "CenterPaths",
+    "Debugging",
+    "TITANPATH",
+    "TahaPaths",
+    "TopPaths"
   ],
   "autoFolders": [
-    "Source Side Autos",
-    "Test Autos"
+    "BottomAutos",
+    "CenterAutos",
+    "Debugging",
+    "TITANAUTON",
+    "TahaAutos",
+    "TopAutos"
   ],
-  "defaultMaxVel": 4.0,
+  "defaultMaxVel": 3.5,
   "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 270.0,
   "defaultMaxAngAccel": 540.0,

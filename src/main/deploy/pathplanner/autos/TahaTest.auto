@@ -1,0 +1,56 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.714390666449495,
+      "y": 6.727573634519466
+    },
+    "rotation": 58.671307132195885
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Speaker Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftToT1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Smart Fire"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "T1toC1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "TahaAutos",
+  "choreoAuto": false
+}

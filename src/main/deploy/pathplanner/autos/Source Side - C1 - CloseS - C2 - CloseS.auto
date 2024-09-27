@@ -14,19 +14,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Subwoofer Shot"
+            "name": "Speaker Fire"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Source Side - C1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pickup Note"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Source Side - C1"
+                }
+              }
+            ]
           }
         },
         {
@@ -38,19 +45,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Auto Fire"
+            "name": "Smart Fire"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Close Shot - C2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Pickup Note"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "C2 - Close Shot"
+                }
+              }
+            ]
           }
         },
         {
@@ -62,12 +76,12 @@
         {
           "type": "named",
           "data": {
-            "name": "Auto Fire"
+            "name": "Smart Fire"
           }
         }
       ]
     }
   },
-  "folder": "Source Side Autos",
+  "folder": null,
   "choreoAuto": false
 }

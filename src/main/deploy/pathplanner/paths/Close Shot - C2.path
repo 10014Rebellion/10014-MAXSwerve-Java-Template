@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 8.23383552712092,
-        "y": 2.3965026812041206
+        "x": 8.27025654051308,
+        "y": 2.435854001522554
       },
       "prevControl": {
-        "x": 5.605098391292445,
-        "y": 1.5300474241433386
+        "x": 5.641519404684604,
+        "y": 1.569398744461772
       },
       "nextControl": null,
       "isLocked": false,
@@ -36,27 +36,9 @@
     }
   ],
   "constraintZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake Start",
-      "waypointRelativePos": 0.1,
-      "command": {
-        "type": "parallel",
-        "data": {
-          "commands": [
-            {
-              "type": "named",
-              "data": {
-                "name": "Pickup Note"
-              }
-            }
-          ]
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
+    "maxVelocity": 3.5,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 540.0

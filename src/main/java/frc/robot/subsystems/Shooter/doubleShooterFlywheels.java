@@ -97,8 +97,9 @@ public class doubleShooterFlywheels extends SubsystemBase{
         rightFlywheel.setD(flywheelD.get());
     }
     
+    @Override
     public void periodic() {
-
+        SmartDashboard.putBoolean("FLYWHEEL AT SETPOINT", flywheelsAtSetpoint());
         SmartDashboard.putNumber("Current Left Flywheel Velocity", getLeftFlywheelVelocity());
         SmartDashboard.putNumber("Current Right Flywheel Velocity", getRightFlywheelVelocity());
         SmartDashboard.putBoolean("Flywheels at Setpoint", FlywheelConstants.flywheelsAtSetpoint);

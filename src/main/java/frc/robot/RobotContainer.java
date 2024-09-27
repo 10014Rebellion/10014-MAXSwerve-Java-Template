@@ -50,7 +50,18 @@ import frc.robot.commands.ArmCommands.commandArmAmp;
 import frc.robot.commands.ArmCommands.commandArmAutoAim;
 import frc.robot.commands.ArmCommands.commandArmIntake;
 import frc.robot.commands.ArmCommands.commandArmSubwoofer;
+import frc.robot.commands.AutonCommands.arm.autonAutoAimArmPID;
+import frc.robot.commands.AutonCommands.arm.autonIntakeArmPID;
+import frc.robot.commands.AutonCommands.arm.autonSpeakerArmPID;
+import frc.robot.commands.AutonCommands.drive.autonAlignDrivePID;
+import frc.robot.commands.AutonCommands.flywheels.autonRevUpFlywheel;
+import frc.robot.commands.AutonCommands.indexer.autonShootIndexer;
 import frc.robot.commands.ClimbCommands.climbCommand;
+
+
+// Auton Commands
+import frc.robot.commands.AutonCommands.indexer.autonShootIndexer;
+
 // import frc.robot.commands.ClimbCommands.commandClimbAutoZero;
 import frc.robot.commands.DriveCommands.commandDrivetrainAimAtSpeaker;
 import frc.robot.commands.DriveCommands.commandDrivetrainAlignToTarget;
@@ -138,7 +149,7 @@ public class RobotContainer {
         // Configure the button bindings
         
         configureButtonBindings();
-        configureTriggers();
+        // configureTriggers();
         // configureTestButtonBindings();
 
         // Auton Sendable Chooser
@@ -178,7 +189,7 @@ public class RobotContainer {
         // configureTestButtonBindings();
     }
 
-    private void configureTriggers(){
+    public void configureTriggers(){
         // Automatically shoot when ready
         new Trigger(() -> 
         DriveConstants.aimedAtTarget && 
@@ -627,6 +638,52 @@ public class RobotContainer {
                 )
             )
         ));
+
+        // My new one
+        NamedCommands.registerCommand("Speaker Fire", new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new autonSpeakerArmPID(robotShooter),
+                // new autonAlignDrivePID(m_robotDrive, centralCamera, driverController),
+                new autonRevUpFlywheel(robotFlywheels)
+            ),
+            // .withTimeout(2.7),
+
+            new SequentialCommandGroup(
+                new autonShootIndexer(robotIndexer),
+                new autonIntakeArmPID(robotShooter)
+            )
+        ));
+
+        NamedCommands.registerCommand("Smart Fire", new SequentialCommandGroup(
+            new ParallelCommandGroup(
+                new autonAutoAimArmPID(robotShooter),
+                new autonAlignDrivePID(m_robotDrive, centralCamera, driverController),
+                new autonRevUpFlywheel(robotFlywheels)
+            ),
+            // .withTimeout(2.7),
+
+            new SequentialCommandGroup(
+                new autonShootIndexer(robotIndexer),
+                new autonIntakeArmPID(robotShooter)
+            )
+        ));
+
+        NamedCommands.registerCommand("Start Intaking", 
+            new commandIntakePickup(robotIntake)
+        );
+
+        // NamedCommands.registerCommand("Shoot", getAutonomousCommand());
+
+
+        // Auto shoot
+        NamedCommands.registerCommand("ShootIn", 
+            new SequentialCommandGroup(
+                new commandArmAutoAim(robotShooter),
+                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
+                new commandFlywheelShoot(robotFlywheels)
+            )
+        );
+
         NamedCommands.registerCommand("Prep Fire", 
         new ParallelCommandGroup(
             new commandArmAutoAim(robotShooter),

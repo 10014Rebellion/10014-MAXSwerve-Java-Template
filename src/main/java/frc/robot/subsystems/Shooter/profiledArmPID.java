@@ -219,6 +219,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     
     public boolean atSetpoint() {
         return (Math.abs(pivotPos - setpoint) < PivotPIDConstants.errorLimit);
+        // return getController().atGoal();
     }
 
     public double getCalculatedSpeakerAngle() {

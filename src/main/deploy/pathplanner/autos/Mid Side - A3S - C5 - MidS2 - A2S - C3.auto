@@ -12,21 +12,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Subwoofer Shot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Mid Side Start - A1"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Auto Fire"
           }
         },
         {
@@ -42,21 +30,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Auto Fire"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "MidS2 - A2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Auto Fire"
           }
         },
         {
@@ -69,12 +45,6 @@
           "type": "path",
           "data": {
             "pathName": "C3 - A2S"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Auto Fire"
           }
         }
       ]

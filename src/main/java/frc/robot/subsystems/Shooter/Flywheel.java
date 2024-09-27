@@ -55,11 +55,10 @@ public class Flywheel extends SubsystemBase {
     }
 
     public boolean atSetpoint() {
-        return (Math.abs(targetVelo - getVelo()) < 200
-                && targetVelo != 0
+        return (Math.abs(targetVelo - getVelo()) < 200&& targetVelo != 0
         );
     }
-
+    
     public double getVelo() {
         return encoder.getVelocity();
     }

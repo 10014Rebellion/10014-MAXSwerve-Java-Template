@@ -1,0 +1,69 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.72,
+      "y": 6.663465994549679
+    },
+    "rotation": 58.36330508788529
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Speaker Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TitanStartToT1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Smart Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "TitanT1ToC2"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "folder": "TITANAUTON",
+  "choreoAuto": false
+}
