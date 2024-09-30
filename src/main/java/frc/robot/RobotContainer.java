@@ -55,6 +55,7 @@ import frc.robot.commands.AutonCommands.arm.autonIntakeArmPID;
 import frc.robot.commands.AutonCommands.arm.autonSpeakerArmPID;
 import frc.robot.commands.AutonCommands.drive.autonAlignDrivePID;
 import frc.robot.commands.AutonCommands.flywheels.autonRevUpFlywheel;
+import frc.robot.commands.AutonCommands.indexer.autonPickupIndexer;
 import frc.robot.commands.AutonCommands.indexer.autonShootIndexer;
 import frc.robot.commands.ClimbCommands.climbCommand;
 
@@ -145,7 +146,7 @@ public class RobotContainer {
         defaultPose = new Pose2d(0, 0, new Rotation2d(0));
         poseSubsystem = new PoseSubsystem(centralCamera, m_robotDrive::getRotation2d, m_robotDrive::getSwerveModulePositions);
         
-        
+        m_robotDrive.configureAutoBuilder(poseSubsystem::getPose, poseSubsystem::resetPoseEstimator);
         // Configure the button bindings
         
         configureButtonBindings();
@@ -202,9 +203,10 @@ public class RobotContainer {
 
         // Keep intaking if piece is slipping out
         new Trigger(() ->
-            (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER ||
-             ShooterConstants.currentArmState == ShooterConstants.armState.AMP ||
-             ShooterConstants.currentArmState == ShooterConstants.armState.TUNING) &&
+             (ShooterConstants.currentArmState == ShooterConstants.armState.SPEAKER ||
+              ShooterConstants.currentArmState == ShooterConstants.armState.AMP ||
+              ShooterConstants.currentArmState == ShooterConstants.armState.TUNING ||
+            ShooterConstants.currentArmState == ShooterConstants.armState.YEET) &&
             !IndexerConstants.robotHasNote
         ).whileTrue(new commandIndexerPickup(robotIndexer));
     }
@@ -353,9 +355,9 @@ public class RobotContainer {
             .whileTrue(new InstantCommand(() -> robotClimb.setPercentOutput(-0.25)))
             .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
 
-        copilotController.rightStick()
+        copilotController.leftStick()
             .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
-
+        
 
         // Test trap setpoints.
         copilotController.povRight().whileTrue(robotShooter.goToSetpointCommand(95.0));
@@ -369,6 +371,11 @@ public class RobotContainer {
                     new InstantCommand(() -> m_robotDrive.zeroHeading()),
                     new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
                 )
+            );
+
+        driverController.b()
+            .whileTrue(
+                new InstantCommand(() -> poseSubsystem.forceResetPose())
             );
         // driverController.y().whileTrue(
         //     new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
@@ -439,6 +446,7 @@ public class RobotContainer {
             new ParallelCommandGroup(
                 robotShooter.goToSetpointCommand(ShooterConstants.kArmYeetPosition),
                 new commandFlywheelShoot(robotFlywheels),
+                new InstantCommand(() -> ShooterConstants.currentArmState = ShooterConstants.armState.YEET),
                 new ParallelDeadlineGroup(
                     new WaitCommand(0.5), 
                     new commandIndexBrakeMode(robotIndexer)
@@ -448,6 +456,7 @@ public class RobotContainer {
         copilotController.a().whileTrue(
             new ParallelCommandGroup(
                 robotShooter.goToSetpointCommand(ShooterConstants.kArmShootUnderPosition),
+                new InstantCommand(() -> ShooterConstants.currentArmState = ShooterConstants.armState.YEET),
                 new commandFlywheelShoot(robotFlywheels)
             ));
 
@@ -485,8 +494,8 @@ public class RobotContainer {
         //     .onFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
         copilotController.povUp()
             .whileTrue(new ParallelCommandGroup(
-                new climbCommand(robotClimb, 300, false),
-                new climbCommand(robotClimb, 300, true)
+                new climbCommand(robotClimb, 400, false),
+                new climbCommand(robotClimb, 400, true)
             ))
             .whileFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
         copilotController.povDown()
@@ -502,7 +511,14 @@ public class RobotContainer {
             ))
             .whileFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
         copilotController.rightStick()
+            .whileTrue(new ParallelCommandGroup(
+                new climbCommand(robotClimb,0, false),
+                new climbCommand(robotClimb, 0, true)
+            ))
+            .whileFalse(new InstantCommand(() -> robotClimb.setPercentOutput(0)));
+        copilotController.leftStick()
             .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
+        
 
 
         // Test trap setpoints.
@@ -616,12 +632,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("Index Note", new commandIndexerStart(robotIndexer));
         NamedCommands.registerCommand("Fire Note", new commandIndexerStart(robotIndexer));
         NamedCommands.registerCommand("Pickup Note", 
-        new ParallelCommandGroup(
+        new ParallelDeadlineGroup(
+            new WaitCommand(3.5),
+            new ParallelCommandGroup(
             new commandArmIntake(robotShooter),
-            //new ParallelCommandGroup(
                 new commandIntakePickup(robotIntake),
                 new commandIndexerPickup(robotIndexer)
-            //)
+            )
         ));
         NamedCommands.registerCommand("Auto Fire", 
         new ParallelRaceGroup(
@@ -640,10 +657,11 @@ public class RobotContainer {
         ));
 
         // My new one
-        NamedCommands.registerCommand("Speaker Fire", new SequentialCommandGroup(
+        NamedCommands.registerCommand("Speaker Fire", 
+        new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new autonSpeakerArmPID(robotShooter),
-                // new autonAlignDrivePID(m_robotDrive, centralCamera, driverController),
+                new autonAlignDrivePID(m_robotDrive, poseSubsystem::getPose, poseSubsystem::getTargetYaw),
                 new autonRevUpFlywheel(robotFlywheels)
             ),
             // .withTimeout(2.7),
@@ -653,23 +671,32 @@ public class RobotContainer {
                 new autonIntakeArmPID(robotShooter)
             )
         ));
-
-        NamedCommands.registerCommand("Smart Fire", new SequentialCommandGroup(
+        
+        // Sets flywheels, drive base, and arm to go to shooting setpoints.
+        // Also runs indexer as "pickup" to make sure the note doesn't fall out
+        // Finally, after 0.75 seconds (contingency)
+        // Allows the indexer to run, firing the note.
+        NamedCommands.registerCommand("Smart Fire", 
+        new SequentialCommandGroup(
             new ParallelCommandGroup(
-                new autonAutoAimArmPID(robotShooter),
-                new autonAlignDrivePID(m_robotDrive, centralCamera, driverController),
-                new autonRevUpFlywheel(robotFlywheels)
-            ),
-            // .withTimeout(2.7),
-
-            new SequentialCommandGroup(
-                new autonShootIndexer(robotIndexer),
-                new autonIntakeArmPID(robotShooter)
-            )
+                new autonRevUpFlywheel(robotFlywheels),
+                new autonAlignDrivePID(m_robotDrive, poseSubsystem::getPose, poseSubsystem::getTargetYaw),
+                new autonAutoAimArmPID(robotShooter, poseSubsystem::getTargetDistance, centralCamera::getDistanceToTag),
+                new autonPickupIndexer(robotIndexer)
+            ).withTimeout(2.0),
+            new WaitCommand(0.75),
+            new autonShootIndexer(robotIndexer)
+            //new autonIntakeArmPID(robotShooter)
         ));
 
+        // Sets the arm to intake, plus runs indexer and intake.
+        // Effectively identical to the teleop command.
         NamedCommands.registerCommand("Start Intaking", 
-            new commandIntakePickup(robotIntake)
+        new ParallelCommandGroup(
+            new autonIntakeArmPID(robotShooter),
+            new commandIntakePickup(robotIntake),
+            new commandIndexerPickup(robotIndexer)
+        ).withTimeout(3.5)
         );
 
         // NamedCommands.registerCommand("Shoot", getAutonomousCommand());

@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.7031127583381926,
+        "y": 6.272596207164246
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.7031127583381926,
+        "y": 5.419869994669567
+      },
+      "isLocked": false,
+      "linkedName": "Mid Shot 2"
+    },
+    {
+      "anchor": {
+        "x": 2.146327011795348,
+        "y": 5.53650223579517
+      },
+      "prevControl": {
+        "x": 3.6163948384234796,
+        "y": 5.535493887889185
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A2 Rear"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -0.1737800999146936,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "CenterPaths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

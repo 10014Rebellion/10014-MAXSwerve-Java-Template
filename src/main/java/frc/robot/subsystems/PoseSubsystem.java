@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -55,8 +56,8 @@ public class PoseSubsystem extends SubsystemBase{
             Pose2d pose = estimatedRobotPose.estimatedPose.toPose2d();
             if (isPoseOnField(pose)) {
                 if (estimatedRobotPose.strategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR) {
-                    poseEstimator.addVisionMeasurement(pose, estimatedRobotPose.timestampSeconds, Constants.photonConstants.kVisionMultiTagStandardDeviations);
-                }
+                  poseEstimator.addVisionMeasurement(pose, estimatedRobotPose.timestampSeconds, Constants.photonConstants.kVisionMultiTagStandardDeviations);
+                  }
                 else {
                     for (PhotonTrackedTarget target : estimatedRobotPose.targetsUsed) {
                         if (Utils.isValueInRange(target.getPoseAmbiguity(), 0.0, Constants.photonConstants.kVisionMaxPoseAmbiguity)) {
@@ -68,6 +69,19 @@ public class PoseSubsystem extends SubsystemBase{
             }
         });
     }
+
+    public void forceResetPose() {
+      poseEstimator.update(gyroRotation.get(), swerveModulePositions.get());
+        centralCamera.getEstimatedGlobalPose().ifPresent(estimatedRobotPose -> {
+            Pose2d camPose = estimatedRobotPose.estimatedPose.toPose2d();
+            poseEstimator.resetPosition(gyroRotation.get(), swerveModulePositions.get(), camPose);
+            //if (isPoseOnField(camPose)) {
+                //if (estimatedRobotPose.strategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR) {
+                  //poseEstimator.resetPosition(gyroRotation.get(), swerveModulePositions.get(), pose);
+                  //}            
+           // }
+    });
+  }
 
     public Pose2d getPose() {
         return poseEstimator.getEstimatedPosition();
@@ -145,6 +159,12 @@ public class PoseSubsystem extends SubsystemBase{
         swerveModulePositions.get(),
         new Pose2d(poseEstimator.getEstimatedPosition().getTranslation(), gyroRotation.get())
     );
+    }
+    public void resetPoseEstimator(Pose2d robotPose) {
+      poseEstimator.resetPosition(
+        gyroRotation.get(), 
+        swerveModulePositions.get(),
+        robotPose);
     }
 
 

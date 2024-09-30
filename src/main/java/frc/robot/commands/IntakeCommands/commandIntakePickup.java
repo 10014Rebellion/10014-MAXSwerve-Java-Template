@@ -14,12 +14,24 @@ public class commandIntakePickup extends Command{
 
     @Override
     public void initialize() {
-        intake.runIntake();
+        if (!IndexerConstants.robotHasNote){
+            intake.runIntake();
+        }
+        else {
+            intake.stopIntake();
+        }
         IndexerConstants.currentIntakeState = IndexerConstants.intakeState.PICKUP;
     }
 
     @Override
-    public void execute() {}
+    public void execute() {
+        if (!IndexerConstants.robotHasNote){
+            intake.runIntake();
+        }
+        else {
+            intake.stopIntake();
+        }
+    }
 
     @Override
     public void end(boolean interrupted) {

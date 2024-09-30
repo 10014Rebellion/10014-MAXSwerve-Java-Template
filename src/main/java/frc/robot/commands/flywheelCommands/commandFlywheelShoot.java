@@ -20,33 +20,40 @@ public class commandFlywheelShoot extends Command{
             flywheels.setBothFlywheelVelocity(5800, 2900);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.SHOOT;
         }
-        else {
-            flywheels.setBothFlywheelVelocity(0, 0);
-            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
-        }
+        // else {
+        //     flywheels.setBothFlywheelVelocity(0, 0);
+        //     FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
+        // }
         
     }
 
     @Override
-    public void execute() {}
+    public void execute() {
+        if (IndexerConstants.robotHasNote) {
+            flywheels.setBothFlywheelVelocity(5800, 2900);
+            FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.SHOOT;
+        }
+    }
 
     @Override
     public void end(boolean interrupted) {
-        if (FlywheelConstants.currentFlywheelState == FlywheelConstants.flywheelState.SHOOT) {
+        if ((FlywheelConstants.currentFlywheelState == FlywheelConstants.flywheelState.SHOOT)
+        && IndexerConstants.robotHasNote) {
             flywheels.setBothFlywheelVelocity(5800, 2900);
         }
         else if (IndexerConstants.robotHasNote) {
-            flywheels.setBothFlywheelVelocity(1000, 1000);
+            flywheels.setBothFlywheelVelocity(2000,2000);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.IDLE;
         }
         else {
-            flywheels.setBothFlywheelVelocity(0, 0);
+            flywheels.setBothFlywheelVelocity(500, 500);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
     }
 
     @Override
     public boolean isFinished() {
-        return flywheels.flywheelsAtSetpoint();  
+        //return flywheels.flywheelsAtSetpoint();  
+        return FlywheelConstants.flywheelsAtSetpoint;
     }
 }

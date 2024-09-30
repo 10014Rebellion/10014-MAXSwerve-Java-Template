@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.146327011795348,
+        "y": 5.53650223579517
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.7938706360418095,
+        "y": 5.051874719134054
+      },
+      "isLocked": false,
+      "linkedName": "A2 Rear"
+    },
+    {
+      "anchor": {
+        "x": 2.6015831638103353,
+        "y": 4.288219238334721
+      },
+      "prevControl": {
+        "x": 1.8232420006879373,
+        "y": 4.71410402570358
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A3 - 1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 270.0,
+    "maxAngularAcceleration": 540.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -29.744881296942225,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "CenterPaths",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}

@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
@@ -124,9 +125,16 @@ public class DriveSubsystem extends SubsystemBase {
   public DriveSubsystem(Vision centralCamera) {
     this.centralCamera = centralCamera;
     //m_gyro.setYaw(swervePoseEstimator.getEstimatedPosition().getRotation().getDegrees());
-    AutoBuilder.configureHolonomic(this::getPose, this::resetPoseEstimator,
-     this::getChassisSpeed, this::driveRobotRelative, 
-     new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
+    m_gyro.reset();
+    turnController = new PIDController(DriveConstants.kAngularP, 0, DriveConstants.kAngularD);
+    SmartDashboard.putData("Field", field);
+
+  }
+
+  public void configureAutoBuilder(Supplier<Pose2d> robotPose, Consumer<Pose2d> resetPoseEstimator) {
+    AutoBuilder.configureHolonomic(robotPose, resetPoseEstimator,
+    this::getChassisSpeed, this::driveRobotRelative, 
+    new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
                     new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // Translation PID constants
                     new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // Rotation PID constants
                     4.5, // Max module speed, in m/s
@@ -145,10 +153,6 @@ public class DriveSubsystem extends SubsystemBase {
     },
     this // Reference to this subsystem to set requirements);
     );
-    m_gyro.reset();
-    turnController = new PIDController(DriveConstants.kAngularP, 0, DriveConstants.kAngularD);
-    SmartDashboard.putData("Field", field);
-
   }
 
   @Override

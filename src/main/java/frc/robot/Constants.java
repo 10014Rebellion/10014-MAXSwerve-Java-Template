@@ -155,8 +155,8 @@ public final class Constants {
     
     
     public static final double kDriveDeadband = 0.1;
-    public static final double kDriveMult = 0.75;
-    public static final double kTurnMult = 0.75;
+    public static final double kDriveMult = 1.0;
+    public static final double kTurnMult = 0.9;
 
     public static final int kDriverControllerPort = 0;
     public static final int kCopilotControllerPort = 1;
@@ -201,7 +201,7 @@ public final class Constants {
     public static final double kArmYeetPosition = -10;
     public static final double kArmShootUnderPosition = 40;
     public static final double kArmDefensePosition = 0;
-    public static final double kArmAmpPosition = 85;
+    public static final double kArmAmpPosition = 75;
     public static final double kArmTrapPrepPosition = 90;
     public static final double kArmTrapPosition = 80;
 
@@ -359,8 +359,8 @@ public final class Constants {
     public static final PoseStrategy kPoseStrategy = PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
     public static final PoseStrategy kFallbackPoseStrategy = PoseStrategy.LOWEST_AMBIGUITY;
     public static final Matrix<N3, N1> kVisionSingleTagStandardDeviations = VecBuilder.fill(1, 1, 2); 
-    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.1, 0.1, 0.2); 
-    public static final double kVisionMaxPoseAmbiguity = 0.2;
+    public static final Matrix<N3, N1> kVisionMultiTagStandardDeviations = VecBuilder.fill(0.2, 0.2, 1.0); 
+    public static final double kVisionMaxPoseAmbiguity = 0.1;
   }
 
   public static final class HSVLEDColor {

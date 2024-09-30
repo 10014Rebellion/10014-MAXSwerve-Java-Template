@@ -21,7 +21,7 @@ public class commandArmAmp extends Command{
 
     @Override
     public void initialize() {
-        arm.goToSetpoint(ShooterConstants.kArmAmpPosition - ((mLess) ? 8 : 0));
+        arm.goToSetpoint(ShooterConstants.kArmAmpPosition);// - ((mLess) ? 8 : 0));
         ShooterConstants.currentArmState = ShooterConstants.armState.MOVING;
     }
 
@@ -35,6 +35,6 @@ public class commandArmAmp extends Command{
 
     @Override
     public boolean isFinished() {
-        return arm.atSetpoint();  
+        return ShooterConstants.armAtSetpoint;  
     }
 }

@@ -17,11 +17,11 @@ public class commandFlywheelIdle extends Command{
     @Override
     public void initialize() {
         if (IndexerConstants.robotHasNote) {
-            flywheels.setBothFlywheelVelocity(1000, 1000);
+            flywheels.setBothFlywheelVelocity(2000, 2000);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.IDLE;
         }
         else {
-            flywheels.setBothFlywheelVelocity(0, 0);
+            flywheels.setBothFlywheelVelocity(500, 500);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
         
@@ -37,7 +37,7 @@ public class commandFlywheelIdle extends Command{
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.IDLE;
         }
         else {
-            flywheels.setBothFlywheelVelocity(0, 0);
+            flywheels.setBothFlywheelVelocity(500, 500);
             FlywheelConstants.currentFlywheelState = FlywheelConstants.flywheelState.NOTHING;
         }
     }

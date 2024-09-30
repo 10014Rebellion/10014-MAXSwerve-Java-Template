@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.9569170513673767,
-      "y": 4.086437702600339
+      "x": 0.7456751736928494,
+      "y": 4.370521607059185
     },
-    "rotation": 118.1561914482726
+    "rotation": -57.99156023298031
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Subwoofer Shot"
+            "name": "Speaker Fire"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Source Side - C2"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Source Side - C2"
+                }
+              }
+            ]
           }
         },
         {
@@ -32,13 +45,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Auto Fire"
+            "name": "Smart Fire"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Close Shot - C1"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Close Shot - C1"
+                }
+              }
+            ]
           }
         },
         {
@@ -50,12 +76,12 @@
         {
           "type": "named",
           "data": {
-            "name": "Auto Fire"
+            "name": "Smart Fire"
           }
         }
       ]
     }
   },
-  "folder": null,
+  "folder": "BottomAutos",
   "choreoAuto": false
 }

@@ -198,7 +198,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
     
     public Command goToSetpointCommand(double setpoint) {
         return new InstantCommand(() ->
-        goToSetpoint(setpoint));      
+        goToSetpoint(setpoint));  
     }
 
     public void runArmFFOnly() {

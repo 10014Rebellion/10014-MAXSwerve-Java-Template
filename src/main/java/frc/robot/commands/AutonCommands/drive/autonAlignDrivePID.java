@@ -1,57 +1,89 @@
 package frc.robot.commands.AutonCommands.drive;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 
-public class autonAlignDrivePID extends Command {
-  private DriveSubsystem swerveDrive;
-    private Vision centralCamera;
-    private CommandXboxController driverController;
+public class autonAlignDrivePID extends Command{
 
+    private DriveSubsystem robotDrive;
+    //private CommandXboxController driverController;
+    private Supplier<Pose2d> robotPose;
+    private Supplier<Double> targetYaw;
     private PIDController turnController;
-    private double calculatedTurnSpeed;
-    private double goalYaw;
-
-    public autonAlignDrivePID(DriveSubsystem swerveDrive, Vision centralCamera, CommandXboxController driverController) {
-        this.swerveDrive = swerveDrive;
-        this.centralCamera = centralCamera;
-        this.driverController = driverController;
+    /*public Command alignToTargetCommand(Supplier<Pose2d> robotPose, Supplier<Double> targetYaw) {
+    return
+    run(() -> {
+      double robotYaw = robotPose.get().getRotation().getDegrees();
+      double speedRotation = turnController.calculate(robotYaw);
+      speedRotation += Math.copySign(0.15, speedRotation);
+      if (turnController.atSetpoint()) {
+        speedRotation = 0.0;
+        Constants.DriveConstants.aimedAtTarget = true;
+      }
+      //setSwerveModuleStates(Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(0.0, 0.0, speedRotation)));
+    })
+    .beforeStarting(() -> {
+      Constants.DriveConstants.aimedAtTarget = false;
+      turnController.setSetpoint(targetYaw.get());
+      turnController.reset();
+    });
+  }*/
+    public autonAlignDrivePID(DriveSubsystem robotDrive,  Supplier<Pose2d> robotPose, Supplier<Double> targetYaw) {
+        this.robotDrive = robotDrive;
+        //this.driverController = driverController;
+        this.robotPose = robotPose;
+        this.targetYaw = targetYaw;
         turnController = new PIDController(DriveConstants.kAngularP, 0, DriveConstants.kAngularD);
-        turnController.setTolerance(0);
-        addRequirements(swerveDrive, centralCamera);
+        turnController.enableContinuousInput(-180.0, 180.0);
+        turnController.setTolerance(1.0);
+        addRequirements(robotDrive);
     }
 
     @Override
     public void initialize() {
         DriveConstants.currentDriveState = DriveConstants.driveState.AIMING;
+        Constants.DriveConstants.aimedAtTarget = false;
+        turnController.setSetpoint(targetYaw.get());
+        turnController.reset();
     }
 
     @Override
     public void execute() {
-        double goalYaw = centralCamera.getYaw();
-        calculatedTurnSpeed = turnController.calculate(centralCamera.getYaw(), 0);
-        swerveDrive.drive(
-                    -MathUtil.applyDeadband(driverController.getLeftY()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(driverController.getLeftX()*OIConstants.kDriveMult, OIConstants.kDriveDeadband),
-                    calculatedTurnSpeed, true, false);
-        //System.out.println("Camera Yaw: " + centralCamera.getYaw());
-        //System.out.println("Calculated output: " + calculatedTurnSpeed);
-        DriveConstants.aimedAtTarget = (Math.abs(calculatedTurnSpeed) < 0.1);
- //       SmartDashboard.putNumber("Current Yaw Offset", driverController.get)
+        double robotYaw = robotPose.get().getRotation().getDegrees();
+        turnController.setSetpoint(targetYaw.get());
+        turnController.reset();
+        double speedRotation = turnController.calculate(robotYaw);
+        //speedRotation += Math.copySign(0.15, speedRotation);
+        if (turnController.atSetpoint()) {
+            //speedRotation = 0.0;
+            Constants.DriveConstants.aimedAtTarget = true;
+            DriveConstants.currentDriveState = DriveConstants.driveState.AIMED;
+        }
+        System.out.println(speedRotation);
+        robotDrive.drive(
+                    0,
+                    0,
+                    speedRotation, true, false);
     }
 
     @Override
     public void end(boolean interrupted) {
+        
         DriveConstants.currentDriveState = DriveConstants.driveState.DRIVING;
     }
+
     @Override
     public boolean isFinished() {
-        return DriveConstants.aimedAtTarget;
+        return Constants.DriveConstants.aimedAtTarget;
     }
 }

@@ -28,6 +28,6 @@ public class commandArmIntake extends Command{
 
     @Override
     public boolean isFinished() {
-        return arm.atSetpoint();  
+        return ShooterConstants.armAtSetpoint;  
     }
 }

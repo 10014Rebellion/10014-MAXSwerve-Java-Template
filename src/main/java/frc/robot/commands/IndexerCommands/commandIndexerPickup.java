@@ -15,12 +15,24 @@ public class commandIndexerPickup extends Command{
 
     @Override
     public void initialize() {
-        indexer.runIndexer();
+        if (!IndexerConstants.robotHasNote) {
+            indexer.runIndexer();
+        }
+        else {
+            indexer.stopIndexer();
+        }
         IndexerConstants.currentIndexState = IndexerConstants.indexState.PICKUP;
     }
 
     @Override
-    public void execute() {}
+    public void execute() {
+        if (!IndexerConstants.robotHasNote) {
+            indexer.runIndexer();
+        }
+        else {
+            indexer.stopIndexer();
+        }
+    }
 
     @Override
     public void end(boolean interrupted) {

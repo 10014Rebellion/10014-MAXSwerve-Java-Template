@@ -61,7 +61,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "C2 - Close Shot"
+                  "pathName": "Close Shot - C2"
                 }
               }
             ]
@@ -82,6 +82,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "BottomAutos",
   "choreoAuto": false
 }

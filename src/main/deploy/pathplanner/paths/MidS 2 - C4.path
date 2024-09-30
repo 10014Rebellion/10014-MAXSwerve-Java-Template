@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.040780031470618,
-        "y": 6.35890044588676
+        "x": 3.7031127583381926,
+        "y": 6.272596207164246
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.553405310746221,
-        "y": 6.623242727701913
+        "x": 5.2157380376137965,
+        "y": 6.536938488979399
       },
       "isLocked": false,
       "linkedName": "Mid Shot 2"
@@ -50,7 +50,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
+    "maxVelocity": 4.0,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 270.0,
     "maxAngularAcceleration": 540.0
@@ -61,7 +61,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "CenterPaths",
   "previewStartingState": {
     "rotation": 8.88065915052022,
     "velocity": 0

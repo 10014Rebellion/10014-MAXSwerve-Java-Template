@@ -32,7 +32,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MidS2 - A2"
+            "pathName": "MidS2 - A2 Prep"
           }
         },
         {
@@ -50,6 +50,6 @@
       ]
     }
   },
-  "folder": null,
+  "folder": "CenterAutos",
   "choreoAuto": false
 }

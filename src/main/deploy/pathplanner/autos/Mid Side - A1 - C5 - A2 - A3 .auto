@@ -1,0 +1,131 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.3679858486729504,
+      "y": 5.53650223579517
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Speaker Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Mid Side Start - A1"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Smart Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "A1 - C5"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C5 - MidS 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Smart Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "MidS2 - A2 Prep"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Smart Fire"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intaking"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "A2 - A3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Smart Fire"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "CenterAutos",
+  "choreoAuto": false
+}
