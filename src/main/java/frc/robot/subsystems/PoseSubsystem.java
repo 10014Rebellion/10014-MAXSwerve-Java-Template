@@ -141,7 +141,7 @@ public class PoseSubsystem extends SubsystemBase{
       }
 
     public void updateDistanceToSpeaker() {
-        photonConstants.speakerDistance = getTargetDistance();
+        //photonConstants.speakerDistance = getTargetDistance();
       }
 
     public void updateTelemetry() {

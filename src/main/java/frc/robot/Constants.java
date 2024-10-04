@@ -155,8 +155,8 @@ public final class Constants {
     
     
     public static final double kDriveDeadband = 0.1;
-    public static final double kDriveMult = 1.0;
-    public static final double kTurnMult = 0.9;
+    public static final double kDriveMult = 0.25;
+    public static final double kTurnMult = 0.25;
 
     public static final int kDriverControllerPort = 0;
     public static final int kCopilotControllerPort = 1;

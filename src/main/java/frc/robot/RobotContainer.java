@@ -186,8 +186,9 @@ public class RobotContainer {
     private void configureButtonBindings() {
         // Just swap which line is commented when testing vs competition
         //configureCompetitionButtonBindings();
-        configureStemGalBindings();
+        //configureStemGalBindings();
         // configureTestButtonBindings();
+        configureParadeButtonBindings();
     }
 
     public void configureTriggers(){
@@ -614,6 +615,45 @@ public class RobotContainer {
             .onTrue(new InstantCommand(() -> robotClimb.resetEncoders()));
     }
 
+    private void configureParadeButtonBindings() {
+        driverController.x()
+            .whileTrue(
+                new ParallelCommandGroup(
+                    new InstantCommand(() -> m_robotDrive.zeroHeading()),
+                    new InstantCommand(() -> poseSubsystem.resetPoseEstimator())
+                )
+            );
+        driverController.y().whileTrue(
+            new InstantCommand(() -> m_robotDrive.resetPoseEstimator(defaultPose))
+        );
+        driverController.rightBumper().whileTrue(
+            new SequentialCommandGroup(
+                new commandArmIntake(robotShooter),
+                new ParallelCommandGroup(
+                    new commandIntakePickup(robotIntake),
+                    new commandIndexerPickup(robotIndexer)
+                ))
+            )
+        .whileFalse(new commandFlywheelIdle(robotFlywheels));
+        
+        driverController.rightTrigger().whileTrue(
+            new ParallelCommandGroup(
+                new commandDrivetrainAimAtSpeaker(m_robotDrive, centralCamera, driverController),
+                new commandArmAutoAim(robotShooter),
+                new commandFlywheelShoot(robotFlywheels)
+            )
+        );
+        driverController.b().whileTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> robotShooter.goToTunableSetpoint()),
+                new commandFlywheelShoot(robotFlywheels)
+                //new commandDrivetrainAlignToTarget(m_robotDrive, driverController, poseSubsystem::getPose, poseSubsystem::getTargetYaw)
+            )
+        );
+        driverController.leftTrigger().whileTrue(
+            new commandIndexerStart(robotIndexer)
+        );
+    }
     public void registerNamedCommands() {
         //Registers commands for use with pathplanner
         NamedCommands.registerCommand("Subwoofer Shot", 

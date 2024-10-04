@@ -92,7 +92,8 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         setGoal(ShooterConstants.kArmParallelPosition);
         SmartDashboard.putNumber("kP", PivotPIDConstants.kP);
         pivotAngleMap = new InterpolatingDoubleTreeMap();
-        populatePivotAngleMap();
+        //populatePivotAngleMap();
+        populateHoolahoopAngleMap();
     }
 
     @Override
@@ -126,7 +127,7 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
             // If the PID is trying to tell it to go beyond the realm of reality,
             // It says no.
             else {
-                                if(totalOutput > 12) {
+                if(totalOutput > 12) {
                     pivotMotor.setVoltage(12);
                 }
                 else if (totalOutput < -12) {
@@ -258,5 +259,13 @@ public class profiledArmPID extends ProfiledPIDSubsystem{
         pivotAngleMap.put(3.85,11.25);
         pivotAngleMap.put(4.05, 11.25);
         pivotAngleMap.put(4.5, 12.0);
+    }
+
+    public void populateHoolahoopAngleMap() {
+        pivotAngleMap.put(1.08,-3.0);
+        pivotAngleMap.put(1.35,2.0);
+        pivotAngleMap.put(1.8,6.0);
+        pivotAngleMap.put(2.2,9.0);
+        pivotAngleMap.put(2.9,13.75);
     }
 }

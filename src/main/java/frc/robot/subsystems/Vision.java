@@ -78,10 +78,10 @@ public class Vision extends SubsystemBase{
             cameraLocation.getZ(), 
             trackedTagPose.getZ(),
             -cameraLocation.getRotation().getY(),
-            Units.degreesToRadians(aprilTagResult.getBestTarget().getYaw()));
+            Units.degreesToRadians(aprilTagResult.getBestTarget().getPitch()));
         //System.out.println(-cameraLocation.getRotation().getY());
         //System.out.println("Tracked tag rotation: " + trackedTagPose.getRotation().getY());
-        //photonConstants.speakerDistance = trackedTagDist;
+        photonConstants.speakerDistance = trackedTagDist;
     }
 
     public double getDistanceToTag() {
@@ -124,7 +124,7 @@ public class Vision extends SubsystemBase{
     public void periodic() {
         aprilTagResult = getLatestResult();
         if(aprilTagResult.hasTargets()) {
-            for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
+            /*for (PhotonTrackedTarget i : aprilTagResult.getTargets()) {
                 // These IDs are only the central speakers for each alliance.
                 if ((i.getFiducialId() == 4) && DriverStation.getAlliance().get().toString().equals("Red")) {
                     trackedTag = i;
@@ -138,7 +138,11 @@ public class Vision extends SubsystemBase{
                     updateDistanceToTag();
                 }
                // System.out.println(i.getFiducialId());
-            }
+            }*/
+            PhotonTrackedTarget i = aprilTagResult.getBestTarget();
+            trackedTag = i;
+            trackedTagPose = aprilTagFieldLayout.getTagPose(i.getFiducialId()).get();
+            updateDistanceToTag();
             SmartDashboard.putNumber("Current Tracked ID", aprilTagResult.getBestTarget().getFiducialId());
         }
         SmartDashboard.putNumber("Robot Distance from Speaker (Meters)", trackedTagDist);
